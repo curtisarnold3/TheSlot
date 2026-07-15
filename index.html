@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Slot — a free path through West Coast Swing</title>
+<meta name="description" content="A free, scroll-down map of West Coast Swing from beginner to intermediate. Every move branches off the basics — track what you've learned, see your repertoire, and drill the beginner practice plan.">
+<meta name="theme-color" content="#181425">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Slot — a free path through West Coast Swing">
+<meta property="og:description" content="Every West Coast Swing move branches off one of the basics. Track what you've learned, see your repertoire, and drill the practice plan. No thousand-dollar plan required.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+  :root{
+    --ink:#181425; --ink2:#211a34; --ink3:#2b2343;
+    --paper:#efe7d6; --paper2:#e5dbc3; --paper3:#ded2b6;
+    --brass:#c99a3f; --brass-lo:#8f6e2b; --brass-hi:#ecc069;
+    --got:#54a58c; --got-lo:#3c7d69; --learning:#dd934a;
+    --tx:#efe7d6; --tx-dim:#b3a9c6; --tx-ink:#241f36;
+    --line:#463b62;
+    /* lever colors */
+    --lv-hand:#7a6bb0; --lv-turn:#c99a3f; --lv-rev:#c8757f;
+    --lv-entry:#4f8a9c; --lv-exit:#b06a3a;
+    --display:'Iowan Old Style','Palatino Linotype','Georgia',serif;
+    --body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--ink);color:var(--tx);
+    font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--brass-hi)}
+  .wrap{max-width:940px;margin:0 auto;padding:0 20px}
+
+  /* hero */
+  header.hero{padding:70px 0 26px;position:relative;overflow:hidden}
+  .spine{position:absolute;left:50%;top:0;bottom:0;width:2px;
+    background:linear-gradient(var(--brass),transparent);opacity:.25;transform:translateX(-50%)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--brass);margin-bottom:20px}
+  h1{font-family:var(--display);font-weight:600;line-height:1.02;
+    font-size:clamp(38px,8vw,76px);margin:0 0 10px;letter-spacing:-.01em}
+  h1 em{font-style:normal;color:var(--brass-hi)}
+  .pillars{font-family:var(--display);font-size:clamp(20px,4vw,32px);
+    color:var(--tx);margin:16px 0 22px;letter-spacing:.01em}
+  .pillars b{color:var(--brass-hi);font-weight:600}
+  .pillars span{color:var(--line)}
+  .lede{font-size:18px;color:var(--tx-dim);max-width:62ch}
+  .lede strong{color:var(--tx)}
+
+  /* sticky controls */
+  .controls{position:sticky;top:0;z-index:40;background:rgba(24,20,37,.94);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 0}
+  .controls .row{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center}
+  .meter{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+  .meter .big{font-family:var(--display);font-size:26px;color:var(--brass-hi)}
+  .meter .sub{font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.04em}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--ink3);color:var(--tx-dim);border:1px solid var(--line);
+    padding:6px 11px;border-radius:999px;cursor:pointer;transition:.15s}
+  .chip:hover{color:var(--tx)}
+  .chip.on{background:var(--brass);color:#231a08;border-color:var(--brass);font-weight:600}
+  .toggle{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+    background:transparent;color:var(--got);border:1px solid var(--got-lo);
+    padding:6px 12px;border-radius:999px;cursor:pointer;transition:.15s}
+  .toggle.on{background:var(--got);color:#08251d;font-weight:600}
+  .reset{font-family:var(--mono);font-size:11px;color:var(--tx-dim);background:transparent;
+    border:1px solid var(--line);padding:6px 10px;border-radius:999px;cursor:pointer}
+  .reset:hover{color:var(--tx)}
+
+  section{padding:20px 0}
+  .section-lead{max-width:64ch}
+  h2.big{font-family:var(--display);font-size:clamp(26px,5vw,40px);margin:8px 0 4px;font-weight:600}
+
+  /* levers key */
+  .levers{background:var(--ink2);border:1px solid var(--line);border-radius:16px;
+    padding:26px 24px;margin:8px 0 4px}
+  .levers .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin-bottom:6px}
+  .levers h2{font-family:var(--display);font-size:clamp(24px,4vw,34px);margin:0 0 8px;font-weight:600}
+  .levers p{color:var(--tx-dim);max-width:64ch;margin:0 0 18px}
+  .lgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .lcard{background:var(--ink3);border:1px solid var(--line);border-radius:12px;padding:14px 15px;
+    border-left:4px solid var(--c)}
+  .lcard .g{font-size:18px;line-height:1;color:var(--c)}
+  .lcard .t{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--tx);margin:6px 0 4px;font-weight:600}
+  .lcard .d{font-size:13px;color:var(--tx-dim);line-height:1.4}
+
+  /* family header */
+  .fam-head{display:flex;align-items:baseline;gap:14px;margin:34px 0 4px;
+    padding-top:14px;border-top:1px solid var(--line)}
+  .fam-head h2{font-family:var(--display);font-size:clamp(26px,5vw,42px);margin:0;font-weight:600}
+  .fam-head .n{font-family:var(--mono);font-size:12px;color:var(--brass);letter-spacing:.1em}
+  .fam-desc{color:var(--tx-dim);max-width:64ch;margin:6px 0 14px}
+  .fambar{margin:0 0 18px}
+  .fambar .lab{display:flex;justify-content:space-between;font-family:var(--mono);
+    font-size:11px;letter-spacing:.06em;color:var(--tx-dim);margin-bottom:5px;text-transform:uppercase}
+  .fambar .track{height:6px;background:var(--ink3);border-radius:3px;overflow:hidden}
+  .fambar .fill{height:100%;background:linear-gradient(90deg,var(--got-lo),var(--got));width:0;transition:width .4s}
+
+  /* move cards */
+  .moves{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  .move .card{background:var(--paper);color:var(--tx-ink);border-radius:14px;padding:16px 16px 14px;
+    border:1px solid #cdbf9e;border-left:6px solid #cdbf9e;transition:.18s;height:100%;
+    display:flex;flex-direction:column;gap:9px}
+  .move[data-status="learning"] .card{border-left-color:var(--learning)}
+  .move[data-status="got"] .card{border-left-color:var(--got);background:#e7edd9}
+  .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .name{font-family:var(--display);font-size:20px;font-weight:600;line-height:1.12}
+  .aka{font-size:12px;color:#6f6446;margin-top:2px;font-style:italic}
+  .pips{display:flex;gap:3px;flex-shrink:0;margin-top:4px}
+  .pip{width:7px;height:7px;border-radius:50%;background:#d8cba7}
+  .pip.on{background:var(--brass-lo)}
+  .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .count{font-family:var(--mono);font-size:11px;color:#5a4e33;background:#e2d6b7;
+    padding:2px 7px;border-radius:5px;letter-spacing:.02em}
+  .lever{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+    padding:2px 8px;border-radius:999px;color:#fff;background:var(--c);display:inline-flex;gap:5px;align-items:center;font-weight:600}
+  .builds{font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:#7a6b45}
+  .builds b{color:var(--brass-lo)}
+  .blurb{font-size:14px;color:#3f3826;line-height:1.5;flex:1}
+  .status{display:flex;gap:7px;margin-top:2px}
+  .status button{font-family:var(--mono);font-size:11px;letter-spacing:.03em;text-transform:uppercase;
+    border:1px solid #c3b691;background:transparent;color:#6a5f45;padding:5px 11px;border-radius:8px;cursor:pointer;transition:.15s}
+  .status .lrn.on{background:var(--learning);border-color:var(--learning);color:#3a2409;font-weight:600}
+  .status .got.on{background:var(--got);border-color:var(--got);color:#07251d;font-weight:600}
+  .watch{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.03em;text-transform:uppercase;color:#5a4e33;text-decoration:none;border:1px solid #c3b691;border-radius:8px;padding:5px 10px;transition:.15s;white-space:nowrap}
+  .watch:hover{background:#e2d6b7;color:#3a2f19}
+
+  .empty{color:var(--tx-dim);font-style:italic;padding:8px 0 20px}
+
+  /* prose blocks */
+  .block{background:var(--ink2);border:1px solid var(--line);border-radius:16px;padding:26px 24px;margin:8px 0}
+  .block.honest{border-color:var(--brass-lo);background:linear-gradient(180deg,#221a2f,#1c1729)}
+  .block .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin-bottom:8px}
+  .block h2{font-family:var(--display);font-size:clamp(24px,4vw,36px);margin:0 0 12px;font-weight:600}
+  .block p{color:var(--tx-dim);max-width:66ch;margin:0 0 12px}
+  .block p:last-child{margin-bottom:0}
+  .block strong{color:var(--tx)}
+  .tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:6px}
+  .tip{background:var(--ink3);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .tip h3{font-family:var(--display);font-size:18px;margin:0 0 6px;font-weight:600;color:var(--tx)}
+  .tip p{font-size:14px;color:var(--tx-dim);margin:0;max-width:none}
+  .treekey{display:flex;flex-wrap:wrap;gap:8px 18px;margin:2px 0 16px;font-family:var(--mono);font-size:11px;color:var(--tx-dim);letter-spacing:.02em}
+  .treekey .d{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
+  .treewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px}
+  .tree{display:block;width:100%;min-width:640px;height:auto}
+  .block h3.sub-h{font-family:var(--display);font-size:22px;margin:30px 0 6px;font-weight:600;color:var(--tx)}
+  .routine-steps{margin:14px 0 8px;border-top:1px solid var(--line)}
+  .rstep{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);align-items:baseline}
+  .rstep .t{font-family:var(--mono);font-size:12px;color:var(--brass);white-space:nowrap;min-width:66px;letter-spacing:.03em}
+  .rstep .c h4{font-family:var(--display);font-size:18px;margin:0 0 3px;font-weight:600;color:var(--tx)}
+  .rstep .c p{margin:0;color:var(--tx-dim);font-size:14px;max-width:62ch}
+  .weeklist{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+  .wk{background:var(--ink3);border:1px solid var(--line);border-radius:12px;padding:18px 20px;border-left:4px solid var(--brass)}
+  .wk .wnum{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
+  .wk h3{font-family:var(--display);font-size:22px;margin:4px 0 4px;font-weight:600;color:var(--tx)}
+  .wk .idea{color:var(--tx);font-size:15px;margin:0 0 9px;font-style:italic;max-width:68ch}
+  .wk p{color:var(--tx-dim);font-size:14.5px;margin:0;max-width:68ch}
+  .wk .role{display:block;margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.02em;line-height:1.7}
+  .wk .role b{color:var(--tx)}
+
+  footer{padding:40px 0 70px;color:var(--tx-dim);font-size:13px;max-width:70ch}
+  footer a{color:var(--brass-hi)}
+  .fade{opacity:0;transform:translateY(14px);animation:rise .6s forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media (max-width:520px){.meter{width:100%;margin-bottom:6px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="spine"></div>
+  <div class="wrap">
+    <div class="eyebrow">A free on-ramp · beginner → intermediate</div>
+    <h1>The <em>Slot</em>.</h1>
+    <div class="pillars"><b>One push.</b> <span>·</span> <b>Two passes.</b> <span>·</span> <b>One whip.</b> <span>·</span> <b>Five knobs.</b></div>
+    <p class="lede">Nobody needs a thousand-dollar plan to get good at West Coast Swing. Almost every move you'll ever dance is a variation of a few basics — so this is the whole family tree, laid out from easiest to hardest. <strong>Mark what you've got, see what's next, and keep a living map of your own repertoire so you never lose a move you learned.</strong></p>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="wrap row">
+    <div class="meter"><span class="big" id="m-got">0</span><span class="sub" id="m-sub">of 0 owned</span></div>
+    <div class="chips" id="chips"></div>
+    <button class="toggle" id="rep" title="Show only the moves you've marked as owned">◆ My repertoire</button>
+    <button class="reset" id="reset">Reset</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section>
+    <div class="levers">
+      <div class="k">The secret the posters leave off</div>
+      <h2>You don't learn hundreds of moves. You turn five knobs.</h2>
+      <p>Here's what the expensive tracks rarely say out loud: the dance isn't a giant pile of memorized patterns. It's a handful of basics, each of which you can <em>vary</em> five ways. Learn to see the knob being turned and a "new" move stops being new — it's just a push with a hand change, or a whip run backwards. This is also your memory trick: any move you own times these five levers is a move you can find again.</p>
+      <div class="lgrid">
+        <div class="lcard" style="--c:var(--lv-hand)"><div class="g">⇄</div><div class="t">Hand change</div><div class="d">Swap which hands connect mid-pattern — same footwork, brand-new exits open up.</div></div>
+        <div class="lcard" style="--c:var(--lv-turn)"><div class="g">↻</div><div class="t">Add a turn</div><div class="d">Layer a rotation onto the travel — an inside turn, a free spin, a double.</div></div>
+        <div class="lcard" style="--c:var(--lv-rev)"><div class="g">↺</div><div class="t">Reverse it</div><div class="d">Run the same shape the other direction. A tuck becomes a cinnamon roll.</div></div>
+        <div class="lcard" style="--c:var(--lv-entry)"><div class="g">⤵</div><div class="t">New entry</div><div class="d">Change how you get in — from closed position, from two hands, from a wrap.</div></div>
+        <div class="lcard" style="--c:var(--lv-exit)"><div class="g">⤴</div><div class="t">New exit</div><div class="d">Change how you come out — a different release hand, a roll, a turn on the way through.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="tree"></div>
+
+  <section>
+    <div class="block honest">
+      <div class="k">The part nobody frames honestly</div>
+      <h2>The bar keeps moving — on purpose</h2>
+      <p>You've noticed the frustrating thing: once everybody knows the standard, judges start rewarding whatever's newer. So the dance drifts. Over the last decade-plus, West Coast Swing has moved from a mostly-in-the-feet dance toward flow — <strong>more body shaping, off-axis turns, waves and ripples, and slower, more contemporary music</strong> — a lot of it borrowed from Brazilian Zouk and contemporary partner dance. There are now whole festivals running WCS and Zouk under one roof.</p>
+      <p>Two things are true at once, and this map bets on both. First: <strong>the moving bar is real</strong>, and pretending clean basics alone will win an Advanced Jack &amp; Jill would be lying to you. Second: <strong>the flow layer is built on top of these basics, not instead of them.</strong> Nobody does a gorgeous off-axis whip without owning a clean whip first. So this tree is the honest path to solid Intermediate — the foundation the flowy stuff stands on — and it's the part you can absolutely learn without a five-figure coaching bill. The zouk-flavored layer above it? That's the next mountain, and a shocking amount of it is learnable socially, on YouTube, and by dancing a little Zouk on the side.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="block">
+      <div class="k">Free path · how to actually progress</div>
+      <h2>Drill, then scrimmage. Rinse. Repeat.</h2>
+      <div class="tips">
+        <div class="tip"><h3>Practice ≠ social dancing</h3><p>Socials are the game. Practice is where you drill one thing badly until it's good. Do both — don't confuse them. A move only becomes yours after reps, not after one class.</p></div>
+        <div class="tip"><h3>No partner? Shadow it.</h3><p>You can drill footwork, rolling feet, anchors, and lead shapes completely solo. Most of what breaks down in these isn't the partner — it's your own base.</p></div>
+        <div class="tip"><h3>Go painfully slow</h3><p>If you can't do a move slowly, you're hiding something in the speed. Slow songs build the control fast songs let you fake.</p></div>
+        <div class="tip"><h3>Partnering is the real skill</h3><p>The most-skipped thing isn't patterns — it's cleanly leading and following an unfamiliar body. A Jack &amp; Jill hands you strangers, so practice with them.</p></div>
+        <div class="tip"><h3>You don't need advanced moves</h3><p>Clean basics beat messy tricks at every level a beginner competes in. Get good enough at the simple stuff to look calm — that's the whole game early on.</p></div>
+        <div class="tip"><h3>Count the music everywhere</h3><p>In the car, at your desk, in line. Finding the "1" instantly is free, and it's the difference between dancing to a song and dancing near one.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="block">
+      <div class="k">The whole map · one glance</div>
+      <h2>The family tree</h2>
+      <p>Here's the thing the phone-book move lists never show you: it's <strong>one tree</strong>. Every branch traces back to a basic on the left, and the further right you travel, the harder it gets. Each node's colored edge and glyph is the <em>lever</em> you turn to reach it — so you can literally see a cinnamon roll growing off the tuck turn, or a fistful of exits hanging off the basket whip.</p>
+      <div class="treekey">
+        <span><span class="d" style="background:#8f6e2b"></span>basic / root</span>
+        <span><span class="d" style="background:#c99a3f"></span>↻ add a turn</span>
+        <span><span class="d" style="background:#c8757f"></span>↺ reverse it</span>
+        <span><span class="d" style="background:#7a6bb0"></span>⇄ hand change</span>
+        <span><span class="d" style="background:#4f8a9c"></span>⤵ new entry</span>
+        <span><span class="d" style="background:#b06a3a"></span>⤴ new exit</span>
+      </div>
+      <div class="treewrap"><svg viewBox="0 0 900 1364" xmlns="http://www.w3.org/2000/svg" class="tree" role="img" aria-label="West Coast Swing move family tree"><text x="24" y="28" font-family="Iowan Old Style,Georgia,serif" font-size="19" font-weight="600" fill="#c99a3f">The Push family</text><path d="M206.0 150.0 C221.0 150.0 221.0 65.0 236.0 65.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 150.0 C221.0 150.0 221.0 116.0 236.0 116.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 150.0 C221.0 150.0 221.0 167.0 236.0 167.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 150.0 C221.0 150.0 221.0 201.0 236.0 201.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 150.0 C221.0 150.0 221.0 235.0 236.0 235.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 116.0 C433.0 116.0 433.0 99.0 448.0 99.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 116.0 C433.0 116.0 433.0 133.0 448.0 133.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><rect x="24" y="135.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="24" y="135.0" rx="7" width="6" height="30" fill="#8f6e2b"/><text x="37" y="153.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Sugar Push</text><rect x="236" y="50.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="50.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="249" y="68.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Push w/ Inside Roll</text><text x="409" y="69.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="236" y="101.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="101.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="119.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Sugar Tuck</text><text x="409" y="120.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="236" y="152.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="152.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="249" y="170.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Yo-Yo</text><text x="409" y="171.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="236" y="186.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="186.0" rx="7" width="6" height="30" fill="#7a6bb0"/><text x="249" y="204.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Goofy-Hand Push</text><text x="409" y="205.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#7a6bb0">⇄</text><rect x="236" y="220.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="220.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="249" y="238.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Sunburst Push</text><text x="409" y="239.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="448" y="84.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="84.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="461" y="95.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Sugar Tuck w/</text><text x="461" y="107.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Inside Turn</text><text x="621" y="103.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="448" y="118.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="118.0" rx="7" width="6" height="30" fill="#4f8a9c"/><text x="461" y="129.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Tuck from</text><text x="461" y="141.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Closed Position</text><text x="621" y="137.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#4f8a9c">⤵</text><text x="24" y="288" font-family="Iowan Old Style,Georgia,serif" font-size="19" font-weight="600" fill="#c99a3f">The Pass &amp; Tuck family</text><path d="M206.0 376.0 C221.0 376.0 221.0 325.0 236.0 325.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 376.0 C221.0 376.0 221.0 359.0 236.0 359.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 376.0 C221.0 376.0 221.0 393.0 236.0 393.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 376.0 C221.0 376.0 221.0 427.0 236.0 427.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 563.0 C221.0 563.0 221.0 495.0 236.0 495.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 563.0 C221.0 563.0 221.0 563.0 236.0 563.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 563.0 C221.0 563.0 221.0 597.0 236.0 597.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 563.0 C221.0 563.0 221.0 631.0 236.0 631.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 563.0 C433.0 563.0 433.0 563.0 448.0 563.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 495.0 C433.0 495.0 433.0 461.0 448.0 461.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 495.0 C433.0 495.0 433.0 495.0 448.0 495.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 495.0 C433.0 495.0 433.0 529.0 448.0 529.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M630.0 461.0 C645.0 461.0 645.0 461.0 660.0 461.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><rect x="24" y="361.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="24" y="361.0" rx="7" width="6" height="30" fill="#8f6e2b"/><text x="37" y="379.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Left Side Pass</text><rect x="24" y="548.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="24" y="548.0" rx="7" width="6" height="30" fill="#8f6e2b"/><text x="37" y="566.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Right Side Pass</text><rect x="236" y="310.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="310.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="328.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Inside Roll</text><text x="409" y="329.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="236" y="344.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="344.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="355.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Left Side Pass</text><text x="249" y="367.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">w/ Inside Turn</text><text x="409" y="363.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="236" y="378.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="378.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="396.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Turning Side Pass</text><text x="409" y="397.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="236" y="480.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="480.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="498.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Tuck Turn</text><text x="409" y="499.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="236" y="548.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="548.0" rx="7" width="6" height="30" fill="#7a6bb0"/><text x="249" y="559.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Underarm w/</text><text x="249" y="571.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Hand Change</text><text x="409" y="567.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#7a6bb0">⇄</text><rect x="448" y="548.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="548.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="461" y="566.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Pull-By</text><text x="621" y="567.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="236" y="582.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="582.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="593.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Right Side Pass</text><text x="249" y="605.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">w/ Outside Turn</text><text x="409" y="601.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="448" y="446.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="446.0" rx="7" width="6" height="30" fill="#4f8a9c"/><text x="461" y="464.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Two-Hand Tuck</text><text x="621" y="465.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#4f8a9c">⤵</text><rect x="448" y="480.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="480.0" rx="7" width="6" height="30" fill="#c8757f"/><text x="461" y="498.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Cinnamon Roll</text><text x="621" y="499.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c8757f">↺</text><rect x="236" y="412.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="412.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="430.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Spinning Side Pass</text><text x="409" y="431.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="660" y="446.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="660" y="446.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="673" y="464.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Hammerlock</text><text x="833" y="465.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="448" y="514.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="514.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="461" y="525.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Tuck w/ Double</text><text x="461" y="537.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Underarm</text><text x="621" y="533.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="236" y="616.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="616.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="634.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Multiple-Turn Pass</text><text x="409" y="635.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><text x="24" y="684" font-family="Iowan Old Style,Georgia,serif" font-size="19" font-weight="600" fill="#c99a3f">The Whip family</text><path d="M206.0 942.0 C221.0 942.0 221.0 721.0 236.0 721.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 942.0 C221.0 942.0 221.0 755.0 236.0 755.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 942.0 C221.0 942.0 221.0 789.0 236.0 789.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 942.0 C221.0 942.0 221.0 840.0 236.0 840.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 942.0 C221.0 942.0 221.0 908.0 236.0 908.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 942.0 C221.0 942.0 221.0 959.0 236.0 959.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 942.0 C221.0 942.0 221.0 993.0 236.0 993.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 942.0 C221.0 942.0 221.0 1027.0 236.0 1027.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 942.0 C221.0 942.0 221.0 1061.0 236.0 1061.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 942.0 C221.0 942.0 221.0 1095.0 236.0 1095.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 942.0 C221.0 942.0 221.0 1129.0 236.0 1129.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 942.0 C221.0 942.0 221.0 1163.0 236.0 1163.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 840.0 C433.0 840.0 433.0 823.0 448.0 823.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 840.0 C433.0 840.0 433.0 857.0 448.0 857.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 908.0 C433.0 908.0 433.0 891.0 448.0 891.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 908.0 C433.0 908.0 433.0 925.0 448.0 925.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 1027.0 C433.0 1027.0 433.0 1027.0 448.0 1027.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><rect x="24" y="927.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="24" y="927.0" rx="7" width="6" height="30" fill="#8f6e2b"/><text x="37" y="945.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Whip</text><rect x="236" y="706.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="706.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="724.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Inside Whip</text><text x="409" y="725.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="236" y="740.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="740.0" rx="7" width="6" height="30" fill="#c8757f"/><text x="249" y="758.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Outside Whip</text><text x="409" y="759.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c8757f">↺</text><rect x="236" y="774.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="774.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="249" y="792.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Whip w/ Outside Turn</text><text x="409" y="793.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="236" y="825.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="825.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="249" y="843.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Basket Whip</text><text x="409" y="844.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="448" y="808.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="808.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="461" y="826.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Basket → Pull-By Exit</text><text x="621" y="827.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="448" y="842.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="842.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="461" y="853.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Basket →</text><text x="461" y="865.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Walkaround Exit</text><text x="621" y="861.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="236" y="893.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="893.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="249" y="911.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">J-Hook Whip</text><text x="409" y="912.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="448" y="876.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="876.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="461" y="887.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">J-Hook →</text><text x="461" y="899.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Free-Spin Exit</text><text x="621" y="895.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="448" y="910.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="910.0" rx="7" width="6" height="30" fill="#7a6bb0"/><text x="461" y="921.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">J-Hook →</text><text x="461" y="933.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Hand-Change Exit</text><text x="621" y="929.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#7a6bb0">⇄</text><rect x="236" y="944.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="944.0" rx="7" width="6" height="30" fill="#7a6bb0"/><text x="249" y="962.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Texas Tommy</text><text x="409" y="963.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#7a6bb0">⇄</text><rect x="236" y="978.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="978.0" rx="7" width="6" height="30" fill="#7a6bb0"/><text x="249" y="989.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Behind-the-Back</text><text x="249" y="1001.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Hand Change</text><text x="409" y="997.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#7a6bb0">⇄</text><rect x="236" y="1012.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="1012.0" rx="7" width="6" height="30" fill="#c8757f"/><text x="249" y="1030.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Reverse Whip</text><text x="409" y="1031.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c8757f">↺</text><rect x="448" y="1012.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="1012.0" rx="7" width="6" height="30" fill="#7a6bb0"/><text x="461" y="1023.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Reverse Whip →</text><text x="461" y="1035.0" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">Handshake Hold</text><text x="621" y="1031.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#7a6bb0">⇄</text><rect x="236" y="1046.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="1046.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="1064.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Whip w/ Free Spin</text><text x="409" y="1065.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="236" y="1080.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="1080.0" rx="7" width="6" height="30" fill="#4f8a9c"/><text x="249" y="1098.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Hustle Whip</text><text x="409" y="1099.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#4f8a9c">⤵</text><rect x="236" y="1114.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="1114.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="249" y="1132.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Cradle Whip</text><text x="409" y="1133.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="236" y="1148.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="1148.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="249" y="1166.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Pull-Through Whip</text><text x="409" y="1167.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><text x="24" y="1216" font-family="Iowan Old Style,Georgia,serif" font-size="19" font-weight="600" fill="#c99a3f">Turns &amp; spins</text><path d="M206.0 1278.5 C221.0 1278.5 221.0 1253.0 236.0 1253.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M206.0 1278.5 C221.0 1278.5 221.0 1304.0 236.0 1304.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 1253.0 C433.0 1253.0 433.0 1253.0 448.0 1253.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 1304.0 C433.0 1304.0 433.0 1287.0 448.0 1287.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><path d="M418.0 1304.0 C433.0 1304.0 433.0 1321.0 448.0 1321.0" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/><rect x="24" y="1263.5" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="24" y="1263.5" rx="7" width="6" height="30" fill="#8f6e2b"/><text x="37" y="1282.0" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Spin Prep &amp; Spotting</text><rect x="236" y="1238.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="1238.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="1256.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Inside Turn</text><text x="409" y="1257.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="448" y="1238.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="1238.0" rx="7" width="6" height="30" fill="#c8757f"/><text x="461" y="1256.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Outside Turn</text><text x="621" y="1257.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c8757f">↺</text><rect x="236" y="1289.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="236" y="1289.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="249" y="1307.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Free Spin</text><text x="409" y="1308.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text><rect x="448" y="1272.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="1272.0" rx="7" width="6" height="30" fill="#b06a3a"/><text x="461" y="1290.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Traveling Turns</text><text x="621" y="1291.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text><rect x="448" y="1306.0" rx="7" width="182" height="30" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/><rect x="448" y="1306.0" rx="7" width="6" height="30" fill="#c99a3f"/><text x="461" y="1324.5" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">Multiple Rotations</text><text x="621" y="1325.0" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#c99a3f">↻</text></svg></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="block">
+      <div class="k">Level up fast &middot; the practice plan</div>
+      <h2>Thirty minutes a day beats three hours on Saturday</h2>
+      <p>The tree shows you <em>what</em> to learn. This shows you <em>how</em> to drill it. It's a thirty-minute routine you run every day &mdash; the same shape each time &mdash; and the focus shifts a little each week. Do this and you'll get good faster than people who only dance at socials, because a social is the game, and this is practice. They're not the same thing, and you need both.</p>
+      <p>One rule matters more than the rest: <strong>protect the first twelve minutes.</strong> Miss a day? Don't cram double tomorrow &mdash; just pick the routine back up. Showing up small and often is the entire trick. Nobody gets good in a weekend binge; they get good in a hundred quiet half-hours.</p>
+
+      <h3 class="sub-h">The daily thirty</h3>
+      <p>Think of it in two layers. The first twelve minutes never change &mdash; that's the perishable stuff (timing, feet, the anchor) that quietly rusts the moment you skip it. The middle block rotates to this week's focus, with a couple minutes of review mixed in so old skills don't fade. Set a timer and just move through it.</p>
+      <div class="routine-steps">
+        <div class="rstep"><span class="t">0&ndash;6 min</span><div class="c"><h4>Timing &amp; feet</h4><p>Put on a metronome or a song and dance your basics with exactly one job: land each step on the beat, rolling smoothly through your feet instead of stamping. This is your warm-up and your single most important skill, every single day.</p></div></div>
+        <div class="rstep"><span class="t">6&ndash;12 min</span><div class="c"><h4>Anchor lab</h4><p>Drill the settle at the end of a pattern &mdash; the stretchy "boing" where you lean your weight back and let it spring you home. Hold a doorframe or kitchen counter as a pretend partner. Never skip this one; it's the heartbeat of the whole dance.</p></div></div>
+        <div class="rstep"><span class="t">12&ndash;24 min</span><div class="c"><h4>This week's focus</h4><p>Spend most of this block on the week's new idea (below), plus a few minutes revisiting last week's so it stays sharp. This is where new things actually get built into your body.</p></div></div>
+        <div class="rstep"><span class="t">24&ndash;28 min</span><div class="c"><h4>Put it to music</h4><p>Dance your basics to a real song &mdash; slow some days, fast others. Practice dropping into any song and finding the "1" instantly. Music is the point; don't leave it for last forever.</p></div></div>
+        <div class="rstep"><span class="t">28&ndash;30 min</span><div class="c"><h4>Note one fix</h4><p>Jot down one thing that felt off and one thing to try tomorrow. Thirty seconds. This tiny habit is what quietly turns "practice" into "progress."</p></div></div>
+      </div>
+
+      <h3 class="sub-h">The weekly focus &mdash; seven weeks to a real foundation</h3>
+      <p>Each week, the middle block of your daily thirty points at one new idea. Run them in order, because they stack &mdash; timing holds up the feet, the feet hold up the anchor, and so on. After week seven, keep the daily routine running and start pulling harder moves from the tree above. The routine never really ends; only the focus changes.</p>
+      <div class="weeklist">
+        <div class="wk"><div class="wnum">Week 1</div><h3>Timing</h3><p class="idea">Land your feet exactly when the music says "now."</p><p>Picture a ball bouncing on the floor. Every time it hits, that's a beat &mdash; and your job is to land your steps at that exact moment, not a hair early, not a hair late. It's the same feeling as clapping along to a song without thinking about it; you're just moving that feeling down into your feet. Nail this and everything else looks clean. Miss it and even great moves look sloppy, like a singer who knows all the words but keeps coming in late.</p></div>
+        <div class="wk"><div class="wnum">Week 2</div><h3>Rolling feet &amp; small steps</h3><p class="idea">Walk like a cat, not like a soldier.</p><p>Watch how a cat moves &mdash; smooth, quiet, its weight rolling through each paw. Now picture a soldier marching: stiff, stompy, feet slapping down flat. West Coast Swing should look like the cat. Your foot lands and rolls across itself like a wheel instead of stamping down all at once. The other half is taking <em>small</em> steps &mdash; big ones run you out of room and wreck your anchor before you even get there. Small and smooth is the whole "expensive" look people chase.</p></div>
+        <div class="wk"><div class="wnum">Week 3</div><h3>The anchor</h3><p class="idea">Settle back at the end of every move, like a stretched rubber band.</p><p>At the end of each pattern you don't just stop &mdash; you settle <em>back</em>, stretching gently away from your partner, and you hold it for a beat before the next thing starts. Think of a swing set: you pull back, pause at the top, and that stored-up energy is what sends you forward again. Leaving the anchor early &mdash; creeping forward before you should &mdash; is the number-one thing that screams "beginner." <span class="role"><b>Followers:</b> settle back, never forward &mdash; if you fix one thing ever, fix this. &nbsp; <b>Leaders:</b> invite the settle, then give it time to spring back on its own.</span></p></div>
+        <div class="wk"><div class="wnum">Week 4</div><h3>Posture, frame &amp; quiet arms</h3><p class="idea">Move from your body; let your arms be quiet wires.</p><p>Imagine a floppy puppet that flails around from its arms &mdash; that's the beginner look. A good dancer moves like one solid piece, driven by the big engine in the belly and back, and the arms are just the wires that carry the message between two people. "Quiet arms" means your arms hold a steady shape while your body does the real work. Yanking and pushing with your arms feels rough and kills your timing; moving from your center feels smooth and, weirdly, stronger.</p></div>
+        <div class="wk"><div class="wnum">Week 5</div><h3>The slot &amp; leading clearly</h3><p class="idea">Dance in an invisible bowling lane, and be so clear a stranger can follow you.</p><p>The dance lives in a "slot" &mdash; picture a bowling lane painted on the floor. The follower travels up and down that lane; the leader mostly stays off to the side and sends her along it. Clarity means leading (or following) so cleanly that a total stranger gets it on the first try &mdash; which matters, because a social hands you strangers all night long. A clear, roomy lead that makes your partner look good beats a fancy, cramped one every time.</p></div>
+        <div class="wk"><div class="wnum">Week 6</div><h3>Adaptability &amp; presence</h3><p class="idea">Match whoever you're dancing with, and look like you're enjoying it.</p><p>Think about playing catch. With a little kid you toss the ball gently; with a grown-up you throw it harder &mdash; you automatically match the person in front of you. Dancing's the same: you adjust to the partner you drew instead of forcing your way through. "Presence" just means looking alive &mdash; eye contact, a real smile, like you two are having a nice conversation instead of doing chores. This is the week to start dancing with people who aren't your usual partner, because that's the real skill.</p></div>
+        <div class="wk"><div class="wnum">Week 7</div><h3>Musicality</h3><p class="idea">Dance <em>with</em> the song, not just while it happens to be playing.</p><p>There's a difference between doing steps that happen to have music behind them and actually dancing <em>to</em> the song &mdash; getting quiet when it's quiet, giving a little punch when it hits. Two pieces make it work. "Finding the 1" is hearing instantly where the count starts, like spotting exactly where a jump rope is at the bottom of its swing so you can hop in without tripping. And feeling the "phrase" is noticing that songs come in chunks of eight beats, and starting fresh moves at the top of one. Keep it simple, though &mdash; one calm pause on an obvious big moment in the music does more for you right now than a pile of tricks.</p></div>
+      </div>
+
+      <p style="margin-top:22px">That's the foundation the whole tree stands on. Seven weeks, thirty minutes a day, and you'll move better than folks who've been "going out dancing" for years &mdash; because you actually practiced, and practice quietly beats talent that never drills.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>A starting map, not the whole forest — West Coast Swing has hundreds of variations and the naming is genuinely inconsistent from studio to studio (your "cinnamon roll" is someone else's "reverse tuck"). This is a curated spine you can grow, ordered easiest→hardest, with every move tagged by the basic it descends from and the knob you turn to get there. <strong>Your progress saves to this page on your device.</strong> Families and difficulty follow the shared push / pass / whip vocabulary that virtually every WCS figure comes from. Flip on <em>My repertoire</em> to see just the moves you own — a leader's cheat-sheet for the ones you forget mid-dance.</p>
+  </footer>
+</div>
+
+<script>
+const FAMS = [
+  {id:"foundation",name:"Foundations",n:"00",desc:"Not moves — the physics the moves ride on. If these leak, nothing above them holds. You rebuild these every single day."},
+  {id:"push",name:"The Push family",n:"01",desc:"The follower is led toward you and sent back to the same spot. Deceptively hard: it needs a connection both toward and away. Every push variation is this shape with a knob turned."},
+  {id:"pass",name:"The Pass & Tuck family",n:"02",desc:"Passes send the follower down the slot past you. Add a tuck, a roll, a spin, or flip the direction and the whole family opens — including the tuck's mirror twin, the cinnamon roll."},
+  {id:"whip",name:"The Whip family",n:"03",desc:"An eight-count pattern: led past, then redirected back. The deepest, branchiest trunk in the dance — most of the fancy stuff you admire is a whip with knobs turned."},
+  {id:"turn",name:"Turns & spins",n:"04",desc:"Not a family so much as the levers themselves, standing alone. Own these cleanly and you can bolt them onto almost anything above."}
+];
+
+// lever -> {glyph, cssvar}
+const LV = {
+  "hand change":{g:"⇄",c:"var(--lv-hand)"},
+  "add a turn":{g:"↻",c:"var(--lv-turn)"},
+  "reverse it":{g:"↺",c:"var(--lv-rev)"},
+  "new entry":{g:"⤵",c:"var(--lv-entry)"},
+  "new exit":{g:"⤴",c:"var(--lv-exit)"}
+};
+
+const MOVES = [
+  // foundations
+  {id:"f-time",fam:"foundation",name:"Timing",count:"1 2 3&4 5&6",diff:1,q:"west coast swing timing finding the beat",blurb:"Land every weight change exactly on the beat. The judge's first filter, and the thing you rebuild every day."},
+  {id:"f-slot",fam:"foundation",name:"The Slot",diff:1,q:"west coast swing slot explained",blurb:"Your invisible lane. The follower travels it; the leader stays mostly to the side and sends her along it."},
+  {id:"f-starter",fam:"foundation",name:"Starter Step",count:"1&2 3&4",diff:1,q:"west coast swing starter step",blurb:"How the dance begins from closed position — the on-ramp onto the slot before your first real pattern."},
+  {id:"f-anchor",fam:"foundation",name:"The Anchor",count:"5&6",diff:1,q:"west coast swing anchor step technique",blurb:"Settle back and stretch at the end of every pattern — the elastic 'boing' that makes it West Coast Swing and not a walk."},
+  {id:"f-roll",fam:"foundation",name:"Rolling feet",diff:2,q:"west coast swing footwork rolling through feet",blurb:"Roll ball-to-heel like a wheel instead of stamping. Small steps. This is the smoothness everyone's chasing."},
+  {id:"f-conn",fam:"foundation",name:"Connection",diff:2,q:"west coast swing connection leverage compression",blurb:"Leverage (away) and compression (toward) through a firm-but-soft frame, driven by your body — never a yanking arm."},
+  {id:"f-anchorvar",fam:"foundation",name:"Anchor Variations",diff:3,builds:"The Anchor",lever:"new exit",q:"west coast swing anchor step variations styling",blurb:"Once the plain anchor is automatic, style it — tap, coaster, hitch. Same job, more personality on the ending."},
+
+  // push
+  {id:"p-sugar",fam:"push",name:"Sugar Push",aka:"Push Break, six-count basic",count:"1 2 3&4 5&6",diff:1,video:"https://www.youtube.com/watch?v=4zV_TJ7PZyg",blurb:"Follower led toward you and returned to the same spot. Needs both a toward and an away connection — the hardest easy move in the dance."},
+  {id:"p-roll",fam:"push",name:"Push w/ Inside Roll",diff:2,builds:"Sugar Push",lever:"new exit",q:"west coast swing sugar push inside roll",blurb:"Trade the plain return for an inside rolling turn. Same push, new way out."},
+  {id:"p-tuck",fam:"push",name:"Sugar Tuck",count:"1 2 3&4 5&6",diff:2,builds:"Sugar Push",lever:"add a turn",video:"https://www.youtube.com/watch?v=o10RKoM-1cE",blurb:"A push with a tuck on 4 — the follower turns away, then back under your arm to face you again."},
+  {id:"p-yoyo",fam:"push",name:"Yo-Yo",diff:3,builds:"Sugar Push",lever:"new exit",q:"west coast swing yoyo push variation",blurb:"Send-and-return without a full release, so she springs back out like a yo-yo. A playful push exit."},
+  {id:"p-hc",fam:"push",name:"Goofy-Hand Push",aka:"hand-change push",diff:3,builds:"Sugar Push",lever:"hand change",q:"west coast swing goofy hand push variation",blurb:"Switch to a same-side or 'wrong' hand mid-push. This one knob opens a whole new set of exits."},
+  {id:"p-sun",fam:"push",name:"Sunburst Push",diff:3,builds:"Sugar Push",lever:"new exit",q:"west coast swing sunburst push",blurb:"A push dressed up with an opening-and-closing 'sunburst' shape and styling on the send-back."},
+  {id:"p-tuckin",fam:"push",name:"Sugar Tuck w/ Inside Turn",diff:3,builds:"Sugar Tuck",lever:"add a turn",q:"west coast swing sugar tuck inside turn",blurb:"Add a rotation as she comes out of the tuck. Your sugar tuck, now with a spin on the exit."},
+  {id:"p-tuckclosed",fam:"push",name:"Tuck from Closed Position",diff:3,builds:"Sugar Tuck",lever:"new entry",q:"west coast swing tuck from closed position",blurb:"Enter the same tuck from a closed hold instead of an open one. New doorway into a move you already own."},
+
+  // pass
+  {id:"pa-lsp",fam:"pass",name:"Left Side Pass",count:"1 2 3&4 5&6",diff:1,video:"https://www.youtube.com/watch?v=4zV_TJ7PZyg",blurb:"Send the follower down the slot past your left side. The cleanest travelling basic there is."},
+  {id:"pa-rsp",fam:"pass",name:"Right Side Pass",aka:"Underarm Turn",count:"1 2 3&4 5&6",diff:1,video:"https://www.youtube.com/watch?v=4zV_TJ7PZyg",blurb:"Follower passes on your right, usually turning under your raised arm. Your everyday underarm turn."},
+  {id:"pa-inside",fam:"pass",name:"Inside Roll",diff:2,builds:"Left Side Pass",lever:"add a turn",q:"west coast swing inside roll",blurb:"Roll the follower toward your center and back out — a smooth, elegant turning pass."},
+  {id:"pa-lspin",fam:"pass",name:"Left Side Pass w/ Inside Turn",diff:2,builds:"Left Side Pass",lever:"add a turn",q:"west coast swing left side pass inside turn",blurb:"The everyday pass with a turn folded in as she travels. Probably the first 'variation' you'll ever lead."},
+  {id:"pa-turning",fam:"pass",name:"Turning Side Pass",diff:2,builds:"Left Side Pass",lever:"add a turn",q:"west coast swing turning side pass",blurb:"You rotate with her instead of staying put. Opens up direction changes and closed-position exits."},
+  {id:"pa-tuck",fam:"pass",name:"Tuck Turn",count:"1 2 3&4 5&6",diff:2,builds:"Right Side Pass",lever:"add a turn",video:"https://www.youtube.com/playlist?list=PLeZ__vwnEDu9yNXLF-aX0hm-5U9CtKcfA",blurb:"Tuck the follower toward you, reverse, then send her under the arm to turn. A cornerstone you'll reuse forever."},
+  {id:"pa-hc",fam:"pass",name:"Underarm w/ Hand Change",diff:2,builds:"Right Side Pass",lever:"hand change",q:"west coast swing underarm turn hand change",blurb:"Same pass, switch hands as she goes by (ending, say, right-to-right). Sets up a stack of new exits."},
+  {id:"pa-pullby",fam:"pass",name:"Pull-By",diff:2,builds:"Underarm w/ Hand Change",lever:"new exit",q:"west coast swing pull by",blurb:"From a right-to-right hold, she's pulled straight past — no turn. The plainest exit off the hand change."},
+  {id:"pa-rspout",fam:"pass",name:"Right Side Pass w/ Outside Turn",diff:3,builds:"Right Side Pass",lever:"add a turn",q:"west coast swing right side pass outside turn",blurb:"Flip her rotation to the outside as she passes. The mirror of the inside-turn pass."},
+  {id:"pa-2hand",fam:"pass",name:"Two-Hand Tuck",diff:3,builds:"Tuck Turn",lever:"new entry",q:"west coast swing two hand tuck",blurb:"The tuck led with both hands — more control, and the launchpad for wraps and hammerlocks."},
+  {id:"pa-cinn",fam:"pass",name:"Cinnamon Roll",aka:"reverse tuck",diff:3,builds:"Tuck Turn",lever:"reverse it",q:"west coast swing cinnamon roll reverse tuck",blurb:"The tuck's mirror twin — the turn spirals the opposite way, wrapping and unwrapping the arms. Same move, flipped."},
+  {id:"pa-spin",fam:"pass",name:"Spinning Side Pass",diff:3,builds:"Left Side Pass",lever:"add a turn",q:"west coast swing spinning side pass",blurb:"Add a free-spinning turn as the follower travels past. Your first taste of continuous rotation."},
+  {id:"pa-hammer",fam:"pass",name:"Hammerlock",diff:4,builds:"Two-Hand Tuck",lever:"new exit",q:"west coast swing hammerlock",blurb:"Exit the two-hand tuck into a wrapped hammerlock shape, then unwind. Where wraps start."},
+  {id:"pa-double",fam:"pass",name:"Tuck w/ Double Underarm",diff:4,builds:"Tuck Turn",lever:"add a turn",q:"west coast swing tuck double underarm turn",blurb:"Two rotations out of the tuck instead of one. Now it's about clean prep and spotting."},
+  {id:"pa-mult",fam:"pass",name:"Multiple-Turn Pass",diff:4,builds:"Right Side Pass",lever:"add a turn",q:"west coast swing multiple turn side pass",blurb:"Two or more rotations down the slot. Prep, spotting, and clean momentum — not force."},
+
+  // whip
+  {id:"w-basic",fam:"whip",name:"Whip",aka:"basic 8-count",count:"1 2 3&4 5 6 7&8",diff:2,video:"https://www.youtube.com/watch?v=5vVeFs6q9os",blurb:"Led past, then redirected back to the end of the slot over 8 counts. The root of the deepest branch in the dance."},
+  {id:"w-inside",fam:"whip",name:"Inside Whip",diff:3,builds:"Whip",lever:"add a turn",q:"west coast swing inside whip",blurb:"Turn the follower inside (counter-clockwise) through the whip. Rotation added to the redirect."},
+  {id:"w-outside",fam:"whip",name:"Outside Whip",diff:3,builds:"Whip",lever:"reverse it",q:"west coast swing outside whip",blurb:"Turn the follower outside (clockwise) — the mirror of the inside whip. Different feel, different exit."},
+  {id:"w-out-turn",fam:"whip",name:"Whip w/ Outside Turn",diff:3,builds:"Whip",lever:"new exit",q:"west coast swing whip with outside turn",blurb:"Cap the whip with a clean outside turn on the way out. The staple 'dress it up' finish."},
+  {id:"w-basket",fam:"whip",name:"Basket Whip",aka:"sweetheart / lock / walkaround",diff:3,builds:"Whip",lever:"new exit",video:"https://www.youtube.com/playlist?list=PLeZ__vwnEDu8Lf_OAAuIhOHP5jK1UFBPF",blurb:"Both hands 'basket' the follower into a wrap, then release. One entry — and a fistful of different exit hands hang off it."},
+  {id:"w-basket-pullby",fam:"whip",name:"Basket → Pull-By Exit",diff:4,builds:"Basket Whip",lever:"new exit",q:"west coast swing basket whip pull by exit",blurb:"Same basket, released straight down the slot. Exit #1 of several — this is the branching you noticed."},
+  {id:"w-basket-walk",fam:"whip",name:"Basket → Walkaround Exit",diff:4,builds:"Basket Whip",lever:"new exit",q:"west coast swing basket whip walk around exit",blurb:"Same basket, but you walk around each other before the release. Exit #2 — one move, many endings."},
+  {id:"w-jhook",fam:"whip",name:"J-Hook Whip",diff:4,builds:"Whip",lever:"new exit",q:"west coast swing j hook whip",blurb:"Hook the follower's path into a J before releasing. Like the basket, a launchpad for several endings."},
+  {id:"w-jhook-spin",fam:"whip",name:"J-Hook → Free-Spin Exit",diff:4,builds:"J-Hook Whip",lever:"add a turn",q:"west coast swing j hook whip free spin",blurb:"Release the J into a free spin. One way to do a J-hook — layer a rotation on the way out."},
+  {id:"w-jhook-hc",fam:"whip",name:"J-Hook → Hand-Change Exit",diff:4,builds:"J-Hook Whip",lever:"hand change",q:"west coast swing j hook whip hand change",blurb:"Swap hands out of the hook for a different shape. Another way to do 'the same' J-hook whip."},
+  {id:"w-tommy",fam:"whip",name:"Texas Tommy",aka:"Apache",diff:4,builds:"Whip",lever:"hand change",q:"west coast swing texas tommy whip",blurb:"A crossed-hand whip that wraps behind the back and unwinds. A classic that drills clean hand-offs."},
+  {id:"w-bbhc",fam:"whip",name:"Behind-the-Back Hand Change",aka:"BBHC",diff:4,builds:"Whip",lever:"hand change",q:"west coast swing behind the back hand change whip",blurb:"Pass the hand behind your own back mid-whip. A signature switch that itself sets up a stack of variations."},
+  {id:"w-reverse",fam:"whip",name:"Reverse Whip",diff:4,builds:"Whip",lever:"reverse it",video:"https://www.youtube.com/watch?v=2Zvz7e_MXXo",blurb:"Whip the other direction. A whole family inside the family, with different holds to enter it."},
+  {id:"w-reverse-hs",fam:"whip",name:"Reverse Whip → Handshake Hold",diff:4,builds:"Reverse Whip",lever:"hand change",video:"https://www.youtube.com/watch?v=2Zvz7e_MXXo",blurb:"The reverse whip entered from a handshake (or reverse) hold. Same shape, different connection in your hands."},
+  {id:"w-freespin",fam:"whip",name:"Whip w/ Free Spin",diff:4,builds:"Whip",lever:"add a turn",video:"https://www.youtube.com/watch?v=HgASX23pVDE",blurb:"Release into an unassisted spin out of the whip. Now the follower's balance and your prep do all the work."},
+  {id:"w-hustle",fam:"whip",name:"Hustle Whip",diff:4,builds:"Whip",lever:"new entry",q:"west coast swing hustle whip",blurb:"A whip that borrows hustle's compact, quick redirect. New way in for a familiar 8-count."},
+  {id:"w-cradle",fam:"whip",name:"Cradle Whip",diff:4,builds:"Whip",lever:"new exit",q:"west coast swing cradle whip",blurb:"Catch the follower into a cradle wrap through the whip before releasing. A close, connected variation."},
+  {id:"w-pullthrough",fam:"whip",name:"Pull-Through Whip",diff:4,builds:"Whip",lever:"new exit",q:"west coast swing pull through whip",blurb:"Pull the follower through and past rather than redirecting cleanly back. A momentum-forward ending."},
+
+  // turns
+  {id:"t-prep",fam:"turn",name:"Spin Prep & Spotting",diff:2,video:"https://www.youtube.com/watch?v=RMq9VK5qGOQ",blurb:"The enabling skill under every turn: a clean prep, a spotted head, a balanced axis. Learn this before adding spins anywhere."},
+  {id:"t-inside",fam:"turn",name:"Inside Turn",diff:2,builds:"Spin Prep & Spotting",lever:"add a turn",q:"west coast swing inside turn technique",blurb:"Follower turns toward your center. The rotation you'll bolt onto passes, pushes, and whips most often."},
+  {id:"t-outside",fam:"turn",name:"Outside Turn",diff:2,builds:"Inside Turn",lever:"reverse it",q:"west coast swing outside turn technique",blurb:"Follower turns away from you — the mirror of the inside turn. The other half of the toolkit."},
+  {id:"t-free",fam:"turn",name:"Free Spin",diff:3,builds:"Spin Prep & Spotting",lever:"add a turn",q:"west coast swing free spin follower",blurb:"An unassisted rotation — you set it up and let go. Lives or dies on prep and balance, not muscle."},
+  {id:"t-travel",fam:"turn",name:"Traveling Turns",diff:3,builds:"Free Spin",lever:"new exit",q:"west coast swing traveling turns",blurb:"Spins that move down the slot instead of turning on the spot. Adds direction to your rotation."},
+  {id:"t-mult",fam:"turn",name:"Multiple Rotations",diff:4,builds:"Free Spin",lever:"add a turn",q:"west coast swing multiple spins technique",blurb:"Doubles and triples. Spotting, a clean axis, and honest momentum — the Intermediate calling card."}
+];
+
+const STORE_KEY="wcs-progress-v1";
+let state={};
+let famFilter="all";
+let repOnly=false;
+
+// Progress persists in the browser's localStorage (per-device, per-browser).
+function load(){
+  try{ const raw=localStorage.getItem(STORE_KEY); if(raw) state=JSON.parse(raw)||{}; }catch(e){ state={}; }
+}
+function save(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+}
+
+function setStatus(id,target){
+  const cur=state[id]||"none";
+  if(cur===target) delete state[id]; else state[id]=target;
+  save(); render();
+}
+
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+
+function moveCard(m){
+  const st=state[m.id]||"none";
+  const vurl = m.video ? m.video : ("https://www.youtube.com/results?search_query="+encodeURIComponent(m.q||("west coast swing "+m.name+" tutorial")));
+  const pips=[1,2,3,4].map(i=>`<span class="pip ${i<=m.diff?'on':''}"></span>`).join("");
+  const lever = m.lever ? `<span class="lever" style="--c:${LV[m.lever].c}">${LV[m.lever].g} ${m.lever}</span>` : "";
+  const builds = m.builds ? `<span class="builds">from <b>${esc(m.builds)}</b></span>` : `<span class="builds">basic</span>`;
+  const count = m.count ? `<span class="count">${esc(m.count)}</span>` : "";
+  return `<div class="move fade" data-status="${st}" data-fam="${m.fam}">
+    <div class="card">
+      <div class="top">
+        <div><div class="name">${esc(m.name)}</div>${m.aka?`<div class="aka">${esc(m.aka)}</div>`:""}</div>
+        <div class="pips">${pips}</div>
+      </div>
+      <div class="meta">${builds}${lever}${count}</div>
+      <div class="blurb">${esc(m.blurb)}</div>
+      <div class="status">
+        <button class="lrn ${st==='learning'?'on':''}" data-id="${m.id}" data-t="learning">Learning</button>
+        <button class="got ${st==='got'?'on':''}" data-id="${m.id}" data-t="got">Got it</button>
+        <a class="watch" href="${vurl}" target="_blank" rel="noopener">▶ Watch</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+function render(){
+  // tree
+  const tree=document.getElementById("tree");
+  let html="";
+  FAMS.forEach(f=>{
+    if(famFilter!=="all" && famFilter!==f.id) return;
+    let ms=MOVES.filter(m=>m.fam===f.id).sort((a,b)=>a.diff-b.diff);
+    if(repOnly) ms=ms.filter(m=>(state[m.id]||"none")==="got");
+    if(repOnly && ms.length===0) return; // hide empty families in repertoire view
+    const tot=MOVES.filter(m=>m.fam===f.id).length;
+    const got=MOVES.filter(m=>m.fam===f.id && (state[m.id]||"none")==="got").length;
+    const pct=tot?Math.round(got/tot*100):0;
+    html+=`<section>
+      <div class="fam-head"><h2>${f.name}</h2><span class="n">${f.n}</span></div>
+      <p class="fam-desc">${f.desc}</p>
+      <div class="fambar"><div class="lab"><span>${f.name} owned</span><span>${got} / ${tot}</span></div>
+        <div class="track"><div class="fill" style="width:${pct}%"></div></div></div>
+      <div class="moves">${ms.map(moveCard).join("")}</div>
+      ${(repOnly&&ms.length===0)?`<div class="empty">Nothing marked yet in this family.</div>`:""}
+    </section>`;
+  });
+  if(repOnly){
+    const anyGot=MOVES.some(m=>(state[m.id]||"none")==="got");
+    if(!anyGot) html=`<section><div class="empty">Your repertoire is empty so far. Mark a few moves "Got it" and they'll collect here — your personal cheat-sheet for the moves you blank on mid-dance.</div></section>`;
+  }
+  tree.innerHTML=html;
+  // wire status buttons
+  tree.querySelectorAll(".status button").forEach(b=>{
+    b.addEventListener("click",()=>setStatus(b.dataset.id,b.dataset.t));
+  });
+  updateMeter();
+}
+
+function updateMeter(){
+  const tot=MOVES.length;
+  const got=MOVES.filter(m=>(state[m.id]||"none")==="got").length;
+  const lrn=MOVES.filter(m=>(state[m.id]||"none")==="learning").length;
+  document.getElementById("m-got").textContent=got;
+  document.getElementById("m-sub").textContent=`of ${tot} owned${lrn?` · ${lrn} learning`:""}`;
+}
+
+function buildChips(){
+  const c=document.getElementById("chips");
+  const all=[{id:"all",name:"All"}].concat(FAMS.map(f=>({id:f.id,name:f.name.replace("The ","").replace(" family","")})));
+  c.innerHTML=all.map(f=>`<button class="chip ${f.id==='all'?'on':''}" data-f="${f.id}">${f.name}</button>`).join("");
+  c.querySelectorAll(".chip").forEach(ch=>ch.addEventListener("click",()=>{
+    famFilter=ch.dataset.f;
+    c.querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x.dataset.f===famFilter));
+    render();
+  }));
+}
+
+document.getElementById("rep").addEventListener("click",function(){
+  repOnly=!repOnly;
+  this.classList.toggle("on",repOnly);
+  this.textContent = repOnly ? "◆ Showing repertoire" : "◆ My repertoire";
+  render();
+});
+document.getElementById("reset").addEventListener("click",function(){
+  if(!confirm("Clear all your marked progress on this device?")) return;
+  state={}; save(); repOnly=false;
+  document.getElementById("rep").classList.remove("on");
+  document.getElementById("rep").textContent="◆ My repertoire";
+  render();
+});
+
+(function init(){ load(); buildChips(); render(); })();
+</script>
+</body>
+</html>
