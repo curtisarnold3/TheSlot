@@ -6,7 +6,7 @@ A single-page, scroll-down map of West Coast Swing from beginner to intermediate
 
 It's one static file — `index.html` — with all styles and scripts inline. No build step, no dependencies, no framework. It runs by opening it in any browser.
 
-- **54 moves** across Foundations, Push, Pass, Whip, and Turns
+- **60+ moves** across Foundations, Push, Pass, Whip, Turns, and Anchor & footwork
 - **Five levers** (hand change, add a turn, reverse it, new entry, new exit) that explain the branching
 - **Progress tracking** (Learning / Got it) saved in your browser via `localStorage`
 - **Repertoire mode** — a leader's cheat-sheet of just the moves you own

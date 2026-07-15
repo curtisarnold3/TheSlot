@@ -17,7 +17,7 @@ Everything lives in **`index.html`** — all HTML, CSS, and JavaScript are inlin
 - `const MOVES = [...]` — the move data. Each move: `{id, name, aka?, count?, diff (1-4), builds?, lever?, q?|video?, blurb}`.
   - `builds` is the parent move's `name`; `lever` is one of: `hand change`, `add a turn`, `reverse it`, `new entry`, `new exit`.
   - `video` is a specific YouTube URL; if absent, a `q` (or the move name) builds a YouTube search link.
-- `const FAMS = [...]` — the families (foundation, push, pass, whip, turn) and their headers.
+- `const FAMS = [...]` — the families (foundation, push, pass, whip, turn, footwork) and their headers.
 - Progress is saved per-browser via `localStorage` under the key `wcs-progress-v1`.
 - The family-tree SVG near the bottom is static markup; if `MOVES` changes a lot, that diagram
   won't auto-update (it was generated separately) — flag this rather than silently letting it drift.
@@ -30,5 +30,5 @@ Everything lives in **`index.html`** — all HTML, CSS, and JavaScript are inlin
 
 ## Conventions
 - Keep it dependency-free and single-file. Don't introduce a build system or framework.
-- Preserve the visual system (ink/brass/bone palette, the five-lever color coding).
+- Preserve the visual system (ink/brass/bone palette, the five-lever color coding). Footwork nodes intentionally have no lever (footwork is a rhythm axis, not a pattern lever) and rely on their count/rhythm chip instead.
 - Don't invent YouTube video IDs — use a search link (`q`) unless a real URL is verified.
