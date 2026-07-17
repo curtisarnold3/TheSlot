@@ -1,6 +1,6 @@
 # The Slot — a free path through West Coast Swing
 
-A single-page, scroll-down map of West Coast Swing from beginner to intermediate. Every move branches off one of the basics (push, pass, whip), ordered easiest to hardest, with a lever system that shows *how* each variation is built. Track what you've learned, flip to a repertoire view of just the moves you own, and open a tutorial for any move. No login, no cost, no thousand-dollar plan.
+A single-page, scroll-down map of West Coast Swing from beginner to novice. Every move branches off one of the basics (push, pass, whip), ordered easiest to hardest, with a lever system that shows *how* each variation is built. Track what you've learned, flip to a repertoire view of just the moves you own, and open a tutorial for any move. No login, no fees — a friendly place to start, and a foundation you can build on with classes and lessons.
 
 ## What's here
 
@@ -71,4 +71,4 @@ git push -u origin main
 
 ## License
 
-MIT — see `LICENSE`. Use it, fork it, hand it to a frustrated beginner.
+MIT — see `LICENSE`. Use it, fork it, hand it to a beginner who's just getting started.
