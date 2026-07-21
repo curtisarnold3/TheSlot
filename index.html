@@ -578,6 +578,40 @@ function buildChips(){
   }));
 }
 
+// Renders the drill bank. No-ops entirely unless ?game=1 is on the URL.
+function renderDrills(){
+  if(!GAME) return;
+  const wrap=document.getElementById("drills");
+  if(!wrap) return;
+  document.getElementById("drill-section").removeAttribute("hidden");
+
+  const order=["f-roll","f-anchor"];
+  wrap.innerHTML=order.map(fnd=>{
+    const src=MOVES.find(m=>m.id===fnd);
+    const head=src?src.name:fnd;
+    const list=DRILLS.filter(d=>d.fnd===fnd)
+      .slice()
+      .sort((a,b)=>(a.lvl===0)-(b.lvl===0) || a.lvl-b.lvl);
+    if(!list.length) return "";
+    return `<h3 class="fnd-head">${esc(head)}</h3>
+      <div class="drills">${list.map(drillCard).join("")}</div>`;
+  }).join("");
+}
+
+function drillCard(d){
+  const lvl=d.lvl===0?"Bonus":`Level ${d.lvl}`;
+  return `<article class="drill">
+    <div class="name">${esc(d.name)}</div>
+    <div class="meta">
+      <span class="lvl">${esc(lvl)}</span>
+      <span class="mins">${d.mins} min</span>
+      <span class="develops">${esc(d.develops)}</span>
+    </div>
+    <p class="blurb">${esc(d.blurb)}</p>
+    <p class="cue">${esc(d.cue)}</p>
+  </article>`;
+}
+
 document.getElementById("rep").addEventListener("click",function(){
   repOnly=!repOnly;
   this.classList.toggle("on",repOnly);
@@ -592,7 +626,7 @@ document.getElementById("reset").addEventListener("click",function(){
   render();
 });
 
-(function init(){ load(); buildChips(); render(); })();
+(function init(){ load(); buildChips(); render(); renderDrills(); })();
 </script>
 </body>
 </html>
