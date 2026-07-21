@@ -161,6 +161,21 @@
   .wk .role{display:block;margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.02em;line-height:1.7}
   .wk .role b{color:var(--tx)}
 
+  /* drill bank (game layer) */
+  .fnd-head{font-family:var(--display);font-size:22px;margin:30px 0 6px;font-weight:600;color:var(--tx)}
+  .drills{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  .drill{background:var(--paper);color:var(--tx-ink);border-radius:14px;padding:16px 16px 14px;
+    border:1px solid #cdbf9e;border-left:6px solid var(--got);height:100%;
+    display:flex;flex-direction:column;gap:9px}
+  .drill .name{font-family:var(--display);font-size:20px;font-weight:600;line-height:1.12}
+  .drill .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .drill .lvl,.drill .mins{font-family:var(--mono);font-size:11px;color:#5a4e33;background:#e2d6b7;
+    padding:2px 7px;border-radius:5px;letter-spacing:.06em;text-transform:uppercase}
+  .drill .develops{font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:#7a6b45}
+  .drill .blurb{font-size:14px;color:#3f3826;line-height:1.5;flex:1}
+  .drill .cue{font-size:15px;font-style:italic;color:#3f3826;line-height:1.45;
+    border-left:1px solid var(--brass-lo);padding-left:12px;margin-top:2px}
+
   footer{padding:40px 0 70px;color:var(--tx-dim);font-size:13px;max-width:70ch}
   footer a{color:var(--brass-hi)}
   .fade{opacity:0;transform:translateY(14px);animation:rise .6s forwards}
