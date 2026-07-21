@@ -394,6 +394,65 @@ const MOVES = [
   {id:"a-swivels",fam:"footwork",name:"Swivels",count:"swivel swivel",diff:4,builds:"Anchor Step",q:"west coast swing swivels footwork",blurb:"Swivel the feet and hips in place. A little goes a long way — overdo it and it reads as fidgety, so save it for the right moment."}
 ];
 
+const DRILLS = [
+  // Rolling feet — f-roll
+  {id:"d-peel", fnd:"f-roll", lvl:1, name:"Peel the foot", mins:4, partner:false,
+   develops:"foot articulation",
+   blurb:"Stand with your feet together, weight fully on one foot. Slowly lift the other foot by peeling it off the floor — heel first, then the middle, then the ball, then the toes. Exaggerate it. Most people can't roll down through a step because they never articulate on the way up.",
+   cue:"Heel, middle, ball, toe. Peel it like tape."},
+
+  {id:"d-rolldown", fnd:"f-roll", lvl:2, name:"Roll it back down", mins:4, partner:false,
+   develops:"smooth weight transfer",
+   blurb:"Same drill, reversed. Place the foot toe first, then the ball, then the middle, then the heel, and take your time getting there. Aim to touch down with the smallest part of the foot you can and travel through the whole arch on the way.",
+   cue:"Land on a dime, roll through the whole foot."},
+
+  {id:"d-leads", fnd:"f-roll", lvl:3, name:"Heel lead vs. toe lead", mins:5, partner:false,
+   develops:"deliberate footfalls",
+   blurb:"Walk slowly across the room leading with the heel. Then walk back leading with the toe. Both are correct — the point is that you're choosing one instead of defaulting. Slow forward walks usually want the heel.",
+   cue:"Pick one on purpose. Don't let your feet decide."},
+
+  {id:"d-track", fnd:"f-roll", lvl:4, name:"Single tracking", mins:5, partner:false,
+   develops:"clean lines down the slot",
+   blurb:"Walk forward and backward keeping both heels on one imaginary line, like a balance beam. Your feet should brush past each other on every step. Two separate tracks make you waddle down the slot, and it shows.",
+   cue:"One line. Feet brush as they pass."},
+
+  {id:"d-turnout", fnd:"f-roll", lvl:5, name:"Turnout and knee direction", mins:5, partner:false,
+   develops:"the smooth look",
+   blurb:"Freestyle around the room keeping your feet turned out somewhere between 30 and 45 degrees. Then add the real fix for the marching look: as each foot peels off the floor, let the knee travel forward rather than up. Watch it in a mirror — the difference is obvious.",
+   cue:"Knee forward, not up. That's the whole marching fix."},
+
+  {id:"d-calf", fnd:"f-roll", lvl:0, name:"Ankle strength", mins:3, partner:false,
+   develops:"control through the arch",
+   blurb:"Stand on a stair with your heels hanging off the edge. Lower them slowly below the step, then rise back up, slowly. Dancers without arch and calf strength collapse through the foot and look flat even when they're trying to roll. Sore is fine. Sharp pain is not — stop if you feel it.",
+   cue:"Slow down. Slow is the whole exercise."},
+
+  // The anchor — f-anchor
+  {id:"d-anchor-time", fnd:"f-anchor", lvl:1, name:"Anchor on time", mins:4, partner:false,
+   develops:"anchor timing",
+   blurb:"Put on a slow song and dance nothing but anchor triples in place, on 5&6, over and over. Three weight changes, landing exactly where the music says. No pattern, no travel, no styling. Just the settle, on time, until it's boring.",
+   cue:"Three weight changes. Land them all."},
+
+  {id:"d-behind-heel", fnd:"f-anchor", lvl:2, name:"Behind the heel", mins:5, partner:false,
+   develops:"the away position",
+   blurb:"Here's the actual technical test, and it isn't about how your feet look: at the end of the anchor, your center of balance should sit behind the heel of your forward foot, feet in third position. Set up in an anchor, freeze, and check. If your weight is over the front foot, you haven't anchored — you've just stopped.",
+   cue:"Center behind the front heel. Check it, don't guess."},
+
+  {id:"d-stay", fnd:"f-anchor", lvl:3, name:"Stay in it", mins:6, partner:false,
+   develops:"holding the settle",
+   blurb:"Grab a doorframe or a counter as a pretend partner and anchor against it, holding the settle a full beat longer than feels natural. The two ways this breaks are opposite. Leaders arrive carrying momentum and keep creeping forward, which leaves the follower no room to settle at all. Followers get momentum flowing into the away connection and bounce out early. Drill whichever one is yours.",
+   cue:"Arrive, settle, wait. The music will tell you when."},
+
+  {id:"d-stretch", fnd:"f-anchor", lvl:4, name:"Stretch the &a1", mins:6, partner:false,
+   develops:"elasticity",
+   blurb:"The stretch comes from two centers moving apart while the hands stay put. Holding your doorframe, fill the whole stretch of time from the 6& through the &a and into the 1 — transfer your weight backward one inch at a time, staying balanced over the foot the entire way. If you feel tippy, you went too far back. This is the boing everyone's chasing.",
+   cue:"Fill every inch of the time. Don't rush to the 1."},
+
+  {id:"d-newfeet", fnd:"f-anchor", lvl:5, name:"Borrow some feet", mins:8, partner:false,
+   develops:"anchor variations",
+   blurb:"Pick any footwork card from the Anchor & Footwork family above — a touch step, a kick-ball-change, a ronde — and dance it in place of your usual anchor triple. One rule decides whether it worked: did the away-stretch survive? If it did, that's an anchor. If it didn't, they're just fancy feet.",
+   cue:"New feet, same stretch. The stretch is the anchor."}
+];
+
 const STORE_KEY="wcs-progress-v1";
 let state={};
 let famFilter="all";
