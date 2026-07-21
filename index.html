@@ -307,6 +307,15 @@
     </div>
   </section>
 
+  <section id="drill-section" hidden>
+    <div class="block">
+      <div class="k">The drill bank &middot; partner not required</div>
+      <h2>Eleven things you can drill alone, today</h2>
+      <p>The tree tells you what to learn. These tell you what to <em>drill</em> — and drilling is the part that actually moves a move from "I've seen it" to "I own it." Every one of these works in a kitchen, alone, with no partner and no floor. Start at level one and climb.</p>
+      <div id="drills"></div>
+    </div>
+  </section>
+
   <footer>
     <p>A starting map, not the whole forest — West Coast Swing has hundreds of variations and the naming is genuinely inconsistent from studio to studio (your "cinnamon roll" is someone else's "reverse tuck"). This is a curated spine you can grow, ordered easiest→hardest, with every move tagged by the basic it descends from and the knob you turn to get there. <strong>Your progress saves to this page on your device.</strong> Families and difficulty follow the shared push / pass / whip vocabulary that virtually every WCS figure comes from. Flip on <em>My repertoire</em> to see just the moves you own — a leader's cheat-sheet for the ones you forget mid-dance.</p>
   </footer>
@@ -467,6 +476,10 @@ const DRILLS = [
    blurb:"Pick any footwork card from the Anchor & Footwork family above — a touch step, a kick-ball-change, a ronde — and dance it in place of your usual anchor triple. One rule decides whether it worked: did the away-stretch survive? If it did, that's an anchor. If it didn't, they're just fancy feet.",
    cue:"New feet, same stretch. The stretch is the anchor."}
 ];
+
+// Game layer, off by default. Enable with ?game=1
+// Deliberately NOT persisted this sprint — the URL is the only switch.
+const GAME = new URLSearchParams(location.search).get("game") === "1";
 
 const STORE_KEY="wcs-progress-v1";
 let state={};
