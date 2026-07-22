@@ -767,6 +767,34 @@ function renderTree2(){
     +`</svg>`;
 }
 
+// Node boxes in the hand-made SVG, counted per heading band at sprint start
+// (1c5d338): 58 total. No Foundations heading; other families match MOVES.
+const STATIC_COUNTS={foundation:0,push:8,pass:14,whip:14,turn:6,footwork:16};
+
+// Logs dynamic-vs-static differences. Reports only; fixing anything it finds
+// is a data decision, not a code change. Silent unless ?game=1.
+function compareTrees(){
+  if(!GAME) return;
+  const svg=[...document.querySelectorAll("svg.tree")].find(s=>!s.closest("#tree2"));
+  if(!svg) return;
+  const texts=[...svg.querySelectorAll("text")];
+  const staticNames=[...svg.querySelectorAll("rect")].filter(r=>r.getAttribute("width")==="182")
+    .map(r=>{const x=+r.getAttribute("x"),y=+r.getAttribute("y");
+      return texts.filter(t=>Math.abs(+t.getAttribute("x")-(x+13))<2 && +t.getAttribute("y")>y && +t.getAttribute("y")<y+30)
+        .sort((a,b)=>+a.getAttribute("y")-+b.getAttribute("y")).map(t=>t.textContent).join(" ").trim();});
+  const count=n=>1+n.children.reduce((s,c)=>s+count(c),0);
+  console.group(`[tree] dynamic vs static — ${MOVES.length} moves vs ${staticNames.length} drawn boxes`);
+  buildTree().forEach(f=>{
+    const dyn=f.roots.reduce((s,r)=>s+count(r),0), st=STATIC_COUNTS[f.fam];
+    console.log(`${f.fam}: dynamic ${dyn} | static ${st}${dyn===st?"":`  <-- DIFFERS by ${dyn-st}`}`);
+  });
+  const missing=MOVES.filter(m=>!staticNames.includes(m.name));
+  const extra=staticNames.filter(n=>!MOVES.some(m=>m.name===n));
+  console.log("in MOVES but not drawn in the static SVG:", missing.length?missing.map(m=>`${m.id} (${m.name})`):"none");
+  console.log("drawn in the static SVG but not in MOVES:", extra.length?extra:"none");
+  console.groupEnd();
+}
+
 document.getElementById("rep").addEventListener("click",function(){
   repOnly=!repOnly;
   this.classList.toggle("on",repOnly);
@@ -781,7 +809,7 @@ document.getElementById("reset").addEventListener("click",function(){
   render();
 });
 
-(function init(){ load(); buildChips(); render(); renderDrills(); renderTree2(); })();
+(function init(){ load(); buildChips(); render(); renderDrills(); renderTree2(); compareTrees(); })();
 </script>
 </body>
 </html>
