@@ -486,6 +486,57 @@ const DRILLS = [
    cue:"New feet, same stretch. The stretch is the anchor."}
 ];
 
+// The six foundations' progression rungs. Keys are foundation move ids in MOVES.
+// lvl 0 + bonus:true sorts after the numbered rungs. Exactly one rung carries
+// pointsToFootwork — the Anchor's L5, which the renderer marks with the
+// new-exit arrow as a wink toward the footwork family.
+const LADDERS = {
+  "f-time": [
+    {lvl:1, label:"Find the 1"},
+    {lvl:2, label:"Land on the beat"},
+    {lvl:3, label:"Triple, straight"},
+    {lvl:4, label:"Triple, rolling"},
+    {lvl:5, label:"Choose your count"},
+    {lvl:0, label:"Syncopated triple", bonus:true}
+  ],
+  "f-slot": [
+    {lvl:1, label:"See the lane"},
+    {lvl:2, label:"Stay in it"},
+    {lvl:3, label:"Leader steps off"},
+    {lvl:4, label:"Single tracking"},
+    {lvl:5, label:"Move the slot"}
+  ],
+  "f-starter": [
+    {lvl:1, label:"In place"},
+    {lvl:2, label:"Sendout to left pass"},
+    {lvl:3, label:"Sendout to right pass"},
+    {lvl:4, label:"Sugar push sendout"},
+    {lvl:5, label:"Tuck sendouts"}
+  ],
+  "f-anchor": [
+    {lvl:1, label:"Anchor on time"},
+    {lvl:2, label:"Behind the heel"},
+    {lvl:3, label:"Stay in it"},
+    {lvl:4, label:"Stretch the &a1"},
+    {lvl:5, label:"Borrow any footwork", pointsToFootwork:true}
+  ],
+  "f-roll": [
+    {lvl:1, label:"Peel the foot"},
+    {lvl:2, label:"Roll it down"},
+    {lvl:3, label:"Heel vs. toe lead"},
+    {lvl:4, label:"Single tracking"},
+    {lvl:5, label:"Turnout & knee"},
+    {lvl:0, label:"Ankle strength", bonus:true}
+  ],
+  "f-conn": [
+    {lvl:1, label:"Frame & tone"},
+    {lvl:2, label:"Leverage (away)"},
+    {lvl:3, label:"Compression (toward)"},
+    {lvl:4, label:"Move from center"},
+    {lvl:5, label:"Match your partner"}
+  ]
+};
+
 // Game layer, off by default. Enable with ?game=1
 // Deliberately NOT persisted this sprint — the URL is the only switch.
 const GAME = new URLSearchParams(location.search).get("game") === "1";
