@@ -899,7 +899,7 @@ document.getElementById("reset").addEventListener("click",function(){
   render();
 });
 
-(function init(){ load(); buildChips(); render(); renderDrills(); renderTree2(); compareTrees(); })();
+(function init(){ load(); buildChips(); render(); renderDrills(); if(GAME){ loadGame(); renderTree2(); } compareTrees(); })();
 </script>
 </body>
 </html>
