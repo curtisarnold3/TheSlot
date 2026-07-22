@@ -652,6 +652,55 @@ function buildTree(){
   });
 }
 
+// Geometry read off the static SVG's own rect/text/path attributes, not guessed.
+// SUBTREE_GAP is derived: depth-1 siblings that have children sit 51 apart where
+// plain siblings sit 34 apart, so the extra separation is 17 (half the pitch).
+const TREE_GEO={NODE_W:182,NODE_H:30,RX:7,COL_X:24,COL_STEP:212,
+  PITCH:34,SUBTREE_GAP:17,HEAD_Y:28,HEAD_DY:22,FAM_GAP:46,PAD_BOTTOM:24,SVG_W:900};
+
+// Assigns x/y/w/h to every node and stacks families down the page. Pure apart from
+// mutating the forest it is handed. Each family also gets headY/top/height; the
+// returned array carries totalHeight for the viewBox.
+function layoutTree(forest){
+  const G=TREE_GEO;
+  // Two adjacent leaves need only the pitch; anything with children gets breathing room.
+  const gapBetween=(a,b)=>(a.children.length||b.children.length)?G.SUBTREE_GAP:0;
+  const span=n=>{
+    if(!n.children.length) return G.PITCH;
+    let s=0;
+    n.children.forEach((c,i)=>{ if(i) s+=gapBetween(n.children[i-1],c); s+=span(c); });
+    return Math.max(G.PITCH,s);
+  };
+  const place=(n,depth,top)=>{
+    n.x=G.COL_X+depth*G.COL_STEP; n.w=G.NODE_W; n.h=G.NODE_H;
+    let cy=top;
+    n.children.forEach((c,i)=>{
+      if(i) cy+=gapBetween(n.children[i-1],c);
+      place(c,depth+1,cy);
+      cy+=span(c);
+    });
+    // Parent sits midway between its first and last child's centers — the rule the
+    // static SVG uses (Sugar Push centers at 150; its children span 65..235).
+    if(n.children.length){
+      const a=n.children[0], z=n.children[n.children.length-1];
+      n.y=(a.y+a.h/2 + z.y+z.h/2)/2 - G.NODE_H/2;
+    }else{
+      n.y=top+(G.PITCH-G.NODE_H)/2;
+    }
+  };
+  let y=G.HEAD_Y;
+  forest.forEach(f=>{
+    f.headY=y;
+    const top=y+G.HEAD_DY;
+    let cy=top;
+    f.roots.forEach((r,i)=>{ if(i) cy+=G.SUBTREE_GAP; place(r,0,cy); cy+=span(r); });
+    f.top=top; f.height=cy-top;
+    y=cy+G.FAM_GAP;
+  });
+  forest.totalHeight=y-G.FAM_GAP+G.PAD_BOTTOM;
+  return forest;
+}
+
 document.getElementById("rep").addEventListener("click",function(){
   repOnly=!repOnly;
   this.classList.toggle("on",repOnly);
