@@ -612,6 +612,46 @@ function drillCard(d){
   </article>`;
 }
 
+// Turns the flat MOVES array into a per-family forest. Pure: no DOM, no layout.
+// Parent lookup is by `builds` -> `name` string, which is the existing data convention.
+// A `builds` that matches nothing, or that points into another family, becomes an
+// orphan plus a console warning rather than a silently dropped branch.
+function buildTree(){
+  const byName={};
+  MOVES.forEach(m=>{ byName[m.name]=m; });
+  const order={};
+  MOVES.forEach((m,i)=>{ order[m.id]=i; });
+
+  return FAMS.map(f=>{
+    const mine=MOVES.filter(m=>m.fam===f.id);
+    const nodes={};
+    const roots=[], orphans=[];
+    mine.forEach(m=>{ nodes[m.id]={move:m,depth:0,children:[]}; });
+
+    mine.forEach(m=>{
+      if(!m.builds){ roots.push(nodes[m.id]); return; }
+      const parent=byName[m.builds];
+      if(!parent){
+        console.warn(`[tree] orphan: "${m.id}" builds on "${m.builds}", which matches no move name`);
+        orphans.push(m); return;
+      }
+      if(parent.fam!==f.id){
+        console.warn(`[tree] orphan: "${m.id}" (${f.id}) builds on "${m.builds}" in family "${parent.fam}" — cross-family parenting is not supported by the layout`);
+        orphans.push(m); return;
+      }
+      nodes[parent.id].children.push(nodes[m.id]);
+    });
+
+    // Easiest-to-hardest as you travel outward; array order breaks ties.
+    const bySort=(a,b)=>a.move.diff-b.move.diff || order[a.move.id]-order[b.move.id];
+    const walk=(n,d)=>{ n.depth=d; n.children.sort(bySort); n.children.forEach(c=>walk(c,d+1)); };
+    roots.sort(bySort);
+    roots.forEach(r=>walk(r,0));
+
+    return {fam:f.id, name:f.name, roots, orphans};
+  });
+}
+
 document.getElementById("rep").addEventListener("click",function(){
   repOnly=!repOnly;
   this.classList.toggle("on",repOnly);
