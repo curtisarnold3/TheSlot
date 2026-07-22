@@ -554,6 +554,45 @@ function save(){
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
 }
 
+// ---- Game-layer storage -----------------------------------------------------
+// Deliberately parallel to the move-progress path above, never part of it:
+// its own key, its own object. Nothing here reads or writes STORE_KEY or
+// `state`, so a bug in the game layer cannot reach a dancer's saved moves.
+// Storage failure (private browsing, quota) degrades rung marking to
+// non-persistent — it never throws.
+const GAME_KEY="wcs-game-v1";
+let gameState={rungs:{}};
+
+// One place that knows the key format. Rung identity is foundation id + level,
+// not the label — two foundations share the label "Stay in it".
+function rungKey(fid,lvl){ return `${fid}-${lvl}`; }
+
+function loadGame(){
+  try{
+    const raw=localStorage.getItem(GAME_KEY);
+    // Arrays pass a typeof "object" check but drop added props on stringify,
+    // which would silently discard every later write. Plain objects only.
+    if(raw){ const parsed=JSON.parse(raw);
+      gameState=(parsed&&typeof parsed==="object"&&!Array.isArray(parsed))?parsed:{rungs:{}}; }
+  }catch(e){ gameState={rungs:{}}; }
+  if(!gameState.rungs||typeof gameState.rungs!=="object") gameState.rungs={};
+}
+function saveGame(){
+  try{ localStorage.setItem(GAME_KEY, JSON.stringify(gameState)); }catch(e){}
+}
+
+function isRungReached(fid,lvl){ return !!gameState.rungs[rungKey(fid,lvl)]; }
+
+// Reached rungs are stored as present-and-true; unreached ones are deleted
+// rather than stored as false, so the object stays a set of what's earned.
+function toggleRung(fid,lvl){
+  const k=rungKey(fid,lvl);
+  if(gameState.rungs[k]) delete gameState.rungs[k]; else gameState.rungs[k]=true;
+  saveGame();
+  renderTree2();
+}
+// ---- end game-layer storage -------------------------------------------------
+
 function setStatus(id,target){
   const cur=state[id]||"none";
   if(cur===target) delete state[id]; else state[id]=target;
