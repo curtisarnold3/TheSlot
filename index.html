@@ -274,6 +274,15 @@
     </div>
   </section>
 
+  <section id="tree2-section" hidden>
+    <div class="block">
+      <div class="k">Dynamic tree &middot; preview</div>
+      <h2>The same tree, drawn from the data</h2>
+      <p>This one is generated from the move list at page load instead of being pasted in by hand. Compare it against the diagram above — when they agree, the hand-made one retires.</p>
+      <div class="treewrap"><div id="tree2"></div></div>
+    </div>
+  </section>
+
   <section>
     <div class="block">
       <div class="k">Level up fast &middot; the practice plan</div>
@@ -701,6 +710,63 @@ function layoutTree(forest){
   return forest;
 }
 
+// Lever -> [accent colour, glyph]. Footwork moves carry no lever and get no glyph:
+// footwork branches on rhythm, not on a pattern lever, so inventing one would
+// overwrite a deliberate teaching decision. Roots use the plain brass accent.
+const LEVER_ART={"hand change":["#7a6bb0","⇄"],"add a turn":["#c99a3f","↻"],
+  "reverse it":["#c8757f","↺"],"new entry":["#4f8a9c","⤵"],"new exit":["#b06a3a","⤴"]};
+const ROOT_ACCENT="#8f6e2b";
+
+// Splits a label at the space nearest its middle, matching the static file
+// ("Sugar Tuck w/ Inside Turn" -> "Sugar Tuck w/" + "Inside Turn").
+function treeLabel(name){
+  if(name.length<=21) return [name];
+  const mid=name.length/2; let at=-1;
+  for(let i=0;i<name.length;i++)
+    if(name[i]===" " && (at<0||Math.abs(i-mid)<Math.abs(at-mid))) at=i;
+  return at<0?[name]:[name.slice(0,at),name.slice(at+1)];
+}
+
+// Draws the forest as an SVG string and injects it. Off unless ?game=1.
+function renderTree2(){
+  if(!GAME) return;
+  const host=document.getElementById("tree2");
+  if(!host) return;
+  document.getElementById("tree2-section").removeAttribute("hidden");
+
+  const G=TREE_GEO;
+  const forest=layoutTree(buildTree());
+
+  const drawNode=n=>{
+    const art=LEVER_ART[n.move.lever];
+    const c=art?art[0]:ROOT_ACCENT;
+    const lines=treeLabel(n.move.name);
+    let s=`<rect x="${n.x}" y="${n.y}" rx="${G.RX}" width="${n.w}" height="${n.h}" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/>`
+      +`<rect x="${n.x}" y="${n.y}" rx="${G.RX}" width="6" height="${n.h}" fill="${c}"/>`;
+    if(lines.length===1){
+      s+=`<text x="${n.x+13}" y="${n.y+18.5}" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">${esc(lines[0])}</text>`;
+    }else{
+      s+=`<text x="${n.x+13}" y="${n.y+11}" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">${esc(lines[0])}</text>`
+        +`<text x="${n.x+13}" y="${n.y+23}" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">${esc(lines[1])}</text>`;
+    }
+    if(art) s+=`<text x="${n.x+173}" y="${n.y+19}" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="${c}">${art[1]}</text>`;
+    return s+n.children.map(drawNode).join("");
+  };
+  // Control points sit on the vertical midline between the two columns.
+  const drawLinks=n=>n.children.map(c=>{
+    const px=n.x+n.w, py=n.y+n.h/2, cx=c.x, cy=c.y+c.h/2, mid=(px+cx)/2;
+    return `<path d="M${px} ${py} C${mid} ${py} ${mid} ${cy} ${cx} ${cy}" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/>`
+      +drawLinks(c);
+  }).join("");
+
+  host.innerHTML=`<svg viewBox="0 0 ${G.SVG_W} ${forest.totalHeight}" xmlns="http://www.w3.org/2000/svg" class="tree" role="img" aria-label="West Coast Swing move family tree, generated from the move list">`
+    +forest.map(f=>
+      `<text x="24" y="${f.headY}" font-family="Iowan Old Style,Georgia,serif" font-size="19" font-weight="600" fill="#c99a3f">${esc(f.name)}</text>`
+      +f.roots.map(drawLinks).join("")+f.roots.map(drawNode).join("")
+    ).join("")
+    +`</svg>`;
+}
+
 document.getElementById("rep").addEventListener("click",function(){
   repOnly=!repOnly;
   this.classList.toggle("on",repOnly);
@@ -715,7 +781,7 @@ document.getElementById("reset").addEventListener("click",function(){
   render();
 });
 
-(function init(){ load(); buildChips(); render(); renderDrills(); })();
+(function init(){ load(); buildChips(); render(); renderDrills(); renderTree2(); })();
 </script>
 </body>
 </html>
