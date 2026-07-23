@@ -190,6 +190,21 @@
     border-left:1px solid var(--brass-lo);padding-left:12px;margin-top:2px}
   .fnd-note{color:var(--tx-dim);font-size:14px;max-width:64ch;margin:0 0 14px}
 
+  /* challenge card */
+  .challenge{background:var(--ink2);border:1px solid var(--brass-lo);border-radius:16px;padding:18px 20px;margin:8px 0}
+  .challenge .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin-bottom:6px}
+  .challenge .activity{font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.03em;margin:0 0 10px}
+  .challenge .lead{font-size:16px;color:var(--tx);margin:0 0 6px;max-width:64ch;line-height:1.45}
+  .challenge .lead b{color:var(--brass-hi);font-weight:600}
+  .challenge .meta{font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.02em;margin:0 0 12px}
+  .challenge .meta b{color:var(--tx)}
+  .challenge .double{color:var(--got);font-size:14px;line-height:1.45;margin:10px 0 0;max-width:64ch}
+  .challenge .act{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .cbtn{font-family:var(--body);font-size:15px;font-weight:600;border-radius:10px;padding:11px 18px;
+    min-height:44px;cursor:pointer;border:1px solid var(--brass);background:var(--brass);color:#231a08;transition:.15s}
+  .cbtn.ghost{background:transparent;color:var(--brass-hi);border-color:var(--brass-lo)}
+  .cbtn:hover{filter:brightness(1.06)}
+
   footer{padding:40px 0 70px;color:var(--tx-dim);font-size:13px;max-width:70ch}
   footer a{color:var(--brass-hi)}
   .fade{opacity:0;transform:translateY(14px);animation:rise .6s forwards}
@@ -219,6 +234,8 @@
 </div>
 
 <div class="wrap">
+
+  <section><div class="challenge" id="challenge" aria-live="polite"></div></section>
 
   <section>
     <div class="levers">
@@ -860,6 +877,145 @@ function pickDrill(){
 }
 // ---- end challenge engine ---------------------------------------------------
 
+// ---- challenge card (F2) ----------------------------------------------------
+// Four states: idle / offered / accepted / done. Only "accepted" persists, via
+// gameState.open, so a closed tab reopens onto the same challenge. The offer and
+// the done confirmation are transient UI.
+let challengeOffer=null;   // {type:"move"|"drill", move?, drill?, outran?}
+let challengeDone=null;    // HTML fragment for the confirmation panel
+
+function fmtMinutes(m){
+  if(m<60) return m+"m";
+  const h=Math.floor(m/60), r=m%60;
+  return r?`${h}h ${r}m`:`${h}h`;
+}
+// Distinct activity days in the last rolling 7 days — a count, never a streak.
+function daysThisWeek(){
+  const d=new Date(), p=n=>String(n).padStart(2,"0");
+  const cut=new Date(d.getFullYear(),d.getMonth(),d.getDate()-6);
+  const key=x=>`${x.getFullYear()}-${p(x.getMonth()+1)}-${p(x.getDate())}`;
+  const c=key(cut);
+  return gameState.dates.filter(s=>s>=c).length;   // ISO strings compare correctly
+}
+function activityLine(){
+  const t=gameState.totals;
+  if(!(t.drills||t.moves||gameState.dates.length)) return "";
+  const days=daysThisWeek();
+  const parts=[`${days} ${days===1?"day":"days"} this week`, `${t.drills} ${t.drills===1?"drill":"drills"}`];
+  if(t.minutes) parts.push(fmtMinutes(t.minutes));
+  return `<div class="activity">${parts.join(" · ")}</div>`;
+}
+
+function moveBody(m,outran){
+  if(!m) return `<p class="lead">You've marked every ownable move on the tree. That's the whole map — go social dancing.</p>`;
+  const fam=(FAMS.find(f=>f.id===m.fam)||{}).name||m.fam;
+  const builds=m.builds?` &middot; builds on <b>${esc(m.builds)}</b>`:"";
+  const note=outran?`<p class="meta">This one's above your marked level — you've outrun the tree. Give it a shot anyway.</p>`:"";
+  return `<p class="lead"><b>${esc(m.name)}</b></p><p class="meta">${esc(fam)}${builds}</p>${note}`;
+}
+function drillBody(d){
+  if(!d) return `<p class="lead">No drill to show right now.</p>`;
+  return `<p class="lead"><b>${esc(d.name)}</b></p><p class="meta">${d.mins} min &middot; develops ${esc(d.develops)}</p>`;
+}
+
+function renderChallenge(){
+  const el=document.getElementById("challenge");
+  if(!el) return;
+  const act=activityLine();
+  let html;
+  if(challengeDone){
+    html=`<div class="k">Nice</div>${act}${challengeDone}
+      <div class="act"><button class="cbtn" data-c="reset">What's next</button></div>`;
+  }else if(gameState.open){
+    const o=gameState.open;
+    const body=o.type==="move"?moveBody(moveById(o.id)):drillBody(drillById(o.id));
+    html=`<div class="k">Your challenge</div>${act}${body}
+      <div class="act"><button class="cbtn" data-c="done">Mark it done</button>
+        <button class="cbtn ghost" data-c="abandon">Not now</button></div>`;
+  }else if(challengeOffer){
+    const co=challengeOffer;
+    const body=co.type==="move"?moveBody(co.move,co.outran):drillBody(co.drill);
+    html=`<div class="k">Try this</div>${act}${body}
+      <div class="act"><button class="cbtn" data-c="accept">I'll do it</button>
+        <button class="cbtn ghost" data-c="reroll">Something else</button></div>`;
+  }else{
+    html=`<div class="k">Your move</div>${act}
+      <p class="lead">Not sure what to work on? Let the app pick one thing. It won't hand you a move you don't have the pieces for yet.</p>
+      <div class="act"><button class="cbtn" data-c="move">Learn a move</button>
+        <button class="cbtn" data-c="drill">Run a drill</button></div>`;
+  }
+  el.innerHTML=html;
+  el.querySelectorAll("[data-c]").forEach(b=>b.addEventListener("click",()=>challengeAction(b.dataset.c)));
+}
+function moveById(id){ return MOVES.find(m=>m.id===id); }
+function drillById(id){ return DRILLS.find(d=>d.id===id); }
+
+function offerCategory(type){
+  const picked=type==="move"?pickMove():pickDrill();
+  const empty = !picked || (type==="move" && !picked.move);
+  if(empty){
+    challengeOffer=null;
+    challengeDone = type==="move"
+      ? `<p class="lead">You've marked every ownable move on the tree. That's genuinely the whole map — time to go dance it.</p>`
+      : `<p class="lead">No drill to offer right now.</p>`;
+    renderChallenge(); return;
+  }
+  const id=type==="move"?picked.move.id:picked.id;
+  challengeOffer=type==="move"?{type,move:picked.move,outran:picked.outran}:{type,drill:picked};
+  logEvent({ts:Date.now(),type,id,action:"offered"});
+  saveGame(); renderChallenge();
+}
+
+function completeOpen(){
+  const o=gameState.open; if(!o) return;
+  const now=Date.now();
+  markToday();
+  if(o.type==="move"){
+    const m=moveById(o.id);
+    setStatus(o.id,"learning");   // never "got" — fifteen minutes with a video isn't ownership
+    gameState.totals.moves=(gameState.totals.moves||0)+1;
+    logEvent({ts:now,type:"move",id:o.id,action:"completed",source:"challenge"});
+    challengeDone=`<p class="lead">Marked <b>${esc(m?m.name:o.id)}</b> as <b>learning</b>. Fifteen minutes with a video isn't owning it — drill it, dance it, then flip it to Got it yourself when it's really yours.</p>`;
+  }else{
+    const d=drillById(o.id);
+    gameState.totals.drills=(gameState.totals.drills||0)+1;
+    gameState.totals.minutes=(gameState.totals.minutes||0)+(d?d.mins:0);
+    logEvent({ts:now,type:"drill",id:o.id,action:"completed"});
+    let msg=`<p class="lead">Logged <b>${esc(d?d.name:o.id)}</b>${d?` — ${d.mins} minutes in the bank`:""}.</p>`;
+    if(d&&d.move&&!gameState.credited.includes(d.move)){
+      gameState.credited.push(d.move);
+      msg+=`<p class="double">That one counted twice — footwork that keeps the stretch is anchor practice, so the Anchor foundation moved too.</p>`;
+    }
+    challengeDone=msg;
+  }
+  gameState.open=null;
+  saveGame();       // setStatus already persisted wcs-progress-v1; this persists gameState
+  renderChallenge();
+}
+
+function challengeAction(cmd){
+  const now=Date.now();
+  if(cmd==="move"||cmd==="drill"){ challengeDone=null; offerCategory(cmd); }
+  else if(cmd==="accept"){
+    const co=challengeOffer; if(!co) return;
+    const id=co.type==="move"?co.move.id:co.drill.id;
+    gameState.open={type:co.type,id,ts:now};
+    logEvent({ts:now,type:co.type,id,action:"accepted"});
+    challengeOffer=null; saveGame(); renderChallenge();
+  }else if(cmd==="reroll"){
+    const co=challengeOffer; if(!co) return;
+    const id=co.type==="move"?co.move.id:co.drill.id;
+    logEvent({ts:now,type:co.type,id,action:"skipped"});
+    offerCategory(co.type);
+  }else if(cmd==="done"){ completeOpen(); }
+  else if(cmd==="abandon"){
+    const o=gameState.open;
+    if(o) logEvent({ts:now,type:o.type,id:o.id,action:"skipped"});
+    gameState.open=null; challengeOffer=null; saveGame(); renderChallenge();
+  }else if(cmd==="reset"){ challengeDone=null; renderChallenge(); }
+}
+// ---- end challenge card -----------------------------------------------------
+
 function setStatus(id,target){
   const cur=state[id]||"none";
   if(cur===target) delete state[id]; else state[id]=target;
@@ -1280,7 +1436,7 @@ window.addEventListener("resize",()=>{
 DRILLS.forEach(d=>{ if(d.move && !MOVES.some(m=>m.id===d.move))
   console.warn(`[drills] "${d.id}" points at move "${d.move}", which doesn't exist`); });
 
-(function init(){ load(); buildChips(); render(); renderDrills(); loadGame(); renderTree2(); })();
+(function init(){ load(); buildChips(); render(); renderDrills(); loadGame(); renderTree2(); renderChallenge(); })();
 </script>
 </body>
 </html>
