@@ -151,6 +151,9 @@
   .treekey .d{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
   .treewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px}
   .tree{display:block;width:100%;min-width:640px;height:auto}
+  /* The dynamic tree sizes its own viewBox to the container, so it never needs
+     the horizontal scroll the hand-made SVG depends on. */
+  .tree-dyn{min-width:0}
   #tree2 g[data-fid]{cursor:pointer}
   /* Chrome does not match :focus on an SVG <g>, and outline does not paint on
      SVG reliably — so focus is flagged by an attribute and drawn as a stroke. */
@@ -818,6 +821,7 @@ function layoutTree(forest,opts){
     y=cy+G.FAM_GAP;
   });
   forest.totalHeight=y-G.FAM_GAP+G.PAD_BOTTOM;
+  forest.geo=G;   // merged geometry, so renderTree2 can read the effective SVG_W
   return forest;
 }
 
@@ -852,12 +856,26 @@ function ladderChildren(fid){
     .map(r=>({rung:Object.assign({fid:fid},r), children:[]}));
 }
 
+// Picks a column count from the measured container. Node text is 11 user units, so
+// rendered size is 11 × (containerPx / viewBoxWidth) — four columns at 900 wide lands
+// at 3.7px on a phone, which is why narrow screens drop to one column at scale 1.
+// Returns null when the element isn't measurable yet (hidden section, zero width).
+function treeView(px){
+  if(!px) return null;
+  if(px>=760) return {MAX_COLS:4,NODE_W:182,COL_STEP:212,SVG_W:900};
+  if(px>=560) return {MAX_COLS:2,NODE_W:182,COL_STEP:212,SVG_W:442};
+  const w=Math.round(px);
+  return {MAX_COLS:1,NODE_W:w-TREE_GEO.COL_X-TREE_GEO.PAD_RIGHT,COL_STEP:0,SVG_W:w};
+}
+
 // Draws the forest as an SVG string and injects it. Off unless ?game=1.
 function renderTree2(){
   if(!GAME) return;
   const host=document.getElementById("tree2");
   if(!host) return;
   document.getElementById("tree2-section").removeAttribute("hidden");
+  const px=host.clientWidth;
+  const view=treeView(px)||{};
 
   const G=TREE_GEO;
   // Foundations are childless in MOVES; their children are ladder rungs, not
@@ -866,12 +884,13 @@ function renderTree2(){
   const built=buildTree();
   built.forEach(f=>{ if(f.fam==="foundation")
     f.roots.forEach(r=>{ r.children=ladderChildren(r.move.id); }); });
-  const forest=layoutTree(built);
+  const forest=layoutTree(built,view);
+  treeBucket=view.MAX_COLS||null;   // seed the resize comparison on first render
 
   const drawRung=n=>{
     const r=n.rung, hit=isRungReached(r.fid,r.lvl);
     const c=hit?RUNG_REACHED:(r.bonus?RUNG_BONUS:RUNG_UNREACHED);
-    const lines=treeLabel((r.bonus?"Bonus":"L"+r.lvl)+" · "+r.label);
+    const lines=treeLabel((r.bonus?"Bonus":"L"+r.lvl)+" · "+r.label,n.w);
     const fname=(MOVES.find(m=>m.id===r.fid)||{}).name||r.fid;
     const aria=`${fname} ${r.bonus?"bonus":"level "+r.lvl}, ${r.label}, ${hit?"reached":"not reached"}`;
     let s=`<g data-fid="${esc(r.fid)}" data-lvl="${r.lvl}" role="button" tabindex="0" aria-label="${esc(aria)}">`
@@ -885,7 +904,7 @@ function renderTree2(){
     }
     // The Anchor's L5 winks at the footwork family. No other rung gets a glyph —
     // rungs are progression steps, not levers.
-    if(r.pointsToFootwork) s+=`<text x="${n.x+173}" y="${n.y+19}" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text>`;
+    if(r.pointsToFootwork) s+=`<text x="${n.x+n.w-9}" y="${n.y+19}" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text>`;
     return s+`</g>`;
   };
 
@@ -893,7 +912,7 @@ function renderTree2(){
     if(n.rung) return drawRung(n);
     const art=LEVER_ART[n.move.lever];
     const c=art?art[0]:ROOT_ACCENT;
-    const lines=treeLabel(n.move.name);
+    const lines=treeLabel(n.move.name,n.w);
     let s=`<rect x="${n.x}" y="${n.y}" rx="${G.RX}" width="${n.w}" height="${n.h}" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/>`
       +`<rect x="${n.x}" y="${n.y}" rx="${G.RX}" width="6" height="${n.h}" fill="${c}"/>`;
     if(lines.length===1){
@@ -902,7 +921,7 @@ function renderTree2(){
       s+=`<text x="${n.x+13}" y="${n.y+11}" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">${esc(lines[0])}</text>`
         +`<text x="${n.x+13}" y="${n.y+23}" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">${esc(lines[1])}</text>`;
     }
-    if(art) s+=`<text x="${n.x+173}" y="${n.y+19}" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="${c}">${art[1]}</text>`;
+    if(art) s+=`<text x="${n.x+n.w-9}" y="${n.y+19}" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="${c}">${art[1]}</text>`;
     return s+n.children.map(drawNode).join("");
   };
   // Control points sit on the vertical midline between the two columns.
@@ -912,7 +931,7 @@ function renderTree2(){
       +drawLinks(c);
   }).join("");
 
-  host.innerHTML=`<svg viewBox="0 0 ${G.SVG_W} ${forest.totalHeight}" xmlns="http://www.w3.org/2000/svg" class="tree" role="img" aria-label="West Coast Swing move family tree, generated from the move list">`
+  host.innerHTML=`<svg viewBox="0 0 ${forest.geo.SVG_W} ${forest.totalHeight}" xmlns="http://www.w3.org/2000/svg" class="tree tree-dyn" role="img" aria-label="West Coast Swing move family tree, generated from the move list">`
     +forest.map(f=>
       `<text x="24" y="${f.headY}" font-family="Iowan Old Style,Georgia,serif" font-size="19" font-weight="600" fill="#c99a3f">${esc(f.name)}</text>`
       +f.roots.map(drawLinks).join("")+f.roots.map(drawNode).join("")
@@ -979,6 +998,20 @@ document.getElementById("reset").addEventListener("click",function(){
   document.getElementById("rep").classList.remove("on");
   document.getElementById("rep").textContent="◆ My repertoire";
   render();
+});
+
+// Re-layout on rotation or a resized window, but only when the column bucket actually
+// changes — a re-render replaces the node under the user's finger and drops focus.
+let treeBucket=null, treeTimer=null;
+window.addEventListener("resize",()=>{
+  clearTimeout(treeTimer);
+  treeTimer=setTimeout(()=>{
+    const host=document.getElementById("tree2");
+    if(!host) return;
+    const v=treeView(host.clientWidth);
+    const b=v?v.MAX_COLS:null;
+    if(b!==treeBucket){ treeBucket=b; renderTree2(); }
+  },150);
 });
 
 (function init(){ load(); buildChips(); render(); renderDrills(); if(GAME){ loadGame(); renderTree2(); } compareTrees(); })();
