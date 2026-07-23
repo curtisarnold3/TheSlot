@@ -347,7 +347,7 @@
     </div>
   </section>
 
-  <section id="drill-section" hidden>
+  <section id="drill-section">
     <div class="block">
       <div class="k">The drill bank &middot; partner not required</div>
       <h2>Things you can drill alone, today</h2>
@@ -754,10 +754,6 @@ const LADDERS = {
   ]
 };
 
-// Game layer, off by default. Enable with ?game=1
-// Deliberately NOT persisted this sprint — the URL is the only switch.
-const GAME = new URLSearchParams(location.search).get("game") === "1";
-
 const STORE_KEY="wcs-progress-v1";
 let state={};
 let famFilter="all";
@@ -1108,10 +1104,8 @@ function buildChips(){
 
 // Renders the drill bank. No-ops entirely unless ?game=1 is on the URL.
 function renderDrills(){
-  if(!GAME) return;
   const wrap=document.getElementById("drills");
   if(!wrap) return;
-  document.getElementById("drill-section").removeAttribute("hidden");
 
   const order=["f-time","f-slot","f-starter","f-anchor","f-roll","f-conn"];
   wrap.innerHTML=order.map(fnd=>{
