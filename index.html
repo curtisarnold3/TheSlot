@@ -70,6 +70,11 @@
   .reset:hover{color:var(--tx)}
 
   section{padding:20px 0}
+  /* The game layer ships dark (D-012). `hidden` is styled display:none by the UA
+     stylesheet, but that has near-zero specificity — any later `display` rule on a
+     section would silently win and reveal an unreviewed section on the live site.
+     This makes the dark-ship guarantee structural instead of leaning on that default. */
+  [hidden]{display:none !important}
   .section-lead{max-width:64ch}
   h2.big{font-family:var(--display);font-size:clamp(26px,5vw,40px);margin:8px 0 4px;font-weight:600}
 
