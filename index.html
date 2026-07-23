@@ -608,7 +608,12 @@ function setStatus(id,target){
   save(); render();
 }
 
-function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+// Coerces rather than assuming a string: esc() runs during init(), so one bad
+// data type would take down the whole page instead of one card (D-013). Escapes
+// double quotes too — rung labels and aria strings are interpolated into SVG
+// attributes, where an unescaped quote would break the markup.
+function esc(s){return (s==null?"":String(s))
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");}
 
 function moveCard(m){
   const st=state[m.id]||"none";
