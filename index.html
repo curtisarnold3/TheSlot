@@ -761,24 +761,53 @@ function save(){
 // Storage failure (private browsing, quota) degrades rung marking to
 // non-persistent — it never throws.
 const GAME_KEY="wcs-game-v1";
-let gameState={rungs:{}};
+function defaultGame(){
+  return {v:2, rungs:{}, credited:[], history:[], totals:{drills:0,minutes:0,moves:0}, dates:[], open:null};
+}
+let gameState=defaultGame();
 
 // One place that knows the key format. Rung identity is foundation id + level,
 // not the label — two foundations share the label "Stay in it".
 function rungKey(fid,lvl){ return `${fid}-${lvl}`; }
 
+// Coerces any stored shape into a valid v2 object without losing rungs. A missing
+// `v` is a v1 store ({rungs} only): keep the rungs, default the rest. Arrays and
+// non-objects are rejected wholesale (L-005) — an array passes typeof "object" but
+// JSON.stringify drops added props, silently eating every later write.
+function normalizeGame(p){
+  const g=defaultGame();
+  const obj=o=>o && typeof o==="object" && !Array.isArray(o);
+  if(!obj(p)) return g;
+  if(obj(p.rungs)) g.rungs=p.rungs;
+  if(p.v===2){
+    if(Array.isArray(p.credited)) g.credited=p.credited;
+    if(Array.isArray(p.history)) g.history=p.history.slice(-200);
+    if(Array.isArray(p.dates)) g.dates=p.dates;
+    if(obj(p.totals)) g.totals={drills:+p.totals.drills||0, minutes:+p.totals.minutes||0, moves:+p.totals.moves||0};
+    if(obj(p.open)) g.open=p.open;
+  }
+  return g;
+}
+
 function loadGame(){
-  try{
-    const raw=localStorage.getItem(GAME_KEY);
-    // Arrays pass a typeof "object" check but drop added props on stringify,
-    // which would silently discard every later write. Plain objects only.
-    if(raw){ const parsed=JSON.parse(raw);
-      gameState=(parsed&&typeof parsed==="object"&&!Array.isArray(parsed))?parsed:{rungs:{}}; }
-  }catch(e){ gameState={rungs:{}}; }
-  if(!gameState.rungs||typeof gameState.rungs!=="object") gameState.rungs={};
+  let parsed=null;
+  try{ const raw=localStorage.getItem(GAME_KEY); if(raw) parsed=JSON.parse(raw); }catch(e){ parsed=null; }
+  gameState=normalizeGame(parsed);
 }
 function saveGame(){
   try{ localStorage.setItem(GAME_KEY, JSON.stringify(gameState)); }catch(e){}
+}
+
+// Append a history event, newest kept, capped at 200 so storage can't grow forever.
+function logEvent(ev){
+  gameState.history.push(ev);
+  if(gameState.history.length>200) gameState.history=gameState.history.slice(-200);
+}
+// Stamp today's date (local YYYY-MM-DD) into the activity set, once per day.
+function markToday(){
+  const d=new Date(), p=n=>String(n).padStart(2,"0");
+  const key=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  if(!gameState.dates.includes(key)) gameState.dates.push(key);
 }
 
 function isRungReached(fid,lvl){ return !!gameState.rungs[rungKey(fid,lvl)]; }
