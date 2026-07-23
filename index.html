@@ -333,8 +333,8 @@
   <section id="drill-section" hidden>
     <div class="block">
       <div class="k">The drill bank &middot; partner not required</div>
-      <h2>Eleven things you can drill alone, today</h2>
-      <p>The tree tells you what to learn. These tell you what to <em>drill</em> — and drilling is the part that actually moves a move from "I've seen it" to "I own it." Every one of these works in a kitchen, alone, with no partner and no floor. Start at level one and climb.</p>
+      <h2>Things you can drill alone, today</h2>
+      <p>The tree tells you what to learn. These tell you what to <em>drill</em> — and drilling is the part that moves a move from "I've seen it" to "I own it." Every one of these works in a kitchen, alone, with no partner and no floor. Each foundation climbs from level one; the footwork is a spread, not a ladder, so start wherever you like.</p>
       <div id="drills"></div>
     </div>
   </section>
@@ -898,8 +898,11 @@ function renderDrills(){
       .slice()
       .sort((a,b)=>(a.lvl===0)-(b.lvl===0) || a.lvl-b.lvl);
     if(!list.length) return "";
+    const note = fnd==="f-conn"
+      ? `<p class="fnd-note">Connection is the one foundation a doorframe can only half-teach. These build the shape and the habits. The conversation needs a person.</p>`
+      : "";
     return `<h3 class="fnd-head">${esc(head)}</h3>
-      <div class="drills">${list.map(drillCard).join("")}</div>`;
+      ${note}<div class="drills">${list.map(drillCard).join("")}</div>`;
   }).join("");
 
   const fw=DRILLS.filter(d=>d.move).slice().sort((a,b)=>a.lvl-b.lvl);
