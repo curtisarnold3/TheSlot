@@ -188,6 +188,7 @@
   .drill .blurb{font-size:14px;color:#3f3826;line-height:1.5;flex:1}
   .drill .cue{font-size:15px;font-style:italic;color:#3f3826;line-height:1.45;
     border-left:1px solid var(--brass-lo);padding-left:12px;margin-top:2px}
+  .fnd-note{color:var(--tx-dim);font-size:14px;max-width:64ch;margin:0 0 14px}
 
   footer{padding:40px 0 70px;color:var(--tx-dim);font-size:13px;max-width:70ch}
   footer a{color:var(--brass-hi)}
@@ -600,7 +601,89 @@ const DRILLS = [
   {id:"d-match", fnd:"f-conn", lvl:5, name:"Match your partner", mins:5, partner:false,
    develops:"adjustable tone",
    blurb:"The one you can't finish alone. Against your towel, deliberately vary how much tension you offer — light, then firm, then light again — and notice how different each one feels through your hand. Then take it to a person at the next social; this rung graduates off the doorframe.",
-   cue:"Nobody feels the same. Noticing that is the skill."}
+   cue:"Nobody feels the same. Noticing that is the skill."},
+
+  // Footwork family — one drill per card. `move` names the footwork card the drill
+  // advances; `fnd` carries the Anchor credit (D-008). `lvl` orders this group only.
+  {id:"d-fw-anchor", fnd:"f-anchor", move:"a-anchor", lvl:1, name:"Anchor Step", mins:4, partner:false,
+   develops:"the baseline",
+   blurb:"The plain triple in place — ball, change, ball — settling back into third. Drill it to a slow song until it's dull. Everything else in this family is this with decoration, so if this one is shaky, decorating it only makes the shakiness harder to see.",
+   cue:"Boring and correct beats interesting and early."},
+
+  {id:"d-fw-touch", fnd:"f-anchor", move:"a-touch", lvl:1, name:"Touch Step", mins:3, partner:false,
+   develops:"ankle control and timing",
+   blurb:"Touch the floor on the downbeat, then step onto it on the \"and.\" Side to side, over and over. The simplest footwork drill on the site and probably the best value — you can do it while the kettle boils.",
+   cue:"If it holds you up, it's a step."},
+
+  {id:"d-fw-steptouch", fnd:"f-anchor", move:"a-steptouch", lvl:1, name:"Step Touch", mins:3, partner:false,
+   develops:"the mirror rhythm",
+   blurb:"The reverse: step on the downbeat, touch on the \"and.\" Drill it back to back with the touch step so your ankles stop caring which order they're in.",
+   cue:"Same two things, swapped. Do both directions."},
+
+  {id:"d-fw-point", fnd:"f-anchor", move:"a-point", lvl:1, name:"Point Step", mins:3, partner:false,
+   develops:"clean lines",
+   blurb:"A touch with the toe pointed, then step. Same rhythm as the touch step, better lines. The whole difference is whether you bothered to finish the foot.",
+   cue:"Point at the floor, not at the wall."},
+
+  {id:"d-fw-coaster", fnd:"f-anchor", move:"a-coaster", lvl:2, name:"Coaster Step", mins:4, partner:false,
+   develops:"direction changes",
+   blurb:"Step, together, step — borrowed from country and ballroom, handy for changing direction. It's also the footwork most likely to drift you forward, which turns your anchor into a stop.",
+   cue:"Three steps that go somewhere, over a body that doesn't."},
+
+  {id:"d-fw-side3", fnd:"f-anchor", move:"a-side3", lvl:3, name:"Side-and-Third Anchor", mins:4, partner:false,
+   develops:"gentle variation",
+   blurb:"Step to the side, then close to third. Because it still lands in third, the away-stretch takes care of itself — which makes this the safest first variation anyone can add.",
+   cue:"Wander sideways, land in third anyway."},
+
+  {id:"d-fw-cross3", fnd:"f-anchor", move:"a-cross3", lvl:3, name:"Cross-and-Third Anchor", mins:4, partner:false,
+   develops:"styled anchors",
+   blurb:"Cross behind, then close to third. A little more sass, same safe landing. Check that the cross doesn't pull your weight forward as you go — that's the one way this breaks.",
+   cue:"Sass above, third position below."},
+
+  {id:"d-fw-sweep", fnd:"f-anchor", move:"a-sweep", lvl:4, name:"Sweep", mins:4, partner:false,
+   develops:"grounded flourish",
+   blurb:"Drag or smear the free foot across the floor before you step. It's smooth, it's grounded, and it changes nothing about your timing — which is exactly why it's a good first flourish.",
+   cue:"Drag it. Don't lift it."},
+
+  {id:"d-fw-ronde", fnd:"f-anchor", move:"a-ronde", lvl:4, name:"Ronde", mins:5, partner:false,
+   develops:"a showy line",
+   blurb:"A sweep taken all the way around: a circular arc of the free leg. Elegant when the music opens up, silly when it doesn't. Keep the supporting knee soft and the arc low.",
+   cue:"If the floor's full, save it."},
+
+  {id:"d-fw-kbc", fnd:"f-anchor", move:"a-kbc", lvl:5, name:"Kick-Ball-Change", mins:4, partner:false,
+   develops:"accented anchors",
+   blurb:"Kick on the downbeat, quick ball-change back to where you started. When a song shouts on that beat, this is cheap, instant musicality. Keep the kick low — knee-height kicks on a crowded floor make enemies.",
+   cue:"Kick from the ankle, not the knee."},
+
+  {id:"d-fw-pbc", fnd:"f-anchor", move:"a-pbc", lvl:5, name:"Point-Ball-Change", mins:4, partner:false,
+   develops:"polish",
+   blurb:"Same rhythm as the kick, but point and touch instead of kicking. It reads as more finished for exactly zero extra difficulty, which is the best trade in the family.",
+   cue:"Same rhythm. Prettier foot."},
+
+  {id:"d-fw-sbc", fnd:"f-anchor", move:"a-sbc", lvl:5, name:"Step-Ball-Change", mins:3, partner:false,
+   develops:"a workhorse rhythm",
+   blurb:"Step, then ball-change. The plainest of the family and the one you'll reach for most. Drill it until it's automatic and it becomes the thing your feet do when your brain is busy.",
+   cue:"The one you'll use when you're not thinking."},
+
+  {id:"d-fw-swivelbc", fnd:"f-anchor", move:"a-swivelbc", lvl:5, name:"Swivel-Ball-Change", mins:5, partner:false,
+   develops:"accented direction change",
+   blurb:"Swivel the free foot sideways instead of kicking, then ball-change. The swivel marks a change of direction just before you settle.",
+   cue:"Swivel below the ribs. Shoulders stay out of it."},
+
+  {id:"d-fw-swivels", fnd:"f-anchor", move:"a-swivels", lvl:6, name:"Swivels", mins:4, partner:false,
+   develops:"hip and foot articulation",
+   blurb:"Swivel feet and hips in place. A little goes a long way — overdone it reads as fidgety rather than confident. Drill it to a slow song and stop before you want to.",
+   cue:"Two is styling. Six is fidgeting."},
+
+  {id:"d-fw-hitch", fnd:"f-anchor", move:"a-hitch", lvl:7, name:"Hitch", mins:5, partner:false,
+   develops:"stretch styling",
+   blurb:"Same rhythm as a kick-ball-change, but instead of kicking you just keep stretching, rolling the anchor foot through an extra beat. Pure connection styling. Drill it against a doorframe so you can check the stretch is real.",
+   cue:"The beat passes. You keep stretching."},
+
+  {id:"d-fw-sync", fnd:"f-anchor", move:"a-sync", lvl:8, name:"Syncopated Triple", mins:5, partner:false,
+   develops:"rhythmic punch",
+   blurb:"Slip an extra \"and\" in before the downbeat to punch the beat. Powerful, and the single biggest cause of a rushed anchor on this whole list — the extra step tempts you forward. Drill it slowly.",
+   cue:"The punch is worth nothing if the anchor left early."}
 ];
 
 // The six foundations' progression rungs. Keys are foundation move ids in MOVES.
@@ -811,17 +894,24 @@ function renderDrills(){
   wrap.innerHTML=order.map(fnd=>{
     const src=MOVES.find(m=>m.id===fnd);
     const head=src?src.name:fnd;
-    const list=DRILLS.filter(d=>d.fnd===fnd)
+    const list=DRILLS.filter(d=>d.fnd===fnd && !d.move)
       .slice()
       .sort((a,b)=>(a.lvl===0)-(b.lvl===0) || a.lvl-b.lvl);
     if(!list.length) return "";
     return `<h3 class="fnd-head">${esc(head)}</h3>
       <div class="drills">${list.map(drillCard).join("")}</div>`;
   }).join("");
+
+  const fw=DRILLS.filter(d=>d.move).slice().sort((a,b)=>a.lvl-b.lvl);
+  if(fw.length){
+    wrap.innerHTML += `<h3 class="fnd-head">Anchor &amp; footwork</h3>
+      <p class="fnd-note">Every one of these is an anchor if the away-stretch survives it, and just fancy feet if it doesn't. That's also why they're the best fifteen minutes on the site: drill one and you're drilling the anchor at the same time.</p>
+      <div class="drills">${fw.map(drillCard).join("")}</div>`;
+  }
 }
 
 function drillCard(d){
-  const lvl=d.lvl===0?"Bonus":`Level ${d.lvl}`;
+  const lvl=d.move?"Footwork":(d.lvl===0?"Bonus":`Level ${d.lvl}`);
   return `<article class="drill">
     <div class="name">${esc(d.name)}</div>
     <div class="meta">
