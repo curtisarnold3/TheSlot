@@ -769,13 +769,14 @@ function buildTree(){
 // SUBTREE_GAP is derived: depth-1 siblings that have children sit 51 apart where
 // plain siblings sit 34 apart, so the extra separation is 17 (half the pitch).
 const TREE_GEO={NODE_W:182,NODE_H:30,RX:7,COL_X:24,COL_STEP:212,
-  PITCH:34,SUBTREE_GAP:17,HEAD_Y:28,HEAD_DY:22,FAM_GAP:46,PAD_BOTTOM:24,SVG_W:900};
+  PITCH:34,SUBTREE_GAP:17,HEAD_Y:28,HEAD_DY:22,FAM_GAP:46,PAD_BOTTOM:24,SVG_W:900,
+  MAX_COLS:4,INDENT:16,PAD_RIGHT:16};
 
 // Assigns x/y/w/h to every node and stacks families down the page. Pure apart from
 // mutating the forest it is handed. Each family also gets headY/top/height; the
 // returned array carries totalHeight for the viewBox.
-function layoutTree(forest){
-  const G=TREE_GEO;
+function layoutTree(forest,opts){
+  const G=Object.assign({},TREE_GEO,opts||{});
   // Two adjacent leaves need only the pitch; anything with children gets breathing room.
   const gapBetween=(a,b)=>(a.children.length||b.children.length)?G.SUBTREE_GAP:0;
   const span=n=>{
@@ -785,7 +786,13 @@ function layoutTree(forest){
     return Math.max(G.PITCH,s);
   };
   const place=(n,depth,top)=>{
-    n.x=G.COL_X+depth*G.COL_STEP; n.w=G.NODE_W; n.h=G.NODE_H;
+    // Past MAX_COLS the tree stops adding columns and expresses depth as indentation
+    // instead, so a narrow screen gets one legible column rather than four tiny ones.
+    // Width shrinks by the same amount so right edges stay flush.
+    const col=Math.min(depth,G.MAX_COLS-1), over=depth-col;
+    n.x=G.COL_X+col*G.COL_STEP+over*G.INDENT;
+    n.w=G.NODE_W-over*G.INDENT;
+    n.h=G.NODE_H;
     let cy=top;
     n.children.forEach((c,i)=>{
       if(i) cy+=gapBetween(n.children[i-1],c);
@@ -823,8 +830,9 @@ const ROOT_ACCENT="#8f6e2b";
 
 // Splits a label at the space nearest its middle, matching the static file
 // ("Sugar Tuck w/ Inside Turn" -> "Sugar Tuck w/" + "Inside Turn").
-function treeLabel(name){
-  if(name.length<=21) return [name];
+function treeLabel(name,w){
+  const threshold=Math.round(21*((w||TREE_GEO.NODE_W)/TREE_GEO.NODE_W));
+  if(name.length<=threshold) return [name];
   const mid=name.length/2; let at=-1;
   for(let i=0;i<name.length;i++)
     if(name[i]===" " && (at<0||Math.abs(i-mid)<Math.abs(at-mid))) at=i;
