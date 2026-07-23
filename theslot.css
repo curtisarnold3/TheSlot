@@ -1,0 +1,17 @@
+/* theslot.css — shared design tokens for The Slot. Loaded first by both pages.
+   The :root block only; layout CSS stays inline in each page (no tokenization
+   pass this sprint). */
+  :root{
+    --ink:#181425; --ink2:#211a34; --ink3:#2b2343;
+    --paper:#efe7d6; --paper2:#e5dbc3; --paper3:#ded2b6;
+    --brass:#c99a3f; --brass-lo:#8f6e2b; --brass-hi:#ecc069;
+    --got:#54a58c; --got-lo:#3c7d69; --learning:#dd934a;
+    --tx:#efe7d6; --tx-dim:#b3a9c6; --tx-ink:#241f36;
+    --line:#463b62;
+    /* lever colors */
+    --lv-hand:#7a6bb0; --lv-turn:#c99a3f; --lv-rev:#c8757f;
+    --lv-entry:#4f8a9c; --lv-exit:#b06a3a;
+    --display:'Iowan Old Style','Palatino Linotype','Georgia',serif;
+    --body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  }
