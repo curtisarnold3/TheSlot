@@ -822,6 +822,44 @@ function toggleRung(fid,lvl){
 }
 // ---- end game-layer storage -------------------------------------------------
 
+// ---- challenge engine -------------------------------------------------------
+// The user picks the category; the engine picks the item (D-023).
+
+// pickMove: an ownable move to learn next. Skips foundations (they're ladders, not
+// ownable) and anything already got. Prerequisite-aware — a move with a `builds`
+// parent is only eligible once that parent is got. Prefers the lowest diff, then
+// something not offered recently, then random. If nothing is eligible the user has
+// outrun the tree: fall back to the lowest-diff un-got move and flag it.
+function pickMove(){
+  const owned=id=>(state[id]||"none")==="got";
+  const byName={}; MOVES.forEach(m=>{ byName[m.name]=m; });
+  const notGot=MOVES.filter(m=>m.fam!=="foundation" && !owned(m.id));
+  if(!notGot.length) return null;                     // every ownable move is got
+  const eligible=notGot.filter(m=>!m.builds || (byName[m.builds] && owned(byName[m.builds].id)));
+  const outran=eligible.length===0;
+  const pool=outran?notGot:eligible;
+  const minDiff=Math.min(...pool.map(m=>m.diff));
+  let tier=pool.filter(m=>m.diff===minDiff);
+  const recent=new Set(gameState.history.slice(-10).filter(h=>h.type==="move"&&h.action==="offered").map(h=>h.id));
+  const fresh=tier.filter(m=>!recent.has(m.id));
+  if(fresh.length) tier=fresh;
+  return {move:tier[Math.floor(Math.random()*tier.length)], outran};
+}
+
+// pickDrill: prefer footwork whose move hasn't yet fed the Anchor ladder (D-010's
+// breadth rule as a preference, not a lock), then drills on foundations with an
+// unreached rung, then anything.
+function pickDrill(){
+  if(!DRILLS.length) return null;
+  const credited=new Set(gameState.credited);
+  const hasUnreached=fid=>(LADDERS[fid]||[]).some(r=>!isRungReached(fid,r.lvl));
+  const tier1=DRILLS.filter(d=>d.move && !credited.has(d.move));
+  const tier2=DRILLS.filter(d=>hasUnreached(d.fnd));
+  const pool=tier1.length?tier1:(tier2.length?tier2:DRILLS);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+// ---- end challenge engine ---------------------------------------------------
+
 function setStatus(id,target){
   const cur=state[id]||"none";
   if(cur===target) delete state[id]; else state[id]=target;
