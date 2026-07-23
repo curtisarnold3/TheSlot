@@ -773,7 +773,7 @@ function buildTree(){
 // plain siblings sit 34 apart, so the extra separation is 17 (half the pitch).
 const TREE_GEO={NODE_W:182,NODE_H:30,RX:7,COL_X:24,COL_STEP:212,
   PITCH:34,SUBTREE_GAP:17,HEAD_Y:28,HEAD_DY:22,FAM_GAP:46,PAD_BOTTOM:24,SVG_W:900,
-  MAX_COLS:4,INDENT:16,PAD_RIGHT:16};
+  MAX_COLS:4,INDENT:18,PAD_RIGHT:16};
 
 // Assigns x/y/w/h to every node and stacks families down the page. Pure apart from
 // mutating the forest it is handed. Each family also gets headY/top/height; the
@@ -782,10 +782,15 @@ function layoutTree(forest,opts){
   const G=Object.assign({},TREE_GEO,opts||{});
   // Two adjacent leaves need only the pitch; anything with children gets breathing room.
   const gapBetween=(a,b)=>(a.children.length||b.children.length)?G.SUBTREE_GAP:0;
-  const span=n=>{
+  // A node goes "outline" when its children land in its own column — indentation is
+  // carrying the depth, so centring the parent between them would drop it onto its own
+  // middle child. Instead the parent takes the row above, file-explorer style.
+  const outlineAt=(n,depth)=>n.children.length>0 &&
+    Math.min(depth+1,G.MAX_COLS-1)===Math.min(depth,G.MAX_COLS-1);
+  const span=(n,depth)=>{
     if(!n.children.length) return G.PITCH;
-    let s=0;
-    n.children.forEach((c,i)=>{ if(i) s+=gapBetween(n.children[i-1],c); s+=span(c); });
+    let s=outlineAt(n,depth)?G.PITCH:0;
+    n.children.forEach((c,i)=>{ if(i) s+=gapBetween(n.children[i-1],c); s+=span(c,depth+1); });
     return Math.max(G.PITCH,s);
   };
   const place=(n,depth,top)=>{
@@ -796,19 +801,20 @@ function layoutTree(forest,opts){
     n.x=G.COL_X+col*G.COL_STEP+over*G.INDENT;
     n.w=G.NODE_W-over*G.INDENT;
     n.h=G.NODE_H;
-    let cy=top;
+    n.outline=outlineAt(n,depth);
+    let cy=top+(n.outline?G.PITCH:0);
     n.children.forEach((c,i)=>{
       if(i) cy+=gapBetween(n.children[i-1],c);
       place(c,depth+1,cy);
-      cy+=span(c);
+      cy+=span(c,depth+1);
     });
-    // Parent sits midway between its first and last child's centers — the rule the
-    // static SVG uses (Sugar Push centers at 150; its children span 65..235).
-    if(n.children.length){
+    if(n.outline||!n.children.length){
+      n.y=top+(G.PITCH-G.NODE_H)/2;
+    }else{
+      // Unchanged: parent centres between its first and last child's centres — the rule
+      // the static SVG uses (Sugar Push centres at 150; its children span 65..235).
       const a=n.children[0], z=n.children[n.children.length-1];
       n.y=(a.y+a.h/2 + z.y+z.h/2)/2 - G.NODE_H/2;
-    }else{
-      n.y=top+(G.PITCH-G.NODE_H)/2;
     }
   };
   let y=G.HEAD_Y;
@@ -816,7 +822,7 @@ function layoutTree(forest,opts){
     f.headY=y;
     const top=y+G.HEAD_DY;
     let cy=top;
-    f.roots.forEach((r,i)=>{ if(i) cy+=G.SUBTREE_GAP; place(r,0,cy); cy+=span(r); });
+    f.roots.forEach((r,i)=>{ if(i) cy+=G.SUBTREE_GAP; place(r,0,cy); cy+=span(r,0); });
     f.top=top; f.height=cy-top;
     y=cy+G.FAM_GAP;
   });
@@ -924,10 +930,19 @@ function renderTree2(){
     if(art) s+=`<text x="${n.x+n.w-9}" y="${n.y+19}" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="${c}">${art[1]}</text>`;
     return s+n.children.map(drawNode).join("");
   };
-  // Control points sit on the vertical midline between the two columns.
+  // Column links are a left-to-right bezier; outline links are an elbow — a stem down
+  // the parent's left gutter, then a stub into each child's left edge.
   const drawLinks=n=>n.children.map(c=>{
-    const px=n.x+n.w, py=n.y+n.h/2, cx=c.x, cy=c.y+c.h/2, mid=(px+cx)/2;
-    return `<path d="M${px} ${py} C${mid} ${py} ${mid} ${cy} ${cx} ${cy}" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/>`
+    const cy=c.y+c.h/2;
+    let d;
+    if(n.outline){
+      const sx=n.x+TREE_GEO.INDENT/2;
+      d=`M${sx} ${n.y+n.h} V${cy} H${c.x}`;
+    }else{
+      const px=n.x+n.w, py=n.y+n.h/2, mid=(px+c.x)/2;
+      d=`M${px} ${py} C${mid} ${py} ${mid} ${cy} ${c.x} ${cy}`;
+    }
+    return `<path d="${d}" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/>`
       +drawLinks(c);
   }).join("");
 
