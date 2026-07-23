@@ -608,6 +608,7 @@ function setStatus(id,target){
   const cur=state[id]||"none";
   if(cur===target) delete state[id]; else state[id]=target;
   save(); render();
+  renderTree2();   // the tree shows move status now, so it has to hear about the change
 }
 
 // Coerces rather than assuming a string: esc() runs during init(), so one bad
