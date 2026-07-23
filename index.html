@@ -424,12 +424,12 @@ const MOVES = [
 
   // anchor & footwork
   {id:"a-anchor",fam:"footwork",name:"Anchor Step",count:"5 & 6",diff:1,q:"west coast swing anchor step footwork",blurb:"The standard triple in place — ball-change-ball, settling back into third position. This is the plain footwork every variation below dresses up."},
-  {id:"a-side3",fam:"footwork",name:"Side-and-Third Anchor",count:"5 & 6",diff:2,builds:"Anchor Step",q:"west coast swing side and third anchor",blurb:"Step to the side, then close to third. The gentlest variation — it still lands in third position, so the away-stretch stays automatic."},
+  {id:"a-side3",fam:"footwork",name:"Side-and-Third Anchor",count:"5 & 6",diff:3,builds:"Anchor Step",q:"west coast swing side and third anchor",blurb:"Step to the side, then close to third. The gentlest variation — it still lands in third position, so the away-stretch stays automatic."},
   {id:"a-cross3",fam:"footwork",name:"Cross-and-Third Anchor",count:"5 & 6",diff:3,builds:"Side-and-Third Anchor",q:"west coast swing cross and third anchor",blurb:"Cross behind, then third. A touch more sass, same safe landing spot."},
   {id:"a-touch",fam:"footwork",name:"Touch Step",count:"touch, step",diff:2,builds:"Anchor Step",q:"west coast swing touch step footwork drill",blurb:"Touch the floor with no weight on the downbeat, then step onto it on the upbeat. The single simplest footwork drill there is — do it side to side for days."},
   {id:"a-steptouch",fam:"footwork",name:"Step Touch",count:"step, touch",diff:2,builds:"Touch Step",q:"west coast swing step touch footwork",blurb:"The mirror image: step on the downbeat, touch on the upbeat. Drilling both directions wires up your ankles and your timing at once."},
   {id:"a-point",fam:"footwork",name:"Point Step",count:"point, step",diff:2,builds:"Touch Step",q:"west coast swing point step footwork",blurb:"A touch, but prettier — point the toe to the floor, then step. Clean lines, instant polish."},
-  {id:"a-coaster",fam:"footwork",name:"Coaster Step",count:"step-together-step",diff:3,builds:"Anchor Step",q:"west coast swing coaster step",blurb:"A step-together-step triple borrowed from country and ballroom. Handy for changing direction — but keep the away-stretch, or it becomes the dreaded drift forward."},
+  {id:"a-coaster",fam:"footwork",name:"Coaster Step",count:"step-together-step",diff:2,builds:"Anchor Step",q:"west coast swing coaster step",blurb:"A step-together-step triple borrowed from country and ballroom. Handy for changing direction — but keep the away-stretch, or it becomes the dreaded drift forward."},
   {id:"a-kbc",fam:"footwork",name:"Kick-Ball-Change",count:"kick & a",diff:3,builds:"Anchor Step",q:"west coast swing kick ball change anchor",blurb:"Kick on the downbeat, then a quick ball-change back to where you started. If the song shouts KICK on that beat, this is instant, cheap musicality."},
   {id:"a-pbc",fam:"footwork",name:"Point-Ball-Change",count:"point & a",diff:3,builds:"Kick-Ball-Change",q:"west coast swing point ball change",blurb:"Same rhythm as the kick, but point and touch the toe instead of kicking. A signature look — Thibault Ramirez practically lives on this one."},
   {id:"a-sbc",fam:"footwork",name:"Step-Ball-Change",count:"step & a",diff:3,builds:"Kick-Ball-Change",q:"west coast swing step ball change",blurb:"The plainest of the ball-change family — step, then ball-change. A quiet workhorse you'll reach for constantly."},
@@ -1207,6 +1207,11 @@ window.addEventListener("resize",()=>{
     if(b!==treeBucket){ treeBucket=b; renderTree2(); }
   },150);
 });
+
+// Silent data errors: `builds` already warns on orphans in buildTree(); a footwork
+// drill's `move` had no such check, so a typo would just quietly credit nothing.
+DRILLS.forEach(d=>{ if(d.move && !MOVES.some(m=>m.id===d.move))
+  console.warn(`[drills] "${d.id}" points at move "${d.move}", which doesn't exist`); });
 
 (function init(){ load(); buildChips(); render(); renderDrills(); loadGame(); renderTree2(); })();
 </script>
