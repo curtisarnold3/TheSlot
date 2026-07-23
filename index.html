@@ -853,6 +853,15 @@ function treeLabel(name,w){
 // already use for "unfilled"; an unreached bonus keeps the brass root accent.
 const RUNG_REACHED="#54a58c", RUNG_BONUS="#8f6e2b", RUNG_UNREACHED="#d8cba7";
 
+// Status rides the box, not the left accent bar — the bar is the lever, which is the
+// whole point of the tree. Same fill and stroke the move cards already use, so the tree
+// reads without a second vocabulary to learn.
+const MOVE_ART={
+  got:     {fill:"#e7edd9",stroke:"#54a58c",sw:1.5},
+  learning:{fill:"#efe7d6",stroke:"#dd934a",sw:1.5},
+  none:    {fill:"#efe7d6",stroke:"#d8cba7",sw:1}
+};
+
 // Ladder rungs as tree nodes — numbered first, bonus last. Shaped like move
 // nodes so layoutTree() and the connector drawing handle them unchanged.
 function ladderChildren(fid){
@@ -916,7 +925,8 @@ function renderTree2(){
     const art=LEVER_ART[n.move.lever];
     const c=art?art[0]:ROOT_ACCENT;
     const lines=treeLabel(n.move.name,n.w);
-    let s=`<rect x="${n.x}" y="${n.y}" rx="${G.RX}" width="${n.w}" height="${n.h}" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/>`
+    const st=MOVE_ART[state[n.move.id]||"none"]||MOVE_ART.none;
+    let s=`<rect x="${n.x}" y="${n.y}" rx="${G.RX}" width="${n.w}" height="${n.h}" fill="${st.fill}" stroke="${st.stroke}" stroke-width="${st.sw}"/>`
       +`<rect x="${n.x}" y="${n.y}" rx="${G.RX}" width="6" height="${n.h}" fill="${c}"/>`;
     if(lines.length===1){
       s+=`<text x="${n.x+13}" y="${n.y+18.5}" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">${esc(lines[0])}</text>`;
