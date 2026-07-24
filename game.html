@@ -278,6 +278,7 @@ function landOnFamily(fam){
 
 function afterLand(fam){
   if(!spinning) return;                 // idempotent: transitionend and the timeout can't double-fire
+  chime();
   const meta = WHEEL_FAMS.find(w=>w.fam===fam);
   const res = document.getElementById("result");
   res.innerHTML = `The wheel says <b>${meta?meta.label:fam}</b>. <span style="color:var(--tx-dim)">Dealing…</span>`;
@@ -302,6 +303,7 @@ function spin(){
   document.getElementById("wheelhint").textContent = "Spinning…";
   if(reduceMotion){ landOnFamily(fam); afterLand(fam); return; }
   landOnFamily(fam);
+  spinTicks();
   const rot = document.getElementById("wheel-rot");
   const done = e=>{ if(e.propertyName!=="transform") return; rot.removeEventListener("transitionend",done); afterLand(fam); };
   rot.addEventListener("transitionend",done);
@@ -337,7 +339,67 @@ function renderActivity(){
   el.textContent = parts.join(" · ");
 }
 
-// ---- menu / sound (sound synthesis lands in commit 5) ----
+// ---- synthesized sound (WebAudio, no files) ----
+// Default off. The AudioContext is created only inside a user gesture, and only when
+// sound is on — never on load. Every cue no-ops unless settings.sound is true.
+let audioCtx=null;
+function ac(){
+  if(!gameState.settings || !gameState.settings.sound) return null;
+  if(!audioCtx){ try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } }
+  if(audioCtx.state==="suspended") audioCtx.resume();
+  return audioCtx;
+}
+// wheel tick: short square blip, caller raises the pitch as the wheel slows
+function tick(freq){
+  const ctx=ac(); if(!ctx) return;
+  const o=ctx.createOscillator(), g=ctx.createGain(), t=ctx.currentTime;
+  o.type="square"; o.frequency.value=freq;
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.07,t+0.004);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+0.045);
+  o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+0.06);
+}
+// card flip: brief band-passed noise burst
+function flipSound(){
+  const ctx=ac(); if(!ctx) return;
+  const dur=0.13, buf=ctx.createBuffer(1,Math.floor(ctx.sampleRate*dur),ctx.sampleRate), d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
+  const src=ctx.createBufferSource(); src.buffer=buf;
+  const bp=ctx.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=1500; bp.Q.value=0.7;
+  const g=ctx.createGain(); g.gain.value=0.14;
+  src.connect(bp).connect(g).connect(ctx.destination); src.start();
+}
+// landing: two-note brass chime
+function chime(){
+  const ctx=ac(); if(!ctx) return;
+  [[0,523.25],[0.13,659.25]].forEach(([dt,f])=>{
+    const o=ctx.createOscillator(), g=ctx.createGain(), st=ctx.currentTime+dt;
+    o.type="triangle"; o.frequency.value=f;
+    g.gain.setValueAtTime(0.0001,st); g.gain.exponentialRampToValueAtTime(0.13,st+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,st+0.5);
+    o.connect(g).connect(ctx.destination); o.start(st); o.stop(st+0.55);
+  });
+}
+// Watch the live wheel angle and tick as it crosses each wedge boundary; ticks thin out
+// and rise in pitch as it slows. rAF, so it follows whatever easing the transition uses.
+function spinTicks(){
+  if(!gameState.settings.sound) return;
+  const rot=document.getElementById("wheel-rot"), N=wheelFams.length*2, step=360/N;
+  const start=performance.now(), dur=4300; let last=null;
+  function angle(){
+    const tr=getComputedStyle(rot).transform; if(tr==="none") return 0;
+    const m=tr.match(/matrix\(([^)]+)\)/); if(!m) return 0;
+    const v=m[1].split(",").map(Number); return Math.atan2(v[1],v[0])*180/Math.PI;
+  }
+  function frame(now){
+    const a=((angle()%360)+360)%360, b=Math.floor(a/step);
+    if(last!==null && b!==last){ const p=Math.min(1,(now-start)/dur); tick(500+p*430); }
+    last=b;
+    if(now-start<dur+150) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+// ---- menu / sound ----
 function refreshSound(){
   const on=!!(gameState.settings&&gameState.settings.sound);
   document.getElementById("soundsw").textContent = on?"on":"off";
@@ -354,6 +416,7 @@ document.getElementById("ham").addEventListener("click", function(){
 document.getElementById("soundtoggle").addEventListener("click", function(){
   gameState.settings.sound = !gameState.settings.sound;
   saveGame(); refreshSound();
+  if(gameState.settings.sound){ ac(); tick(660); }   // prime the context on this gesture + confirm
 });
 
 // ---- the draw and the challenge ----
@@ -486,6 +549,7 @@ function drawAction(cmd,i){
     logEvent({ts:now,type:c.type,id:c.item.id,action:"offered"}); saveGame();
     const cards=document.querySelectorAll(".g-slots .gcard");
     if(reduceMotion){ revealed={type:c.type,item:c.item}; renderDraw(); return; }
+    flipSound();
     cards.forEach((card,idx)=>{ card.classList.add(idx==i?"flip":"away"); });
     setTimeout(()=>{ revealed={type:c.type,item:c.item}; renderDraw(); }, 430);
   }
