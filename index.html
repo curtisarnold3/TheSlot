@@ -360,6 +360,7 @@ let repOnly=false;
 // the done confirmation are transient UI.
 let challengeOffer=null;   // {type:"move"|"drill", move?, drill?, outran?}
 let challengeDone=null;    // HTML fragment for the confirmation panel
+let challengeOwnId=null;   // move id awaiting the "Own it yet?" self-report
 
 function fmtMinutes(m){
   if(m<60) return m+"m";
@@ -401,10 +402,12 @@ function renderChallenge(){
   const act=activityLine();
   let html;
   if(challengeDone){
-    html=`<div class="k">Nice</div>${act}${challengeDone}
-      <div class="act"><button class="cbtn" data-c="reset">What's next</button></div>`;
-  }else if(gameState.open){
-    const o=gameState.open;
+    const tail = challengeOwnId
+      ? `<p class="meta">Own it yet?</p><div class="act"><button class="cbtn" data-c="gotit">Yes, got it</button><button class="cbtn ghost" data-c="notyet">Not yet</button></div>`
+      : `<div class="act"><button class="cbtn" data-c="reset">What's next</button></div>`;
+    html=`<div class="k">Nice</div>${act}${challengeDone}${tail}`;
+  }else if(gameState.open.map){
+    const o=gameState.open.map;
     const body=o.type==="move"?moveBody(moveById(o.id)):drillBody(drillById(o.id));
     html=`<div class="k">Your challenge</div>${act}${body}
       <div class="act"><button class="cbtn" data-c="done">Mark it done</button>
@@ -444,15 +447,18 @@ function offerCategory(type){
 }
 
 function completeOpen(){
-  const o=gameState.open; if(!o) return;
+  const o=gameState.open.map; if(!o) return;
   const now=Date.now();
   markToday();
+  challengeOwnId=null;
   if(o.type==="move"){
     const m=moveById(o.id);
-    setStatus(o.id,"learning");   // never "got" — fifteen minutes with a video isn't ownership
+    markStatus(o.id,"learning");   // pure set — never toggles a learning move off (D-028)
+    render(); renderTree2();
     gameState.totals.moves=(gameState.totals.moves||0)+1;
     logEvent({ts:now,type:"move",id:o.id,action:"completed",source:"challenge"});
-    challengeDone=`<p class="lead">Marked <b>${esc(m?m.name:o.id)}</b> as <b>learning</b>. Fifteen minutes with a video isn't owning it — drill it, dance it, then flip it to Got it yourself when it's really yours.</p>`;
+    challengeOwnId=o.id;           // triggers the "Own it yet?" self-report
+    challengeDone=`<p class="lead">Marked <b>${esc(m?m.name:o.id)}</b> as <b>learning</b>. Fifteen minutes with a video isn't owning it — but once it's genuinely yours, say so.</p>`;
   }else{
     const d=drillById(o.id);
     gameState.totals.drills=(gameState.totals.drills||0)+1;
@@ -465,18 +471,18 @@ function completeOpen(){
     }
     challengeDone=msg;
   }
-  gameState.open=null;
-  saveGame();       // setStatus already persisted wcs-progress-v1; this persists gameState
+  gameState.open.map=null;
+  saveGame();       // markStatus already persisted wcs-progress-v1; this persists gameState
   renderChallenge();
 }
 
 function challengeAction(cmd){
   const now=Date.now();
-  if(cmd==="move"||cmd==="drill"){ challengeDone=null; offerCategory(cmd); }
+  if(cmd==="move"||cmd==="drill"){ challengeDone=null; challengeOwnId=null; offerCategory(cmd); }
   else if(cmd==="accept"){
     const co=challengeOffer; if(!co) return;
     const id=co.type==="move"?co.move.id:co.drill.id;
-    gameState.open={type:co.type,id,ts:now};
+    gameState.open.map={type:co.type,id,ts:now};
     logEvent({ts:now,type:co.type,id,action:"accepted"});
     challengeOffer=null; saveGame(); renderChallenge();
   }else if(cmd==="reroll"){
@@ -486,10 +492,17 @@ function challengeAction(cmd){
     offerCategory(co.type);
   }else if(cmd==="done"){ completeOpen(); }
   else if(cmd==="abandon"){
-    const o=gameState.open;
+    const o=gameState.open.map;
     if(o) logEvent({ts:now,type:o.type,id:o.id,action:"skipped"});
-    gameState.open=null; challengeOffer=null; saveGame(); renderChallenge();
-  }else if(cmd==="reset"){ challengeDone=null; renderChallenge(); }
+    gameState.open.map=null; challengeOffer=null; saveGame(); renderChallenge();
+  }
+  else if(cmd==="gotit"){
+    if(challengeOwnId){ markStatus(challengeOwnId,"got"); render(); renderTree2();
+      logEvent({ts:now,type:"move",id:challengeOwnId,action:"owned"}); }
+    challengeOwnId=null; challengeDone=null; saveGame(); renderChallenge();
+  }
+  else if(cmd==="notyet"){ challengeOwnId=null; challengeDone=null; renderChallenge(); }
+  else if(cmd==="reset"){ challengeDone=null; challengeOwnId=null; renderChallenge(); }
 }
 // ---- end challenge card -----------------------------------------------------
 

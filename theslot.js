@@ -432,7 +432,8 @@ let onRungChange=null;
 // non-persistent — it never throws.
 const GAME_KEY="wcs-game-v1";
 function defaultGame(){
-  return {v:2, rungs:{}, credited:[], history:[], totals:{drills:0,minutes:0,moves:0}, dates:[], open:null};
+  return {v:3, rungs:{}, credited:[], history:[], totals:{drills:0,minutes:0,moves:0},
+    dates:[], open:{map:null,game:null}, settings:{sound:false}};
 }
 let gameState=defaultGame();
 
@@ -448,14 +449,20 @@ function normalizeGame(p){
   const g=defaultGame();
   const obj=o=>o && typeof o==="object" && !Array.isArray(o);
   if(!obj(p)) return g;
-  if(obj(p.rungs)) g.rungs=p.rungs;
-  if(p.v===2){
+  if(obj(p.rungs)) g.rungs=p.rungs;               // rungs carry forward from every version
+  if(p.v===2 || p.v===3){
     if(Array.isArray(p.credited)) g.credited=p.credited;
     if(Array.isArray(p.history)) g.history=p.history.slice(-200);
     if(Array.isArray(p.dates)) g.dates=p.dates;
     if(obj(p.totals)) g.totals={drills:+p.totals.drills||0, minutes:+p.totals.minutes||0, moves:+p.totals.moves||0};
-    if(obj(p.open)) g.open=p.open;
   }
+  // open: v3 is {map,game}; a v2 flat open becomes open.map; v1 has none.
+  if(p.v===3 && obj(p.open)){
+    g.open={ map: obj(p.open.map)?p.open.map:null, game: obj(p.open.game)?p.open.game:null };
+  }else if(obj(p.open)){
+    g.open={ map:p.open, game:null };
+  }
+  if(p.v===3 && obj(p.settings)) g.settings={ sound: !!p.settings.sound };
   return g;
 }
 
@@ -469,7 +476,10 @@ function saveGame(){
 }
 
 // Append a history event, newest kept, capped at 200 so storage can't grow forever.
+// Each event carries `via` — which page produced it; a page sets logVia at startup.
+let logVia="map";
 function logEvent(ev){
+  if(!ev.via) ev.via=logVia;
   gameState.history.push(ev);
   if(gameState.history.length>200) gameState.history=gameState.history.slice(-200);
 }
@@ -495,17 +505,34 @@ function toggleRung(fid,lvl){
 // ---- challenge engine -------------------------------------------------------
 // The user picks the category; the engine picks the item (D-023).
 
+// A move counts as "reached" once it's learning or got — the unlock threshold (D-028).
+function reached(id){ const s=state[id]||"none"; return s==="got"||s==="learning"; }
+
+// Families with at least one drawable move right now: not a foundation, not got, and
+// its prerequisite reached. The wheel is built from this, so an exhausted family drops off.
+function eligibleFamilies(){
+  const byName={}; MOVES.forEach(m=>{ byName[m.name]=m; });
+  const fams=new Set();
+  MOVES.forEach(m=>{
+    if(m.fam==="foundation" || (state[m.id]||"none")==="got") return;
+    if(!m.builds || (byName[m.builds] && reached(byName[m.builds].id))) fams.add(m.fam);
+  });
+  return [...fams];
+}
+
 // pickMove: an ownable move to learn next. Skips foundations (they're ladders, not
 // ownable) and anything already got. Prerequisite-aware — a move with a `builds`
 // parent is only eligible once that parent is got. Prefers the lowest diff, then
 // something not offered recently, then random. If nothing is eligible the user has
 // outrun the tree: fall back to the lowest-diff un-got move and flag it.
 function pickMove(){
-  const owned=id=>(state[id]||"none")==="got";
   const byName={}; MOVES.forEach(m=>{ byName[m.name]=m; });
-  const notGot=MOVES.filter(m=>m.fam!=="foundation" && !owned(m.id));
+  const notGot=MOVES.filter(m=>m.fam!=="foundation" && (state[m.id]||"none")!=="got");
   if(!notGot.length) return null;                     // every ownable move is got
-  const eligible=notGot.filter(m=>!m.builds || (byName[m.builds] && owned(byName[m.builds].id)));
+  // D-028: a prerequisite unlocks once its parent is *reached* (learning OR got),
+  // not only got — so completing a challenge immediately opens its children and
+  // the wheel never starves.
+  const eligible=notGot.filter(m=>!m.builds || (byName[m.builds] && reached(byName[m.builds].id)));
   const outran=eligible.length===0;
   const pool=outran?notGot:eligible;
   const minDiff=Math.min(...pool.map(m=>m.diff));
