@@ -11,7 +11,43 @@
 <meta property="og:description" content="Every West Coast Swing move branches off one of the basics. Track what you've learned, see your repertoire, and drill the practice plan — a friendly place to start learning to dance.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="theslot.css">
-<script src="theslot.js"></script>
+<script src="theslot.js" onerror="window.__slotLoadErr=1"></script>
+<script>
+/* Blank-page net — fully inline, depends on neither theslot.js nor theslot.css (the
+   files that may have failed). If the shared script didn't run, retry it once, then
+   show a visible, recoverable message instead of a blank page. */
+(function(){
+  var retried=false, started=false;
+  window.slotFail=function(){
+    if(started) return;
+    document.body.innerHTML='<div role="alert" style="position:fixed;inset:0;display:flex;'
+      +'align-items:center;justify-content:center;padding:24px;background:#181425;color:#efe7d6;'
+      +'font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif">'
+      +'<div style="max-width:420px;text-align:center">'
+      +'<h1 style="font-size:22px;font-weight:600;margin:0 0 12px">Something didn’t load</h1>'
+      +'<p style="font-size:16px;line-height:1.5;color:#b3a9c6;margin:0 0 20px">The site couldn’t '
+      +'fetch part of itself. This is usually temporary.</p>'
+      +'<button onclick="location.reload()" style="font:600 16px system-ui;min-height:44px;padding:12px 24px;'
+      +'border-radius:10px;border:1px solid #c99a3f;background:#c99a3f;color:#231a08;cursor:pointer">Try again</button>'
+      +'<p style="font-size:13px;line-height:1.5;color:#8a80a0;margin:20px 0 0">If it keeps happening, an ad '
+      +'blocker or privacy extension may be blocking a file.</p>'
+      +'</div></div>';
+  };
+  window.slotBoot=function(startFn){
+    function go(){ started=true; try{ startFn(); }catch(e){ started=false; console.warn("[theslot] startup failed",e); slotFail(); } }
+    if(typeof MOVES!=="undefined"){ go(); return; }   // shared script ran — start now
+    if(retried){ slotFail(); return; }
+    retried=true;
+    setTimeout(function(){                             // retry once with a cache-buster
+      var s=document.createElement("script");
+      s.src="theslot.js?retry=1";
+      s.onload=function(){ (typeof MOVES!=="undefined")?go():slotFail(); };
+      s.onerror=function(){ slotFail(); };
+      document.head.appendChild(s);
+    },2000);
+  };
+})();
+</script>
 <style>
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -913,13 +949,30 @@ window.addEventListener("resize",()=>{
   },150);
 });
 
-// Silent data errors: `builds` already warns on orphans in buildTree(); a footwork
-// drill's `move` had no such check, so a typo would just quietly credit nothing.
-DRILLS.forEach(d=>{ if(d.move && !MOVES.some(m=>m.id===d.move))
-  console.warn(`[drills] "${d.id}" points at move "${d.move}", which doesn't exist`); });
+// A dismissible bar shown only if wcs-progress-v1 had to be recovered — someone who
+// marked forty moves deserves to know, rather than quietly finding an empty tree.
+// Inline styles, literal colours: it must render even if theslot.css never arrived.
+function showProgressNotice(){
+  var bar=document.createElement("div");
+  bar.setAttribute("role","status");
+  bar.style.cssText="position:sticky;top:0;z-index:100;background:#2b2343;color:#efe7d6;border-bottom:1px solid #8f6e2b;padding:10px 14px;font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;gap:12px;align-items:center;justify-content:center;text-align:center";
+  bar.innerHTML='<span>We couldn’t read your saved progress. A backup is stored in case you need it.</span><button aria-label="Dismiss" style="background:transparent;border:1px solid #8f6e2b;color:#efe7d6;border-radius:6px;min-width:32px;min-height:32px;cursor:pointer;font-size:16px">×</button>';
+  bar.querySelector("button").addEventListener("click",function(){ bar.remove(); });
+  document.body.insertBefore(bar, document.body.firstChild);
+}
 
-onRungChange = renderTree2;   // theslot.js's toggleRung calls this to redraw the tree
-(function init(){ load(); buildChips(); render(); renderDrills(); loadGame(); renderTree2(); renderChallenge(); })();
+// Startup runs only once theslot.js is confirmed loaded (via slotBoot). Everything here
+// touches shared data/functions, so none of it may run at top level.
+function startApp(){
+  onRungChange = renderTree2;   // theslot.js's toggleRung calls this to redraw the tree
+  // Silent data errors: `builds` already warns on orphans in buildTree(); a footwork
+  // drill's `move` had no such check, so a typo would just quietly credit nothing.
+  DRILLS.forEach(d=>{ if(d.move && !MOVES.some(m=>m.id===d.move))
+    console.warn(`[drills] "${d.id}" points at move "${d.move}", which doesn't exist`); });
+  load(); buildChips(); render(); renderDrills(); loadGame(); renderTree2(); renderChallenge();
+  if(progressRecovered) showProgressNotice();
+}
+slotBoot(startApp);
 </script>
 </body>
 </html>

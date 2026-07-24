@@ -404,10 +404,31 @@ const LADDERS = {
 
 const STORE_KEY="wcs-progress-v1";
 let state={};
+let progressRecovered=false;   // set true if wcs-progress-v1 had to be recovered from a bad read
 
-// Progress persists in the browser's localStorage (per-device, per-browser).
+// Before discarding storage we can't read, stash the raw string under a backup key —
+// a user's data must never be destroyed by the code recovering from it (L-011). The
+// read is the half that silently loses data, so back up first, always. Never throws.
+function backupKey(key,raw){
+  if(raw==null) return;
+  try{ localStorage.setItem(key+"-backup", raw); }catch(e){}
+}
+function readable(o){ return o && typeof o==="object" && !Array.isArray(o); }  // L-005: arrays are not
+
+// Progress persists in the browser's localStorage (per-device, per-browser). A read
+// that throws, won't parse, or isn't a plain object is backed up and reset — never
+// left to crash the render.
 function load(){
-  try{ const raw=localStorage.getItem(STORE_KEY); if(raw) state=JSON.parse(raw)||{}; }catch(e){ state={}; }
+  let raw=null;
+  try{ raw=localStorage.getItem(STORE_KEY); }catch(e){ raw=null; }
+  if(raw==null){ state={}; return; }
+  let parsed;
+  try{ parsed=JSON.parse(raw); }catch(e){ parsed=undefined; }
+  if(readable(parsed)){ state=parsed; return; }
+  backupKey(STORE_KEY, raw);
+  progressRecovered=true;
+  console.warn("[theslot] couldn't read "+STORE_KEY+" — backed up to "+STORE_KEY+"-backup, starting fresh");
+  state={};
 }
 function save(){
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
@@ -447,29 +468,43 @@ function rungKey(fid,lvl){ return `${fid}-${lvl}`; }
 // JSON.stringify drops added props, silently eating every later write.
 function normalizeGame(p){
   const g=defaultGame();
-  const obj=o=>o && typeof o==="object" && !Array.isArray(o);
-  if(!obj(p)) return g;
-  if(obj(p.rungs)) g.rungs=p.rungs;               // rungs carry forward from every version
-  if(p.v===2 || p.v===3){
-    if(Array.isArray(p.credited)) g.credited=p.credited;
-    if(Array.isArray(p.history)) g.history=p.history.slice(-200);
-    if(Array.isArray(p.dates)) g.dates=p.dates;
-    if(obj(p.totals)) g.totals={drills:+p.totals.drills||0, minutes:+p.totals.minutes||0, moves:+p.totals.moves||0};
+  try{
+    const obj=o=>o && typeof o==="object" && !Array.isArray(o);
+    if(!obj(p)) return g;
+    if(obj(p.rungs)) g.rungs=p.rungs;               // rungs carry forward from every version
+    if(p.v===2 || p.v===3){
+      if(Array.isArray(p.credited)) g.credited=p.credited;
+      if(Array.isArray(p.history)) g.history=p.history.slice(-200);
+      if(Array.isArray(p.dates)) g.dates=p.dates;
+      if(obj(p.totals)) g.totals={drills:+p.totals.drills||0, minutes:+p.totals.minutes||0, moves:+p.totals.moves||0};
+    }
+    // open: v3 is {map,game}; a v2 flat open becomes open.map; v1 has none.
+    if(p.v===3 && obj(p.open)){
+      g.open={ map: obj(p.open.map)?p.open.map:null, game: obj(p.open.game)?p.open.game:null };
+    }else if(obj(p.open)){
+      g.open={ map:p.open, game:null };
+    }
+    if(p.v===3 && obj(p.settings)) g.settings={ sound: !!p.settings.sound };
+    return g;
+  }catch(e){
+    console.warn("[theslot] game-state migration failed — using defaults", e);
+    return defaultGame();
   }
-  // open: v3 is {map,game}; a v2 flat open becomes open.map; v1 has none.
-  if(p.v===3 && obj(p.open)){
-    g.open={ map: obj(p.open.map)?p.open.map:null, game: obj(p.open.game)?p.open.game:null };
-  }else if(obj(p.open)){
-    g.open={ map:p.open, game:null };
-  }
-  if(p.v===3 && obj(p.settings)) g.settings={ sound: !!p.settings.sound };
-  return g;
 }
 
 function loadGame(){
+  let raw=null;
+  try{ raw=localStorage.getItem(GAME_KEY); }catch(e){ raw=null; }
   let parsed=null;
-  try{ const raw=localStorage.getItem(GAME_KEY); if(raw) parsed=JSON.parse(raw); }catch(e){ parsed=null; }
-  gameState=normalizeGame(parsed);
+  if(raw!=null){
+    try{ parsed=JSON.parse(raw); }catch(e){ parsed=undefined; }
+    if(!readable(parsed)){        // threw, or a non-object shape (array/primitive/null)
+      backupKey(GAME_KEY, raw);
+      console.warn("[theslot] couldn't read "+GAME_KEY+" — backed up to "+GAME_KEY+"-backup, starting fresh");
+      parsed=null;
+    }
+  }
+  gameState=normalizeGame(parsed);   // readable objects still migrate (rungs preserved)
 }
 function saveGame(){
   try{ localStorage.setItem(GAME_KEY, JSON.stringify(gameState)); }catch(e){}
