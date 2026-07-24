@@ -93,9 +93,46 @@
   details.g-new p{color:var(--tx-dim);font-size:14px;line-height:1.5;margin:10px 0 0;max-width:60ch}
   details.g-new p b{color:var(--tx)}
 
+  /* draw: dealt cards */
+  .g-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .gcard{position:relative;min-height:150px;border-radius:14px;border:1px solid var(--brass-lo);
+    padding:12px 8px;font:inherit;color:var(--tx);cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    background:radial-gradient(130% 120% at 30% 18%, #2b2343, #14101f);
+    transition:transform .45s ease, opacity .35s ease;transform-origin:center}
+  .gcard .fil{position:absolute;inset:7px;border:1px solid var(--brass-lo);border-radius:9px;opacity:.45;pointer-events:none}
+  .gcard .mono{font-family:var(--display);font-size:36px;color:var(--brass);line-height:1}
+  .gcard .mono small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--tx-dim);margin-top:8px}
+  .gcard:focus-visible{outline:3px solid var(--brass-hi);outline-offset:2px}
+  .gcard.dealin{animation:dealin .4s ease both}
+  @keyframes dealin{from{opacity:0;transform:translateY(12px) rotateY(-22deg)}to{opacity:1;transform:none}}
+  .gcard.flip{transform:rotateY(90deg);opacity:0}
+  .gcard.away{opacity:0;transform:scale(.92)}
+  /* locked card: face-up, dimmed, doesn't flip */
+  .gcard.locked{cursor:default;background:var(--paper);color:var(--tx-ink);opacity:.7;border-style:dashed}
+  .gcard.locked .fil{display:none}
+  .gcard.locked .lk{font-size:20px;opacity:.7}
+  .gcard.locked .nm{font-family:var(--display);font-size:15px;font-weight:600;margin:7px 0 5px;line-height:1.15}
+  .gcard.locked .un{font-family:var(--mono);font-size:10px;color:#6a5f45;line-height:1.35}
+
+  /* revealed / accepted / done panel */
+  .g-panel{background:var(--paper);color:var(--tx-ink);border:1px solid var(--brass);border-radius:16px;padding:18px}
+  .g-panel .kind{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8f6e2b;margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .g-panel .b2x{background:var(--brass);color:#231a08;font-weight:700;border-radius:6px;padding:2px 7px;font-size:11px;letter-spacing:.03em;border:0;cursor:pointer}
+  .g-panel h2{font-family:var(--display);font-size:24px;margin:0 0 6px;font-weight:600;color:var(--tx-ink)}
+  .g-panel .sub{font-family:var(--mono);font-size:12px;color:#5a4e33;margin:0 0 10px}
+  .g-panel .why{font-size:14.5px;color:#3f3826;line-height:1.5;margin:0 0 14px;max-width:60ch}
+  .g-panel .why.dbl{color:var(--got-lo);font-weight:600}
+  .g-panel .act{display:flex;flex-wrap:wrap;gap:10px}
+  .g-panel .cbtn{font-family:var(--body);font-size:15px;font-weight:600;border-radius:10px;padding:11px 16px;min-height:44px;cursor:pointer;border:1px solid #b06a3a;background:var(--brass);color:#231a08}
+  .g-panel .cbtn.ghost{background:transparent;color:#6a5f45;border-color:#c3b691}
+  .g-panel .cbtn.got{background:var(--got);border-color:var(--got);color:#08251d}
+
   @media (prefers-reduced-motion: reduce){
     #wheel-rot{transition:none}
     .g-wheelwrap,.g-result{transition:opacity .2s ease}
+    .gcard{transition:opacity .2s ease}
+    .gcard.dealin{animation:none}
   }
 </style>
 </head>
@@ -141,6 +178,8 @@
 <script>
 // ---- game edition: shell, category toggle, and the wheel ----
 logVia = "game";                 // history events from this page are tagged "game"
+load();                          // moves state — MUST load before any markStatus/save, or
+                                 // completing a challenge would overwrite the user's marks
 loadGame();
 
 const WHEEL_FAMS = [
@@ -317,10 +356,173 @@ document.getElementById("soundtoggle").addEventListener("click", function(){
   saveGame(); refreshSound();
 });
 
+// ---- the draw and the challenge ----
+let deal=null;        // [{type:"move"|"drill", item, locked}] up to three
+let dealFam=null;     // family the current move-deal came from (for Pass -> redraw)
+let revealed=null;    // {type, item} the tapped card
+let drawDone=null;    // {html, ownId?} confirmation
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function parentOf(m){ return m.builds ? MOVES.find(x=>x.name===m.builds) : null; }
+function famName(fid){ const f=MOVES.find(m=>m.id===fid); return f?f.name:fid; }
+
+function honestMove(m){
+  const p=parentOf(m);
+  if(!p) return "A place to start — this one stands on nothing.";
+  return (state[p.id]||"none")==="got"
+    ? `Dealt to you because you've got the ${esc(m.builds)}.`
+    : `Dealt to you because you've started the ${esc(m.builds)}.`;
+}
+function isDbl(d){ return d.move && !gameState.credited.includes(d.move); }
+function honestDrill(d){
+  if(isDbl(d)) return "Footwork you haven't drilled yet — this one counts twice.";
+  if(d.move)  return "More footwork — still anchor practice underneath.";
+  return `Trains your ${esc(famName(d.fnd))} — ${esc(d.develops)}.`;
+}
+
+function dealMoves(fam){
+  dealFam=fam;
+  const cand=MOVES.filter(m=>m.fam===fam && (state[m.id]||"none")!=="got");
+  const drawable=cand.filter(m=>{ const p=parentOf(m); return !m.builds || (p && reached(p.id)); });
+  const locked=cand.filter(m=>{ const p=parentOf(m); return m.builds && !(p && reached(p.id)); });
+  let slots=shuffle(drawable).slice(0,3).map(m=>({type:"move",item:m,locked:false}));
+  if(slots.length<3) slots=slots.concat(shuffle(locked).slice(0,3-slots.length).map(m=>({type:"move",item:m,locked:true})));
+  deal=slots; revealed=null; drawDone=null; renderDraw();
+}
+function dealDrills(){
+  const credited=new Set(gameState.credited);
+  const hasUnreached=fid=>(LADDERS[fid]||[]).some(r=>!isRungReached(fid,r.lvl));
+  const t1=DRILLS.filter(d=>d.move && !credited.has(d.move)), t2=DRILLS.filter(d=>hasUnreached(d.fnd));
+  const seen=new Set(), pool=[];
+  [t1,t2,DRILLS].forEach(t=>shuffle(t).forEach(d=>{ if(!seen.has(d.id)){seen.add(d.id);pool.push(d);} }));
+  deal=pool.slice(0,3).map(d=>({type:"drill",item:d,locked:false})); dealFam=null; revealed=null; drawDone=null; renderDraw();
+}
+
+function dealtPanel(){
+  return `<div class="g-slots">`+deal.map((c,i)=>{
+    if(c.locked){
+      const p=parentOf(c.item);
+      return `<div class="gcard locked dealin" style="animation-delay:${i*90}ms">
+        <div class="lk" aria-hidden="true">🔒</div>
+        <div class="nm">${esc(c.item.name)}</div>
+        <div class="un">unlock by learning<br>the ${esc(p?p.name:c.item.builds)}</div></div>`;
+    }
+    return `<button class="gcard dealin" style="animation-delay:${i*90}ms" data-c="reveal" data-i="${i}"
+       aria-label="Face-down card ${i+1} of ${deal.length} — tap to reveal">
+      <div class="fil"></div><div class="mono">✦<small>THE SLOT</small></div></button>`;
+  }).join("")+`</div>`;
+}
+function itemPanel(type,item,extraKind,whyClass,why,actions){
+  const sub = type==="move"
+    ? `${esc((FAMS.find(f=>f.id===item.fam)||{}).name||item.fam)}${item.builds?` &middot; builds on ${esc(item.builds)}`:""}`
+    : `${item.mins} min &middot; develops ${esc(item.develops)}`;
+  return `<div class="g-panel">
+    <div class="kind">${type==="move"?"Your move":"Your drill"}${extraKind||""}</div>
+    <h2>${esc(item.name)}</h2>
+    <p class="sub">${sub}</p>
+    <p class="why ${whyClass||""}">${why}</p>
+    <div class="act">${actions}</div></div>`;
+}
+function revealedPanel(){
+  const {type,item}=revealed;
+  const why = type==="move"?honestMove(item):honestDrill(item);
+  const badge = (type==="drill" && isDbl(item)) ? `<button class="b2x" data-c="why2x" title="Why twice?">2×</button>` : "";
+  const actions=`<button class="cbtn" data-c="take">Take it</button>
+    <button class="cbtn ghost" data-c="pass">Pass</button>
+    <button class="cbtn ghost" data-c="notnow">Not now</button>`;
+  return itemPanel(type,item,badge,type==="drill"&&isDbl(item)?"dbl":"",why,actions);
+}
+function acceptedPanel(o){
+  const item = o.type==="move"?MOVES.find(m=>m.id===o.id):DRILLS.find(d=>d.id===o.id);
+  const why = o.type==="move"?"You took this one on. Go work it, then mark it done.":"You took this one on — bank it when it's done.";
+  const badge = (o.type==="drill" && item && isDbl(item)) ? `<span class="b2x" aria-label="counts twice">2×</span>` : "";
+  const actions=`<button class="cbtn" data-c="done">Mark it done</button>
+    <button class="cbtn ghost" data-c="notnow">Not now</button>`;
+  return itemPanel(o.type,item||{name:o.id},badge,"",why,actions);
+}
+function donePanel(){
+  const own = drawDone.ownId
+    ? `<p class="sub">Own it yet?</p><div class="act"><button class="cbtn got" data-c="gotit">Yes, got it</button><button class="cbtn ghost" data-c="notyet">Not yet</button></div>`
+    : `<div class="act"><button class="cbtn" data-c="again">Draw again</button></div>`;
+  return `<div class="g-panel"><div class="kind">Nice</div>${drawDone.html}${own}</div>`;
+}
+function renderDraw(){
+  const el=document.getElementById("draw");
+  let html="";
+  if(drawDone) html=donePanel();
+  else if(gameState.open.game) html=acceptedPanel(gameState.open.game);
+  else if(revealed) html=revealedPanel();
+  else if(deal) html=dealtPanel();
+  el.innerHTML=html;
+  el.querySelectorAll("[data-c]").forEach(b=>b.addEventListener("click",()=>drawAction(b.dataset.c,b.dataset.i)));
+}
+
+function completeGame(o){
+  const now=Date.now(); markToday();
+  if(o.type==="move"){
+    const m=MOVES.find(x=>x.id===o.id);
+    markStatus(o.id,"learning");   // pure set — never toggles a learning move off (D-028)
+    gameState.totals.moves=(gameState.totals.moves||0)+1;
+    logEvent({ts:now,type:"move",id:o.id,action:"completed",source:"challenge"});
+    drawDone={ html:`<p class="why">Marked <b>${esc(m?m.name:o.id)}</b> as learning. A spin and a watch isn't ownership — but once it's really yours, say so.</p>`, ownId:o.id };
+  }else{
+    const d=DRILLS.find(x=>x.id===o.id);
+    gameState.totals.drills=(gameState.totals.drills||0)+1;
+    gameState.totals.minutes=(gameState.totals.minutes||0)+(d?d.mins:0);
+    logEvent({ts:now,type:"drill",id:o.id,action:"completed"});
+    let html=`<p class="why">Logged <b>${esc(d?d.name:o.id)}</b>${d?` — ${d.mins} minutes banked`:""}.</p>`;
+    if(d && d.move && !gameState.credited.includes(d.move)){
+      gameState.credited.push(d.move);
+      html+=`<p class="why dbl">2× — footwork that keeps the stretch is anchor practice, so the Anchor foundation moved too.</p>`;
+    }
+    drawDone={ html };
+  }
+  gameState.open.game=null; saveGame(); renderActivity(); renderDraw();
+}
+
+function drawAction(cmd,i){
+  const now=Date.now();
+  if(cmd==="reveal"){
+    const c=deal[+i]; if(!c || c.locked) return;
+    logEvent({ts:now,type:c.type,id:c.item.id,action:"offered"}); saveGame();
+    const cards=document.querySelectorAll(".g-slots .gcard");
+    if(reduceMotion){ revealed={type:c.type,item:c.item}; renderDraw(); return; }
+    cards.forEach((card,idx)=>{ card.classList.add(idx==i?"flip":"away"); });
+    setTimeout(()=>{ revealed={type:c.type,item:c.item}; renderDraw(); }, 430);
+  }
+  else if(cmd==="take"){
+    if(!revealed) return;
+    gameState.open.game={type:revealed.type,id:revealed.item.id,ts:now};
+    logEvent({ts:now,type:revealed.type,id:revealed.item.id,action:"accepted"});
+    revealed=null; saveGame(); renderDraw();
+  }
+  else if(cmd==="pass"){
+    if(!revealed) return;
+    logEvent({ts:now,type:revealed.type,id:revealed.item.id,action:"skipped"}); saveGame();
+    const wasType=revealed.type; revealed=null;
+    if(wasType==="move" && dealFam) dealMoves(dealFam); else dealDrills();
+  }
+  else if(cmd==="notnow"){
+    const o=gameState.open.game;
+    if(o) logEvent({ts:now,type:o.type,id:o.id,action:"abandoned"});
+    gameState.open.game=null; revealed=null; deal=null; drawDone=null; saveGame(); renderDraw();
+    if(mode==="move"){ document.getElementById("result").classList.remove("show"); }
+  }
+  else if(cmd==="done"){ if(gameState.open.game) completeGame(gameState.open.game); }
+  else if(cmd==="gotit"){
+    if(drawDone && drawDone.ownId){ markStatus(drawDone.ownId,"got"); logEvent({ts:now,type:"move",id:drawDone.ownId,action:"owned"}); }
+    drawDone=null; saveGame(); renderActivity(); renderDraw();
+  }
+  else if(cmd==="notyet"){ drawDone=null; renderDraw(); }
+  else if(cmd==="again"){ drawDone=null; deal=null; renderDraw(); if(mode==="drill") dealDrills(); }
+  else if(cmd==="why2x"){ alert("Footwork that keeps the away-stretch is anchor practice — so a footwork drill trains two things. It counts once per footwork move."); }
+}
+
 (function initGame(){
   buildWheel();
   renderActivity();
   refreshSound();
+  renderDraw();   // resume an accepted challenge (open.game) across reloads
+  if(mode==="drill") dealDrills();
 })();
 </script>
 </body>
