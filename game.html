@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Slot — Game Edition</title>
+<meta name="description" content="Spin. Draw. Learn. Let luck choose your next West Coast Swing move or drill — the game edition of The Slot's beginner map.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="theslot.css">
+<script src="theslot.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html{ -webkit-text-size-adjust:100% }
+  body{
+    margin:0; font-family:var(--body); color:var(--tx);
+    background:
+      radial-gradient(120% 80% at 50% -10%, #2b2343 0%, rgba(43,35,67,0) 55%),
+      radial-gradient(120% 120% at 50% 120%, #0e0b18 0%, rgba(14,11,24,0) 60%),
+      var(--ink);
+    min-height:100vh; -webkit-font-smoothing:antialiased;
+  }
+  .g-wrap{max-width:440px;margin:0 auto;padding:0 18px 60px;position:relative}
+
+  /* top bar */
+  .g-top{display:flex;align-items:center;justify-content:space-between;padding:16px 0 8px}
+  .g-mark{font-family:var(--display);font-size:20px;font-weight:600;color:var(--brass-hi);letter-spacing:.01em}
+  .g-mark b{color:var(--tx)}
+  .g-ham{background:transparent;border:1px solid var(--line);border-radius:10px;color:var(--tx-dim);
+    width:44px;height:44px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .g-ham:hover{color:var(--tx)}
+
+  /* menu sheet */
+  .g-menu{display:none;border:1px solid var(--brass-lo);background:var(--ink2);border-radius:14px;
+    padding:10px;margin:6px 0 4px}
+  .g-menu.on{display:block}
+  .g-menu a,.g-menu button{display:flex;width:100%;align-items:center;justify-content:space-between;
+    background:transparent;border:0;border-radius:10px;color:var(--tx);font:inherit;font-size:15px;
+    padding:12px 12px;min-height:44px;cursor:pointer;text-decoration:none;text-align:left}
+  .g-menu a:hover,.g-menu button:hover{background:var(--ink3)}
+  .g-menu .sw{font-family:var(--mono);font-size:12px;color:var(--brass)}
+
+  /* title */
+  .g-title{font-family:var(--display);font-weight:600;font-size:clamp(34px,10vw,46px);
+    line-height:1.02;margin:14px 0 6px;letter-spacing:-.01em}
+  .g-title em{font-style:normal;color:var(--brass-hi)}
+  .g-tag{color:var(--tx-dim);font-size:16px;margin:0 0 14px}
+
+  /* activity line */
+  .g-activity{font-family:var(--mono);font-size:12px;letter-spacing:.03em;color:var(--tx-dim);
+    margin:0 0 14px;min-height:16px}
+
+  /* category toggle */
+  .g-toggle{display:flex;gap:8px;background:var(--ink2);border:1px solid var(--line);
+    border-radius:999px;padding:5px;margin:0 0 22px}
+  .g-toggle button{flex:1;border:0;background:transparent;color:var(--tx-dim);font:inherit;
+    font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    padding:11px 8px;min-height:44px;border-radius:999px;cursor:pointer;transition:.15s}
+  .g-toggle button[aria-selected="true"]{background:var(--brass);color:#231a08;font-weight:700}
+
+  /* wheel */
+  .g-wheelwrap{transition:max-height .35s ease, opacity .3s ease;overflow:hidden;max-height:420px;opacity:1}
+  .g-wheelwrap.collapsed{max-height:0;opacity:0;margin:0}
+  .wheel-btn{display:block;width:100%;max-width:340px;margin:0 auto 4px;background:transparent;
+    border:0;padding:0;cursor:pointer;position:relative;border-radius:50%}
+  .wheel-btn:disabled{cursor:default}
+  .wheel-btn:focus-visible{outline:3px solid var(--brass-hi);outline-offset:4px;border-radius:50%}
+  .wheel svg{display:block;width:100%;height:auto}
+  #wheel-rot{transform-box:fill-box;transform-origin:150px 150px;
+    transition:transform 4.2s cubic-bezier(.17,.67,.2,1.01)}
+  .wheel-hint{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--tx-dim);text-align:center;margin:8px 0 0}
+
+  /* result strip */
+  .g-result{min-height:30px;text-align:center;margin:14px 0 8px;font-size:17px;color:var(--tx);
+    opacity:0;transition:opacity .3s ease}
+  .g-result.show{opacity:1}
+  .g-result b{color:var(--brass-hi);font-family:var(--display);font-size:20px}
+
+  /* draw row (filled in commit 4) */
+  .g-draw{margin:6px 0 8px}
+  .g-drawbtn{width:100%;max-width:340px;margin:0 auto;display:block;font-family:var(--body);
+    font-size:16px;font-weight:600;border-radius:12px;padding:13px 18px;min-height:48px;cursor:pointer;
+    border:1px solid var(--brass);background:var(--brass);color:#231a08}
+  .g-drawbtn[hidden]{display:none}
+
+  /* new to this */
+  details.g-new{margin:26px 0 0;border-top:1px solid var(--line);padding-top:14px}
+  details.g-new summary{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--brass);cursor:pointer;list-style:none;min-height:32px;display:flex;align-items:center}
+  details.g-new summary::-webkit-details-marker{display:none}
+  details.g-new summary::after{content:"+";margin-left:8px;color:var(--tx-dim)}
+  details.g-new[open] summary::after{content:"–"}
+  details.g-new p{color:var(--tx-dim);font-size:14px;line-height:1.5;margin:10px 0 0;max-width:60ch}
+  details.g-new p b{color:var(--tx)}
+
+  @media (prefers-reduced-motion: reduce){
+    #wheel-rot{transition:none}
+    .g-wheelwrap,.g-result{transition:opacity .2s ease}
+  }
+</style>
+</head>
+<body>
+<div class="g-wrap">
+
+  <div class="g-top">
+    <div class="g-mark">The <b>Slot</b> · Game</div>
+    <button class="g-ham" id="ham" aria-label="Menu" aria-expanded="false">☰</button>
+  </div>
+  <div class="g-menu" id="menu" role="menu">
+    <a href="index.html" role="menuitem">← Back to the map</a>
+    <button id="soundtoggle" role="menuitemcheckbox" aria-checked="false">Sound <span class="sw" id="soundsw">off</span></button>
+  </div>
+
+  <h1 class="g-title">Spin. Draw. <em>Learn.</em></h1>
+  <p class="g-tag">Let luck choose what you learn next.</p>
+  <div class="g-activity" id="activity" aria-live="polite"></div>
+
+  <div class="g-toggle" role="tablist" aria-label="What to draw">
+    <button id="tab-move" role="tab" aria-selected="true">Pattern / Move</button>
+    <button id="tab-drill" role="tab" aria-selected="false">Skills &amp; Drills</button>
+  </div>
+
+  <div class="g-wheelwrap" id="wheelwrap">
+    <button class="wheel-btn" id="wheel" aria-label="Spin the wheel to draw a move"></button>
+    <p class="wheel-hint" id="wheelhint">Tap to spin</p>
+  </div>
+
+  <div class="g-result" id="result" aria-live="polite"></div>
+
+  <div class="g-draw" id="draw"></div>
+
+  <details class="g-new">
+    <summary>New to this?</summary>
+    <p><b>The wheel</b> picks a family — a push, a pass, a whip, a turn, or footwork — then deals you up to three things from it. Spin, flip a card, and you've got something to go work on.</p>
+    <p><b>Some cards are locked</b> face-up and dimmed. That's a move you can't draw yet because you haven't learned what it's built on. Learn the thing it names and it unlocks.</p>
+    <p><b>Footwork counts twice.</b> A footwork drill trains the footwork <em>and</em> the anchor underneath it — so on this side of the site, it scores double. That's not a trick; it's just true.</p>
+  </details>
+
+</div>
+
+<script>
+// ---- game edition: shell, category toggle, and the wheel ----
+logVia = "game";                 // history events from this page are tagged "game"
+loadGame();
+
+const WHEEL_FAMS = [
+  {fam:"push",     label:"Pushes",   c:"#b06a3a"},
+  {fam:"pass",     label:"Passes",   c:"#4f8a9c"},
+  {fam:"whip",     label:"Whips",    c:"#7a6bb0"},
+  {fam:"turn",     label:"Turns",    c:"#c99a3f"},
+  {fam:"footwork", label:"Footwork", c:"#c8757f"}
+];
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+let mode = "move";               // "move" | "drill"
+let spinning = false;
+let wheelRotation = 0;           // accumulated degrees, always spins forward
+let wheelFams = [];              // families currently on the wheel (from eligibleFamilies)
+
+function darken(hex,f){
+  const n=parseInt(hex.slice(1),16), r=(n>>16)&255, g=(n>>8)&255, b=n&255, d=x=>Math.round(x*f);
+  return `rgb(${d(r)},${d(g)},${d(b)})`;
+}
+function pt(r,deg){ const a=deg*Math.PI/180; return [150+r*Math.sin(a), 150-r*Math.cos(a)]; }
+
+// The SVG shell — rim, bulbs, hub, pointer, and an empty <g id="wheel-rot"> that
+// persists across spins so its transform keeps an established baseline (rebuilding
+// the rotating element every spin kills the CSS transition and transitionend never
+// fires). Built once.
+function buildShell(){
+  let bulbs="";
+  for(let i=0;i<20;i++){ const [bx,by]=pt(147, i*18); bulbs += `<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="2.4" fill="url(#bulb)"/>`; }
+  document.getElementById("wheel").innerHTML = `
+  <svg viewBox="0 0 300 300" role="img" aria-label="Prize wheel of move families">
+    <defs>
+      <radialGradient id="ground" cx="50%" cy="42%" r="70%">
+        <stop offset="0%" stop-color="#241d38"/><stop offset="100%" stop-color="#0e0b18"/>
+      </radialGradient>
+      <linearGradient id="brass" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#f4d488"/><stop offset="45%" stop-color="#c99a3f"/>
+        <stop offset="100%" stop-color="#6e5220"/>
+      </linearGradient>
+      <radialGradient id="bulb" cx="40%" cy="35%" r="70%">
+        <stop offset="0%" stop-color="#fff6dc"/><stop offset="100%" stop-color="#b9862f"/>
+      </radialGradient>
+      <radialGradient id="hub" cx="42%" cy="38%" r="70%">
+        <stop offset="0%" stop-color="#2b2343"/><stop offset="100%" stop-color="#120e1f"/>
+      </radialGradient>
+    </defs>
+    <circle cx="150" cy="150" r="150" fill="url(#ground)"/>
+    <circle cx="150" cy="150" r="146" fill="none" stroke="url(#brass)" stroke-width="12"/>
+    <line x1="60" y1="40" x2="230" y2="150" stroke="#fff2cf" stroke-width="1.2" opacity=".35" stroke-linecap="round"/>
+    ${bulbs}
+    <g id="wheel-rot" style="transform:rotate(0deg)"></g>
+    <circle cx="150" cy="150" r="40" fill="url(#brass)"/>
+    <circle cx="150" cy="150" r="34" fill="url(#hub)" stroke="#6e5220" stroke-width="1"/>
+    <text x="150" y="146" text-anchor="middle" font-family="var(--display)" font-size="15" font-weight="700" fill="#ecc069">SPIN</text>
+    <text x="150" y="162" text-anchor="middle" font-family="var(--mono)" font-size="8" letter-spacing=".18em" fill="#b3a9c6">THE WHEEL</text>
+    <path d="M150 6 L140 30 L160 30 Z" fill="url(#brass)" stroke="#6e5220" stroke-width="1"/>
+  </svg>`;
+}
+
+// Paint the wedges into the persistent #wheel-rot from whatever families are drawable
+// now: ten wedges when all five are live (two opposing wedges each), fewer as families
+// exhaust. Returns the signature of the family set so spin() only repaints on change.
+function paintWedges(){
+  const live = eligibleFamilies();
+  wheelFams = WHEEL_FAMS.filter(w=>live.includes(w.fam));
+  if(!wheelFams.length) wheelFams = WHEEL_FAMS.slice();     // never an empty wheel
+  const order = wheelFams.concat(wheelFams);                // each family twice, opposite
+  const N = order.length, step = 360/N;
+  let wedges="", labels="";
+  order.forEach((w,i)=>{
+    const a=i*step, b=(i+1)*step, mid=a+step/2;
+    const [x1,y1]=pt(138,a), [x2,y2]=pt(138,b);
+    const fill = (i%2===0) ? w.c : darken(w.c,0.66);
+    wedges += `<path d="M150 150 L${x1.toFixed(2)} ${y1.toFixed(2)} A138 138 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z" fill="${fill}" stroke="#0e0b18" stroke-width="1"/>`;
+    const [lx,ly]=pt(96,mid);
+    labels += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" transform="rotate(${mid.toFixed(1)} ${lx.toFixed(1)} ${ly.toFixed(1)})" text-anchor="middle" dominant-baseline="middle" font-family="var(--mono)" font-size="10" font-weight="700" fill="#fdf4e0" letter-spacing=".04em">${w.label}</text>`;
+  });
+  document.getElementById("wheel-rot").innerHTML = wedges+labels;
+  return wheelFams.map(w=>w.fam).join(",");
+}
+let wheelSig = "";
+function buildWheel(){ buildShell(); wheelSig = paintWedges(); }
+
+function landOnFamily(fam){
+  const order = wheelFams.concat(wheelFams);
+  const N = order.length, step = 360/N;
+  const idxs = order.map((w,i)=>w.fam===fam?i:-1).filter(i=>i>=0);
+  const idx = idxs[Math.floor(Math.random()*idxs.length)];
+  const centre = idx*step + step/2;                 // wedge centre, clockwise from top
+  const need = ((-centre - wheelRotation)%360 + 360)%360;
+  wheelRotation += 5*360 + need;                    // 5 full turns then settle onto it
+  const rot = document.getElementById("wheel-rot");
+  if(reduceMotion){ rot.style.transition="none"; }
+  rot.style.transform = `rotate(${wheelRotation}deg)`;
+}
+
+function afterLand(fam){
+  if(!spinning) return;                 // idempotent: transitionend and the timeout can't double-fire
+  const meta = WHEEL_FAMS.find(w=>w.fam===fam);
+  const res = document.getElementById("result");
+  res.innerHTML = `The wheel says <b>${meta?meta.label:fam}</b>. <span style="color:var(--tx-dim)">Dealing…</span>`;
+  res.classList.add("show");
+  spinning = false;
+  document.getElementById("wheel").disabled = false;
+  document.getElementById("wheelhint").textContent = "Spin again";
+  if(typeof dealMoves === "function") dealMoves(fam);   // commit 4 fills this in
+}
+
+function spin(){
+  if(spinning || mode!=="move") return;
+  // Repaint wedges only if the eligible family set changed — keeps #wheel-rot (and its
+  // transform baseline) alive so the CSS transition actually runs.
+  const sig = WHEEL_FAMS.filter(w=>eligibleFamilies().includes(w.fam)).map(w=>w.fam).join(",");
+  if(sig && sig!==wheelSig) wheelSig = paintWedges();
+  const fams = eligibleFamilies();
+  const fam = fams.length ? fams[Math.floor(Math.random()*fams.length)] : wheelFams[0].fam;
+  spinning = true;
+  document.getElementById("wheel").disabled = true;
+  document.getElementById("result").classList.remove("show");
+  document.getElementById("wheelhint").textContent = "Spinning…";
+  if(reduceMotion){ landOnFamily(fam); afterLand(fam); return; }
+  landOnFamily(fam);
+  const rot = document.getElementById("wheel-rot");
+  const done = e=>{ if(e.propertyName!=="transform") return; rot.removeEventListener("transitionend",done); afterLand(fam); };
+  rot.addEventListener("transitionend",done);
+  // Safety net: if transitionend is missed for any reason, land anyway.
+  setTimeout(()=>{ if(spinning) afterLand(fam); }, 5200);
+}
+
+// ---- category toggle ----
+function setMode(m){
+  mode = m;
+  const isMove = m==="move";
+  document.getElementById("tab-move").setAttribute("aria-selected", isMove);
+  document.getElementById("tab-drill").setAttribute("aria-selected", !isMove);
+  document.getElementById("wheelwrap").classList.toggle("collapsed", !isMove);
+  document.getElementById("result").classList.remove("show");
+  document.getElementById("draw").innerHTML = "";
+  if(!isMove && typeof dealDrills === "function") dealDrills();   // commit 4
+}
+
+// ---- activity line (shared count, not a streak) ----
+function fmtMins(m){ if(m<60) return m+"m"; const h=Math.floor(m/60), r=m%60; return r?`${h}h ${r}m`:`${h}h`; }
+function daysThisWeek(){
+  const d=new Date(), p=n=>String(n).padStart(2,"0"), cut=new Date(d.getFullYear(),d.getMonth(),d.getDate()-6);
+  const key=x=>`${x.getFullYear()}-${p(x.getMonth()+1)}-${p(x.getDate())}`, c=key(cut);
+  return gameState.dates.filter(s=>s>=c).length;
+}
+function renderActivity(){
+  const t=gameState.totals, el=document.getElementById("activity");
+  if(!(t.drills||t.moves||gameState.dates.length)){ el.textContent=""; return; }
+  const days=daysThisWeek();
+  const parts=[`${days} ${days===1?"day":"days"} this week`, `${t.drills} ${t.drills===1?"drill":"drills"}`];
+  if(t.minutes) parts.push(fmtMins(t.minutes));
+  el.textContent = parts.join(" · ");
+}
+
+// ---- menu / sound (sound synthesis lands in commit 5) ----
+function refreshSound(){
+  const on=!!(gameState.settings&&gameState.settings.sound);
+  document.getElementById("soundsw").textContent = on?"on":"off";
+  document.getElementById("soundtoggle").setAttribute("aria-checked", on);
+}
+
+document.getElementById("wheel").addEventListener("click", spin);
+document.getElementById("tab-move").addEventListener("click", ()=>setMode("move"));
+document.getElementById("tab-drill").addEventListener("click", ()=>setMode("drill"));
+document.getElementById("ham").addEventListener("click", function(){
+  const m=document.getElementById("menu"), open=m.classList.toggle("on");
+  this.setAttribute("aria-expanded", open);
+});
+document.getElementById("soundtoggle").addEventListener("click", function(){
+  gameState.settings.sound = !gameState.settings.sound;
+  saveGame(); refreshSound();
+});
+
+(function initGame(){
+  buildWheel();
+  renderActivity();
+  refreshSound();
+})();
+</script>
+</body>
+</html>
