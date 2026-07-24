@@ -65,7 +65,10 @@
   .wheel-btn:disabled{cursor:default}
   .wheel-btn:focus-visible{outline:3px solid var(--brass-hi);outline-offset:4px;border-radius:50%}
   .wheel svg{display:block;width:100%;height:auto}
-  #wheel-rot{transform-box:fill-box;transform-origin:150px 150px;
+  /* fill-box + a pixel origin measures from the group's own bbox top-left (12,12),
+     landing at (162,162) and making the disc orbit off-centre during a spin. 50% 50%
+     resolves to the bbox centre, which is exactly the SVG centre (150,150). */
+  #wheel-rot{transform-box:fill-box;transform-origin:50% 50%;
     transition:transform 4.2s cubic-bezier(.17,.67,.2,1.01)}
   .wheel-hint{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
     color:var(--tx-dim);text-align:center;margin:8px 0 0}
@@ -228,7 +231,6 @@ function buildShell(){
     </defs>
     <circle cx="150" cy="150" r="150" fill="url(#ground)"/>
     <circle cx="150" cy="150" r="146" fill="none" stroke="url(#brass)" stroke-width="12"/>
-    <line x1="60" y1="40" x2="230" y2="150" stroke="#fff2cf" stroke-width="1.2" opacity=".35" stroke-linecap="round"/>
     ${bulbs}
     <g id="wheel-rot" style="transform:rotate(0deg)"></g>
     <circle cx="150" cy="150" r="40" fill="url(#brass)"/>
