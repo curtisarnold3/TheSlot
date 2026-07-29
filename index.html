@@ -639,7 +639,7 @@ function setStatus(id,target){
   const cur=state[id]||"none";
   markStatus(id, cur===target ? "none" : target);   // data half lives in theslot.js
   render();
-  renderTree2();   // the tree shows move status now, so it has to hear about the change
+  renderTree2();   // gated: repaints the tree if it's showing, else just marks it stale
 }
 
 function moveCard(m){
@@ -932,12 +932,27 @@ function treeView(px){
   return {MAX_COLS:1,NODE_W:w-TREE_GEO.COL_X-TREE_GEO.PAD_RIGHT,COL_STEP:0,SVG_W:w};
 }
 
-// Draws the forest as an SVG string and injects it. Off unless ?game=1.
+// Lazy tree state. The tree is the tallest, most expensive thing on the page, and
+// it lives in a panel that's hidden most of the time. treeDrawn: has it been painted
+// at least once. treeStale: has something (a status/rung change, a resize) happened
+// that its current paint doesn't reflect.
+let treeDrawn=false, treeStale=false;
+
+// Public gate. Only paint when the Tree panel is actually on screen; an off-screen
+// caller (e.g. a status toggle over on the Moves panel) just flags it stale so it
+// repaints the next time it's shown — not on every keystroke elsewhere.
 function renderTree2(){
+  const p=document.getElementById("p-tree");
+  if(!p || p.hidden){ treeStale=true; return; }
+  drawTree(); treeDrawn=true; treeStale=false;
+}
+
+// Draws the forest as an SVG string and injects it.
+function drawTree(){
   const host=document.getElementById("tree2");
   if(!host) return;
   const px=host.clientWidth;
-  if(!px) return;   // Tree panel is hidden (display:none → width 0). It draws on activation. (c4 formalises this.)
+  if(!px) return;   // panel is visible but not yet laid out — defensive only
   const view=treeView(px)||{};
 
   const G=TREE_GEO;
@@ -1065,7 +1080,8 @@ function activatePanel(name){
   const ctrls=document.getElementById("mv-controls");
   if(ctrls) ctrls.hidden=(name!=="moves");
   // The tree lives in a hidden panel and can't measure itself until it's shown.
-  if(name==="tree" && typeof buildTree==="function") renderTree2();
+  // Paint it on first view, or when a change since the last paint left it stale.
+  if(name==="tree" && typeof buildTree==="function" && (!treeDrawn||treeStale)) renderTree2();
   // Panel switches jump to the top; override the global smooth scroll.
   window.scrollTo({top:0,behavior:"instant"});
 }
@@ -1128,8 +1144,9 @@ function startApp(){
   // drill's `move` had no such check, so a typo would just quietly credit nothing.
   DRILLS.forEach(d=>{ if(d.move && !MOVES.some(m=>m.id===d.move))
     console.warn(`[drills] "${d.id}" points at move "${d.move}", which doesn't exist`); });
-  load(); buildChips(); render(); renderDrills(); loadGame(); renderTree2(); renderChallenge();
-  onHashRoute();   // honour a #panel in the URL on load; defaults to Moves
+  load(); buildChips(); render(); renderDrills(); loadGame(); renderChallenge();
+  onHashRoute();   // honour a #panel in the URL on load; defaults to Moves.
+                   // The tree paints lazily when its panel is first shown (see activatePanel).
   if(progressRecovered) showProgressNotice();
 }
 slotBoot(startApp);
