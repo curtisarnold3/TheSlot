@@ -220,6 +220,7 @@
   @media (prefers-reduced-motion:reduce){.chev{transition:none}}
 
   .empty{color:var(--tx-dim);font-style:italic;padding:8px 0 20px}
+  .searchcount{font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.03em;margin:6px 0 14px}
 
   /* prose blocks */
   .block{background:var(--ink2);border:1px solid var(--line);border-radius:16px;padding:26px 24px;margin:8px 0}
@@ -501,6 +502,10 @@ const openCards=new Set();
 // Which family accordions are open. Foundation leads open; the rest start collapsed.
 // Survives render() the same way openCards does.
 const openFams=new Set(["foundation"]);
+// Live search. Non-empty searchQ puts render() into a flat, ungrouped results mode
+// on the Moves panel; searchReturnPanel is where we send the user when they clear it.
+let searchQ="";
+let searchReturnPanel=null;
 
 // ---- challenge card (F2) ----------------------------------------------------
 // Four states: idle / offered / accepted / done. Only "accepted" persists, via
@@ -701,6 +706,38 @@ function render(){
     if(d.open) openFams.add(d.dataset.fam); else openFams.delete(d.dataset.fam);
   });
   let html="";
+  if(searchQ){
+    // Search overrides the family filter and repertoire view: a flat, ungrouped
+    // list of every move whose name, aka, or parent contains the query.
+    const q=searchQ.toLowerCase();
+    const hits=MOVES.filter(m=>
+      (m.name && m.name.toLowerCase().includes(q)) ||
+      (m.aka  && m.aka.toLowerCase().includes(q))  ||
+      (m.builds && m.builds.toLowerCase().includes(q))
+    ).sort((a,b)=>a.diff-b.diff);
+    if(hits.length){
+      const line=hits.length===1?`1 move matches`:`${hits.length} moves match`;
+      html=`<p class="searchcount">${line} "${esc(searchQ)}"</p>
+        <div class="moves">${hits.map(moveCard).join("")}</div>`;
+    }else{
+      html=`<div class="empty">Nothing matches "${esc(searchQ)}". Names change from studio to studio here — try the other name for it, or the basic it comes from.</div>`;
+    }
+    tree.innerHTML=html;
+    tree.querySelectorAll(".status button").forEach(b=>{
+      b.addEventListener("click",()=>setStatus(b.dataset.id,b.dataset.t));
+    });
+    tree.querySelectorAll(".cardhead").forEach(h=>{
+      h.addEventListener("click",()=>{
+        const id=h.dataset.id, region=document.getElementById("d-"+id);
+        const nowOpen=!openCards.has(id);
+        if(nowOpen) openCards.add(id); else openCards.delete(id);
+        h.setAttribute("aria-expanded",nowOpen?"true":"false");
+        if(region) region.hidden=!nowOpen;
+      });
+    });
+    updateMeter();
+    return;
+  }
   FAMS.forEach(f=>{
     if(famFilter!=="all" && famFilter!==f.id) return;
     let ms=MOVES.filter(m=>m.fam===f.id).sort((a,b)=>a.diff-b.diff);
@@ -759,6 +796,7 @@ function buildChips(){
   const all=[{id:"all",name:"All"}].concat(FAMS.map(f=>({id:f.id,name:f.name.replace("The ","").replace(" family","")})));
   c.innerHTML=all.map(f=>`<button class="chip ${f.id==='all'?'on':''}" data-f="${f.id}">${f.name}</button>`).join("");
   c.querySelectorAll(".chip").forEach(ch=>ch.addEventListener("click",()=>{
+    abandonSearch();   // choosing a family filter clears an active search
     famFilter=ch.dataset.f;
     c.querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x.dataset.f===famFilter));
     render();
@@ -1081,6 +1119,7 @@ function drawTree(){
 }
 
 document.getElementById("rep").addEventListener("click",function(){
+  abandonSearch();   // the repertoire view and search are mutually exclusive
   repOnly=!repOnly;
   this.classList.toggle("on",repOnly);
   this.textContent = repOnly ? "◆ Showing repertoire" : "◆ My repertoire";
@@ -1088,6 +1127,7 @@ document.getElementById("rep").addEventListener("click",function(){
 });
 document.getElementById("reset").addEventListener("click",function(){
   if(!confirm("Clear all your marked progress on this device?")) return;
+  abandonSearch();
   state={}; save(); repOnly=false;
   document.getElementById("rep").classList.remove("on");
   document.getElementById("rep").textContent="◆ My repertoire";
@@ -1126,7 +1166,7 @@ function onHashRoute(){
 window.addEventListener("hashchange",onHashRoute);
 tabEls().forEach(t=>{
   if(!t) return;
-  t.addEventListener("click",()=>{ location.hash=t.dataset.panel; activatePanel(t.dataset.panel); });
+  t.addEventListener("click",()=>{ if(abandonSearch()) render(); location.hash=t.dataset.panel; activatePanel(t.dataset.panel); });
   // Arrow keys move focus along the tablist and activate as they go (Home/End too).
   t.addEventListener("keydown",e=>{
     const tabs=tabEls().filter(Boolean);
@@ -1138,11 +1178,41 @@ tabEls().forEach(t=>{
     else if(e.key==="End") j=tabs.length-1;
     if(j===null) return;
     e.preventDefault();
+    if(abandonSearch()) render();
     const dest=tabs[j];
     location.hash=dest.dataset.panel; activatePanel(dest.dataset.panel);
     dest.focus();
   });
 });
+
+// ---- search -----------------------------------------------------------------
+// Reset search state without re-rendering; the caller renders. Used when the user
+// makes an explicit filter/nav choice (tab, chip, repertoire) mid-search.
+function abandonSearch(){
+  if(!searchQ && !document.getElementById("q").value) return false;
+  searchQ=""; searchReturnPanel=null;
+  const i=document.getElementById("q"); if(i) i.value="";
+  return true;
+}
+(function wireSearch(){
+  const input=document.getElementById("q");
+  if(!input) return;
+  input.addEventListener("input",()=>{
+    const v=input.value.trim();
+    const entering = v && !searchQ;
+    if(entering) searchReturnPanel = PANELS.find(p=>!document.getElementById("p-"+p).hidden) || "moves";
+    searchQ=v;
+    if(v){
+      if(document.getElementById("p-moves").hidden) activatePanel("moves");
+      render();
+    }else{
+      // cleared from the box: rebuild the normal grid, then go back where we were
+      render();
+      const back=searchReturnPanel||"moves"; searchReturnPanel=null;
+      if(back!=="moves") activatePanel(back);
+    }
+  });
+})();
 
 // Re-layout on rotation or a resized window, but only when the column bucket actually
 // changes — a re-render replaces the node under the user's finger and drops focus.
