@@ -86,13 +86,18 @@
   .tab:hover{color:var(--tx)}
   .tab[aria-selected="true"]{color:var(--brass-hi);border-bottom-color:var(--brass)}
   .tab:focus-visible{outline:2px solid var(--brass);outline-offset:-2px;border-radius:4px}
-  /* search row */
-  .searchrow{margin-top:6px}
-  .search{width:100%;font-family:var(--body);font-size:16px;color:var(--tx);
+  /* search row + the quiet, always-present link to /game */
+  .searchrow{margin-top:6px;display:flex;gap:8px;align-items:stretch}
+  .search{flex:1 1 auto;min-width:0;font-family:var(--body);font-size:16px;color:var(--tx);
     background:var(--ink3);border:1px solid var(--line);border-radius:10px;
     padding:10px 14px;min-height:44px;-webkit-appearance:none;appearance:none}
   .search::placeholder{color:var(--tx-dim)}
   .search:focus-visible{outline:2px solid var(--brass);outline-offset:1px;border-color:var(--brass-lo)}
+  .gamelink{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;padding:0 13px;min-height:44px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--brass-hi);text-decoration:none;border:1px solid var(--brass-lo);border-radius:10px;white-space:nowrap}
+  .gamelink:hover{background:var(--ink3);color:var(--brass-hi)}
+  .gamelink:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
   /* controls row (Moves only). Chips scroll horizontally so the sticky header stays
      shallow on a phone instead of wrapping to three rows. */
   .controls{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
@@ -142,6 +147,14 @@
   .lcard .t{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;
     color:var(--tx);margin:6px 0 4px;font-weight:600}
   .lcard .d{font-size:13px;color:var(--tx-dim);line-height:1.4}
+  /* compact lever legend on the Moves panel — decodes the collapsed-card glyphs.
+     Scrolls sideways rather than wrapping so it stays a single quiet line. */
+  .leverkey{display:flex;gap:8px 14px;margin:4px 0 16px;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--tx-dim)}
+  .leverkey::-webkit-scrollbar{display:none}
+  .leverkey .lk{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex:0 0 auto}
+  .leverkey .g{color:var(--c);font-size:14px;font-weight:700;line-height:1}
 
   /* family header */
   .fam-head{display:flex;align-items:baseline;gap:14px;margin:34px 0 4px;
@@ -284,7 +297,6 @@
     <div class="eyebrow">A free on-ramp for West Coast Swing · beginner → novice</div>
     <h1>The <em>Slot</em>.</h1>
     <div class="pillars"><b>One push.</b> <span>·</span> <b>Two passes.</b> <span>·</span> <b>One whip.</b> <span>·</span> <b>Five knobs.</b></div>
-    <p class="lede">Want to learn West Coast Swing, have fun with it, and maybe compete down the road? Start here. Almost every move you'll ever dance is a variation of a few basics — so this is the whole family tree, laid out from easiest to hardest. <strong>Mark what you've got, see what's next, and keep a living map of your own repertoire so you never lose a move you learned.</strong></p>
   </div>
 </header>
 
@@ -300,6 +312,7 @@
     </div>
     <div class="searchrow">
       <input type="search" id="q" class="search" placeholder="Find a move…" aria-label="Find a move" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <a class="gamelink" href="game.html" title="The game edition — spin, draw, drill">🎲 Game</a>
     </div>
     <div class="controls" id="mv-controls">
       <div class="row">
@@ -318,21 +331,13 @@
 
     <section><div class="challenge" id="challenge" aria-live="polite"></div></section>
 
-  <section>
-    <div class="levers">
-      <div class="k">The idea that unlocks everything</div>
-      <h2>You don't learn hundreds of moves. You turn five knobs.</h2>
-      <p>Here's the part that makes the whole thing click: the dance isn't a giant pile of memorized patterns. It's a handful of basics, each of which you can <em>vary</em> five ways. Learn to see the knob being turned and a "new" move stops being new — it's just a push with a hand change, or a whip run backwards. This is also your memory trick: any move you own times these five levers is a move you can find again.</p>
-      <div class="lgrid">
-        <div class="lcard" style="--c:var(--lv-hand)"><div class="g">⇄</div><div class="t">Hand change</div><div class="d">Swap which hands connect mid-pattern — same footwork, brand-new exits open up.</div></div>
-        <div class="lcard" style="--c:var(--lv-turn)"><div class="g">↻</div><div class="t">Add a turn</div><div class="d">Layer a rotation onto the travel — an inside turn, a free spin, a double.</div></div>
-        <div class="lcard" style="--c:var(--lv-rev)"><div class="g">↺</div><div class="t">Reverse it</div><div class="d">Run the same shape the other direction. A tuck becomes a cinnamon roll.</div></div>
-        <div class="lcard" style="--c:var(--lv-entry)"><div class="g">⤵</div><div class="t">New entry</div><div class="d">Change how you get in — from closed position, from two hands, from a wrap.</div></div>
-        <div class="lcard" style="--c:var(--lv-exit)"><div class="g">⤴</div><div class="t">New exit</div><div class="d">Change how you come out — a different release hand, a roll, a turn on the way through.</div></div>
-      </div>
-    </div>
-  </section>
-
+  <div class="leverkey" aria-label="What the lever glyphs mean">
+    <span class="lk" style="--c:var(--lv-hand)"><span class="g">⇄</span>Hand change</span>
+    <span class="lk" style="--c:var(--lv-turn)"><span class="g">↻</span>Add a turn</span>
+    <span class="lk" style="--c:var(--lv-rev)"><span class="g">↺</span>Reverse it</span>
+    <span class="lk" style="--c:var(--lv-entry)"><span class="g">⤵</span>New entry</span>
+    <span class="lk" style="--c:var(--lv-exit)"><span class="g">⤴</span>New exit</span>
+  </div>
     <div id="tree"></div>
   </div>
 
@@ -426,6 +431,23 @@
   </div>
 
   <div class="panel" id="p-about" role="tabpanel" aria-labelledby="t-about" tabindex="0" hidden>
+  <section>
+    <p class="lede">Want to learn West Coast Swing, have fun with it, and maybe compete down the road? Start here. Almost every move you'll ever dance is a variation of a few basics — so this is the whole family tree, laid out from easiest to hardest. <strong>Mark what you've got, see what's next, and keep a living map of your own repertoire so you never lose a move you learned.</strong></p>
+  </section>
+  <section>
+    <div class="levers">
+      <div class="k">The idea that unlocks everything</div>
+      <h2>You don't learn hundreds of moves. You turn five knobs.</h2>
+      <p>Here's the part that makes the whole thing click: the dance isn't a giant pile of memorized patterns. It's a handful of basics, each of which you can <em>vary</em> five ways. Learn to see the knob being turned and a "new" move stops being new — it's just a push with a hand change, or a whip run backwards. This is also your memory trick: any move you own times these five levers is a move you can find again.</p>
+      <div class="lgrid">
+        <div class="lcard" style="--c:var(--lv-hand)"><div class="g">⇄</div><div class="t">Hand change</div><div class="d">Swap which hands connect mid-pattern — same footwork, brand-new exits open up.</div></div>
+        <div class="lcard" style="--c:var(--lv-turn)"><div class="g">↻</div><div class="t">Add a turn</div><div class="d">Layer a rotation onto the travel — an inside turn, a free spin, a double.</div></div>
+        <div class="lcard" style="--c:var(--lv-rev)"><div class="g">↺</div><div class="t">Reverse it</div><div class="d">Run the same shape the other direction. A tuck becomes a cinnamon roll.</div></div>
+        <div class="lcard" style="--c:var(--lv-entry)"><div class="g">⤵</div><div class="t">New entry</div><div class="d">Change how you get in — from closed position, from two hands, from a wrap.</div></div>
+        <div class="lcard" style="--c:var(--lv-exit)"><div class="g">⤴</div><div class="t">New exit</div><div class="d">Change how you come out — a different release hand, a roll, a turn on the way through.</div></div>
+      </div>
+    </div>
+  </section>
   <section>
     <div class="block honest">
       <div class="k">Where this leads next</div>
