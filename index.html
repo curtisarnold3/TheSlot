@@ -72,14 +72,41 @@
   .lede{font-size:18px;color:var(--tx-dim);max-width:62ch}
   .lede strong{color:var(--tx)}
 
-  /* sticky controls */
-  .controls{position:sticky;top:0;z-index:40;background:rgba(24,20,37,.94);
-    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 0}
-  .controls .row{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center}
-  .meter{display:flex;align-items:baseline;gap:10px;margin-right:auto}
-  .meter .big{font-family:var(--display);font-size:26px;color:var(--brass-hi)}
+  /* sticky top bar: tabs (always) + search (always) + controls (Moves only). One
+     sticky element, not three stacked ones. */
+  .topbar{position:sticky;top:0;z-index:40;background:rgba(24,20,37,.94);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .topbar .wrap{padding-top:8px;padding-bottom:8px}
+  /* tab bar */
+  .tabs{display:flex;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:1 0 auto;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    background:transparent;color:var(--tx-dim);border:0;border-bottom:2px solid transparent;
+    padding:9px 12px;min-height:44px;cursor:pointer;transition:color .15s,border-color .15s;white-space:nowrap}
+  .tab:hover{color:var(--tx)}
+  .tab[aria-selected="true"]{color:var(--brass-hi);border-bottom-color:var(--brass)}
+  .tab:focus-visible{outline:2px solid var(--brass);outline-offset:-2px;border-radius:4px}
+  /* search row */
+  .searchrow{margin-top:6px}
+  .search{width:100%;font-family:var(--body);font-size:16px;color:var(--tx);
+    background:var(--ink3);border:1px solid var(--line);border-radius:10px;
+    padding:10px 14px;min-height:44px;-webkit-appearance:none;appearance:none}
+  .search::placeholder{color:var(--tx-dim)}
+  .search:focus-visible{outline:2px solid var(--brass);outline-offset:1px;border-color:var(--brass-lo)}
+  /* controls row (Moves only). Chips scroll horizontally so the sticky header stays
+     shallow on a phone instead of wrapping to three rows. */
+  .controls{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+  /* meter | repertoire | reset on the first line, chips scroll on the second */
+  .controls .row{display:grid;grid-template-columns:1fr auto auto;gap:6px 10px;align-items:center}
+  .meter{display:flex;align-items:baseline;gap:10px;grid-column:1;grid-row:1}
+  .meter .big{font-family:var(--display);font-size:24px;color:var(--brass-hi)}
   .meter .sub{font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.04em}
-  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .toggle{grid-column:2;grid-row:1}
+  .reset{grid-column:3;grid-row:1}
+  .chips{display:flex;flex-wrap:nowrap;gap:6px;grid-column:1/-1;grid-row:2;min-width:0;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{white-space:nowrap;flex:0 0 auto}
   .chip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
     background:var(--ink3);color:var(--tx-dim);border:1px solid var(--line);
     padding:6px 11px;border-radius:999px;cursor:pointer;transition:.15s}
@@ -261,18 +288,35 @@
   </div>
 </header>
 
-<div class="controls">
-  <div class="wrap row">
-    <div class="meter"><span class="big" id="m-got">0</span><span class="sub" id="m-sub">of 0 owned</span></div>
-    <div class="chips" id="chips"></div>
-    <button class="toggle" id="rep" title="Show only the moves you've marked as owned">◆ My repertoire</button>
-    <button class="reset" id="reset">Reset</button>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="tabs" role="tablist" aria-label="Site sections">
+      <button class="tab" id="t-moves"  role="tab" aria-selected="true"  aria-controls="p-moves"  tabindex="0"  data-panel="moves">Moves</button>
+      <button class="tab" id="t-tree"   role="tab" aria-selected="false" aria-controls="p-tree"   tabindex="-1" data-panel="tree">Tree</button>
+      <button class="tab" id="t-plan"   role="tab" aria-selected="false" aria-controls="p-plan"   tabindex="-1" data-panel="plan">Plan</button>
+      <button class="tab" id="t-drills" role="tab" aria-selected="false" aria-controls="p-drills" tabindex="-1" data-panel="drills">Drills</button>
+      <button class="tab" id="t-about"  role="tab" aria-selected="false" aria-controls="p-about"  tabindex="-1" data-panel="about">About</button>
+    </div>
+    <div class="searchrow">
+      <input type="search" id="q" class="search" placeholder="Find a move…" aria-label="Find a move" autocomplete="off" autocapitalize="off" spellcheck="false">
+    </div>
+    <div class="controls" id="mv-controls">
+      <div class="row">
+        <div class="meter"><span class="big" id="m-got">0</span><span class="sub" id="m-sub">of 0 owned</span></div>
+        <div class="chips" id="chips"></div>
+        <button class="toggle" id="rep" title="Show only the moves you've marked as owned">◆ My repertoire</button>
+        <button class="reset" id="reset">Reset</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="wrap">
 
-  <section><div class="challenge" id="challenge" aria-live="polite"></div></section>
+  <div class="panel" id="p-moves" role="tabpanel" aria-labelledby="t-moves" tabindex="0">
+
+    <section><div class="challenge" id="challenge" aria-live="polite"></div></section>
 
   <section>
     <div class="levers">
@@ -289,42 +333,10 @@
     </div>
   </section>
 
-  <div id="tree"></div>
+    <div id="tree"></div>
+  </div>
 
-  <section>
-    <div class="block honest">
-      <div class="k">Where this leads next</div>
-      <h2>The dance keeps evolving</h2>
-      <p>West Coast Swing keeps evolving — that's part of the fun. Over the last decade-plus it's drifted from a mostly-in-the-feet dance toward flow: <strong>more body shaping, off-axis turns, waves and ripples, and slower, more contemporary music</strong>, a lot of it borrowed from Brazilian Zouk and contemporary partner dance. There are now whole festivals running WCS and Zouk under one roof.</p>
-      <p>Two things are true at once, and this map bets on both. First: <strong>the higher levels ask for more than clean basics</strong> — the flowy, musical, deeply connected dancing you see up top is real, and it's worth learning from people who dance it well. Second: <strong>that flow layer is built on top of these basics, not instead of them</strong> — nobody does a gorgeous off-axis whip without owning a clean whip first. So this tree is where everyone starts, and it's the foundation the rest stands on. From here, classes, workshops, and a few good lessons are how you climb.</p>
-    </div>
-  </section>
-
-  <section>
-    <div class="block">
-      <div class="k">Where a teacher comes in</div>
-      <h2>This is the start — not a reason to skip lessons</h2>
-      <p>Let's be clear, because the internet loves to turn this into a fight: <strong>a good teacher is worth it.</strong> Group classes — especially the beginner class before a social — are some of the best-value time you can spend, and a handful of private lessons early on will clean up your technique faster than months of guessing, before habits harden into things you'll have to un-learn. If you fall for this dance, take lessons. Really.</p>
-      <p>What this page is for is the <strong>foundation</strong>: the vocabulary, the practice habits, and a map so you always know where you are and what's next. Walk into your first class already knowing the shape of the thing, and every dollar you spend on instruction goes further.</p>
-      <p>And if you catch the competition bug — on paper, Novice is judged on <strong>timing, technique, and teamwork</strong>, all of which start right here. In practice, most of the community will tell you a coach who knows what the judges reward makes a real difference, and they're not wrong. So the point of this page was never "don't pay anyone." It's simpler: <strong>start here, have fun, and let lessons be a choice you make on purpose</strong> — not a giant package you feel pressured into before you even know you love it.</p>
-    </div>
-  </section>
-
-  <section>
-    <div class="block">
-      <div class="k">Practice · how to actually get better</div>
-      <h2>Drill, then scrimmage. Rinse. Repeat.</h2>
-      <div class="tips">
-        <div class="tip"><h3>Practice ≠ social dancing</h3><p>Socials are the game. Practice is where you drill one thing badly until it's good. Do both — don't confuse them. A move only becomes yours after reps, not after seeing it once.</p></div>
-        <div class="tip"><h3>No partner? Shadow it.</h3><p>You can drill footwork, rolling feet, anchors, and lead shapes completely solo. Most of what breaks down in these isn't the partner — it's your own base.</p></div>
-        <div class="tip"><h3>Go painfully slow</h3><p>If you can't do a move slowly, you're hiding something in the speed. Slow songs build the control fast songs let you fake.</p></div>
-        <div class="tip"><h3>Partnering is the real skill</h3><p>The most-skipped thing isn't patterns — it's cleanly leading and following an unfamiliar body. A Jack &amp; Jill hands you strangers, so practice with them.</p></div>
-        <div class="tip"><h3>You don't need advanced moves</h3><p>Clean basics beat messy tricks at every level a beginner competes in. Get good enough at the simple stuff to look calm — that's the whole game early on.</p></div>
-        <div class="tip"><h3>Count the music everywhere</h3><p>In the car, at your desk, in line. Finding the "1" instantly is free, and it's the difference between dancing to a song and dancing near one.</p></div>
-      </div>
-    </div>
-  </section>
-
+  <div class="panel" id="p-tree" role="tabpanel" aria-labelledby="t-tree" tabindex="0" hidden>
   <section>
     <div class="block">
       <div class="k">The whole map · one glance</div>
@@ -348,6 +360,23 @@
         <span><span class="d" style="background:#8f6e2b"></span>bonus rung</span>
       </div>
       <div class="treewrap"><div id="tree2"></div></div>
+    </div>
+  </section>
+  </div>
+
+  <div class="panel" id="p-plan" role="tabpanel" aria-labelledby="t-plan" tabindex="0" hidden>
+  <section>
+    <div class="block">
+      <div class="k">Practice · how to actually get better</div>
+      <h2>Drill, then scrimmage. Rinse. Repeat.</h2>
+      <div class="tips">
+        <div class="tip"><h3>Practice ≠ social dancing</h3><p>Socials are the game. Practice is where you drill one thing badly until it's good. Do both — don't confuse them. A move only becomes yours after reps, not after seeing it once.</p></div>
+        <div class="tip"><h3>No partner? Shadow it.</h3><p>You can drill footwork, rolling feet, anchors, and lead shapes completely solo. Most of what breaks down in these isn't the partner — it's your own base.</p></div>
+        <div class="tip"><h3>Go painfully slow</h3><p>If you can't do a move slowly, you're hiding something in the speed. Slow songs build the control fast songs let you fake.</p></div>
+        <div class="tip"><h3>Partnering is the real skill</h3><p>The most-skipped thing isn't patterns — it's cleanly leading and following an unfamiliar body. A Jack &amp; Jill hands you strangers, so practice with them.</p></div>
+        <div class="tip"><h3>You don't need advanced moves</h3><p>Clean basics beat messy tricks at every level a beginner competes in. Get good enough at the simple stuff to look calm — that's the whole game early on.</p></div>
+        <div class="tip"><h3>Count the music everywhere</h3><p>In the car, at your desk, in line. Finding the "1" instantly is free, and it's the difference between dancing to a song and dancing near one.</p></div>
+      </div>
     </div>
   </section>
 
@@ -383,7 +412,9 @@
       <p style="margin-top:22px">That's the foundation the whole tree stands on. Seven weeks, thirty minutes a day, and you'll move better than folks who've been "going out dancing" for years &mdash; because you actually practiced, and practice quietly beats talent that never drills.</p>
     </div>
   </section>
+  </div>
 
+  <div class="panel" id="p-drills" role="tabpanel" aria-labelledby="t-drills" tabindex="0" hidden>
   <section id="drill-section">
     <div class="block">
       <div class="k">The drill bank &middot; partner not required</div>
@@ -392,11 +423,34 @@
       <div id="drills"></div>
     </div>
   </section>
+  </div>
+
+  <div class="panel" id="p-about" role="tabpanel" aria-labelledby="t-about" tabindex="0" hidden>
+  <section>
+    <div class="block honest">
+      <div class="k">Where this leads next</div>
+      <h2>The dance keeps evolving</h2>
+      <p>West Coast Swing keeps evolving — that's part of the fun. Over the last decade-plus it's drifted from a mostly-in-the-feet dance toward flow: <strong>more body shaping, off-axis turns, waves and ripples, and slower, more contemporary music</strong>, a lot of it borrowed from Brazilian Zouk and contemporary partner dance. There are now whole festivals running WCS and Zouk under one roof.</p>
+      <p>Two things are true at once, and this map bets on both. First: <strong>the higher levels ask for more than clean basics</strong> — the flowy, musical, deeply connected dancing you see up top is real, and it's worth learning from people who dance it well. Second: <strong>that flow layer is built on top of these basics, not instead of them</strong> — nobody does a gorgeous off-axis whip without owning a clean whip first. So this tree is where everyone starts, and it's the foundation the rest stands on. From here, classes, workshops, and a few good lessons are how you climb.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="block">
+      <div class="k">Where a teacher comes in</div>
+      <h2>This is the start — not a reason to skip lessons</h2>
+      <p>Let's be clear, because the internet loves to turn this into a fight: <strong>a good teacher is worth it.</strong> Group classes — especially the beginner class before a social — are some of the best-value time you can spend, and a handful of private lessons early on will clean up your technique faster than months of guessing, before habits harden into things you'll have to un-learn. If you fall for this dance, take lessons. Really.</p>
+      <p>What this page is for is the <strong>foundation</strong>: the vocabulary, the practice habits, and a map so you always know where you are and what's next. Walk into your first class already knowing the shape of the thing, and every dollar you spend on instruction goes further.</p>
+      <p>And if you catch the competition bug — on paper, Novice is judged on <strong>timing, technique, and teamwork</strong>, all of which start right here. In practice, most of the community will tell you a coach who knows what the judges reward makes a real difference, and they're not wrong. So the point of this page was never "don't pay anyone." It's simpler: <strong>start here, have fun, and let lessons be a choice you make on purpose</strong> — not a giant package you feel pressured into before you even know you love it.</p>
+    </div>
+  </section>
 
   <footer>
     <p>A starting map, not the whole forest — West Coast Swing has hundreds of variations and the naming is genuinely inconsistent from studio to studio (your "cinnamon roll" is someone else's "reverse tuck"). This is a curated spine you can grow, ordered easiest→hardest, with every move tagged by the basic it descends from and the knob you turn to get there. <strong>Your progress saves to this page on your device</strong> — both the moves you mark and the foundation rungs you've reached. Nothing leaves your browser and there's no account to make. Families and difficulty follow the shared push / pass / whip vocabulary that virtually every WCS figure comes from. Flip on <em>My repertoire</em> to see just the moves you own — a leader's cheat-sheet for the ones you forget mid-dance.</p>
     <p style="margin-top:14px">Feeling lucky? There's a <a href="game.html">game edition</a> — spin a wheel, draw a move or a drill, and let luck pick what you practise next.</p>
   </footer>
+  </div>
+
 </div>
 
 <script>
@@ -861,6 +915,7 @@ function renderTree2(){
   const host=document.getElementById("tree2");
   if(!host) return;
   const px=host.clientWidth;
+  if(!px) return;   // Tree panel is hidden (display:none → width 0). It draws on activation. (c4 formalises this.)
   const view=treeView(px)||{};
 
   const G=TREE_GEO;
@@ -968,6 +1023,55 @@ document.getElementById("reset").addEventListener("click",function(){
   render();
 });
 
+// ---- panel routing ----------------------------------------------------------
+// Five tab-panels, one visible at a time. The hash is the single source of truth:
+// a tab click sets location.hash, and the hashchange handler does the actual work,
+// so the browser Back button walks the panel history for free.
+const PANELS=["moves","tree","plan","drills","about"];
+function tabEls(){ return PANELS.map(p=>document.getElementById("t-"+p)); }
+
+function activatePanel(name){
+  if(!PANELS.includes(name)) name="moves";
+  PANELS.forEach(p=>{
+    const on=(p===name);
+    const panel=document.getElementById("p-"+p);
+    const tab=document.getElementById("t-"+p);
+    if(panel) panel.hidden=!on;
+    if(tab){ tab.setAttribute("aria-selected",on?"true":"false"); tab.tabIndex=on?0:-1; }
+  });
+  // The filter controls (meter / chips / repertoire / reset) belong to Moves only.
+  const ctrls=document.getElementById("mv-controls");
+  if(ctrls) ctrls.hidden=(name!=="moves");
+  // The tree lives in a hidden panel and can't measure itself until it's shown.
+  if(name==="tree" && typeof buildTree==="function") renderTree2();
+  // Panel switches jump to the top; override the global smooth scroll.
+  window.scrollTo({top:0,behavior:"instant"});
+}
+function onHashRoute(){
+  const name=location.hash.slice(1);
+  activatePanel(PANELS.includes(name)?name:"moves");
+}
+window.addEventListener("hashchange",onHashRoute);
+tabEls().forEach(t=>{
+  if(!t) return;
+  t.addEventListener("click",()=>{ location.hash=t.dataset.panel; activatePanel(t.dataset.panel); });
+  // Arrow keys move focus along the tablist and activate as they go (Home/End too).
+  t.addEventListener("keydown",e=>{
+    const tabs=tabEls().filter(Boolean);
+    const i=tabs.indexOf(t);
+    let j=null;
+    if(e.key==="ArrowRight"||e.key==="ArrowDown") j=(i+1)%tabs.length;
+    else if(e.key==="ArrowLeft"||e.key==="ArrowUp") j=(i-1+tabs.length)%tabs.length;
+    else if(e.key==="Home") j=0;
+    else if(e.key==="End") j=tabs.length-1;
+    if(j===null) return;
+    e.preventDefault();
+    const dest=tabs[j];
+    location.hash=dest.dataset.panel; activatePanel(dest.dataset.panel);
+    dest.focus();
+  });
+});
+
 // Re-layout on rotation or a resized window, but only when the column bucket actually
 // changes — a re-render replaces the node under the user's finger and drops focus.
 let treeBucket=null, treeTimer=null;
@@ -1003,6 +1107,7 @@ function startApp(){
   DRILLS.forEach(d=>{ if(d.move && !MOVES.some(m=>m.id===d.move))
     console.warn(`[drills] "${d.id}" points at move "${d.move}", which doesn't exist`); });
   load(); buildChips(); render(); renderDrills(); loadGame(); renderTree2(); renderChallenge();
+  onHashRoute();   // honour a #panel in the URL on load; defaults to Moves
   if(progressRecovered) showProgressNotice();
 }
 slotBoot(startApp);
