@@ -17,11 +17,11 @@
   window.slotFail=function(){
     if(started) return;
     document.body.innerHTML='<div role="alert" style="position:fixed;inset:0;display:flex;'
-      +'align-items:center;justify-content:center;padding:24px;background:#181425;color:#efe7d6;'
+      +'align-items:center;justify-content:center;padding:24px;background:#1C2B45;color:#efe7d6;'
       +'font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif">'
       +'<div style="max-width:420px;text-align:center">'
       +'<h1 style="font-size:22px;font-weight:600;margin:0 0 12px">Something didn’t load</h1>'
-      +'<p style="font-size:16px;line-height:1.5;color:#b3a9c6;margin:0 0 20px">The site couldn’t '
+      +'<p style="font-size:16px;line-height:1.5;color:#A9B5C9;margin:0 0 20px">The site couldn’t '
       +'fetch part of itself. This is usually temporary.</p>'
       +'<button onclick="location.reload()" style="font:600 16px system-ui;min-height:44px;padding:12px 24px;'
       +'border-radius:10px;border:1px solid #c99a3f;background:#c99a3f;color:#231a08;cursor:pointer">Try again</button>'
@@ -50,7 +50,7 @@
   body{
     margin:0; font-family:var(--body); color:var(--tx);
     background:
-      radial-gradient(120% 80% at 50% -10%, #2b2343 0%, rgba(43,35,67,0) 55%),
+      radial-gradient(120% 80% at 50% -10%, #2E4266 0%, rgba(46,66,102,0) 55%),
       radial-gradient(120% 120% at 50% 120%, #0e0b18 0%, rgba(14,11,24,0) 60%),
       var(--ink);
     min-height:100vh; -webkit-font-smoothing:antialiased;
@@ -137,7 +137,7 @@
   .gcard{position:relative;min-height:150px;border-radius:14px;border:1px solid var(--brass-lo);
     padding:12px 8px;font:inherit;color:var(--tx);cursor:pointer;
     display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-    background:radial-gradient(130% 120% at 30% 18%, #2b2343, #14101f);
+    background:radial-gradient(130% 120% at 30% 18%, #2E4266, #14101f);
     transition:transform .45s ease, opacity .35s ease;transform-origin:center}
   .gcard .fil{position:absolute;inset:7px;border:1px solid var(--brass-lo);border-radius:9px;opacity:.45;pointer-events:none}
   .gcard .mono{font-family:var(--display);font-size:36px;color:var(--brass);line-height:1}
@@ -261,7 +261,7 @@ function buildShell(){
         <stop offset="0%" stop-color="#fff6dc"/><stop offset="100%" stop-color="#b9862f"/>
       </radialGradient>
       <radialGradient id="hub" cx="42%" cy="38%" r="70%">
-        <stop offset="0%" stop-color="#2b2343"/><stop offset="100%" stop-color="#120e1f"/>
+        <stop offset="0%" stop-color="#2E4266"/><stop offset="100%" stop-color="#120e1f"/>
       </radialGradient>
     </defs>
     <circle cx="150" cy="150" r="150" fill="url(#ground)"/>
@@ -271,7 +271,7 @@ function buildShell(){
     <circle cx="150" cy="150" r="40" fill="url(#brass)"/>
     <circle cx="150" cy="150" r="34" fill="url(#hub)" stroke="#6e5220" stroke-width="1"/>
     <text x="150" y="146" text-anchor="middle" font-family="var(--display)" font-size="15" font-weight="700" fill="#ecc069">SPIN</text>
-    <text x="150" y="162" text-anchor="middle" font-family="var(--mono)" font-size="8" letter-spacing=".18em" fill="#b3a9c6">THE WHEEL</text>
+    <text x="150" y="162" text-anchor="middle" font-family="var(--mono)" font-size="8" letter-spacing=".18em" fill="#A9B5C9">THE WHEEL</text>
     <path d="M150 6 L140 30 L160 30 Z" fill="url(#brass)" stroke="#6e5220" stroke-width="1"/>
   </svg>`;
 }
@@ -623,7 +623,7 @@ function drawAction(cmd,i){
 function showProgressNotice(){
   var bar=document.createElement("div");
   bar.setAttribute("role","status");
-  bar.style.cssText="position:sticky;top:0;z-index:100;background:#2b2343;color:#efe7d6;border-bottom:1px solid #8f6e2b;padding:10px 14px;font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;gap:12px;align-items:center;justify-content:center;text-align:center";
+  bar.style.cssText="position:sticky;top:0;z-index:100;background:#2E4266;color:#efe7d6;border-bottom:1px solid #8f6e2b;padding:10px 14px;font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;gap:12px;align-items:center;justify-content:center;text-align:center";
   bar.innerHTML='<span>We couldn’t read your saved progress. A backup is stored in case you need it.</span><button aria-label="Dismiss" style="background:transparent;border:1px solid #8f6e2b;color:#efe7d6;border-radius:6px;min-width:32px;min-height:32px;cursor:pointer;font-size:16px">×</button>';
   bar.querySelector("button").addEventListener("click",function(){ bar.remove(); });
   document.body.insertBefore(bar, document.body.firstChild);
