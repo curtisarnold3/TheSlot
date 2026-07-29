@@ -130,17 +130,27 @@
 
   /* move cards */
   .moves{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-  .move .card{background:var(--paper);color:var(--tx-ink);border-radius:14px;padding:16px 16px 14px;
-    border:1px solid #cdbf9e;border-left:6px solid #cdbf9e;transition:.18s;height:100%;
-    display:flex;flex-direction:column;gap:9px}
+  .move .card{background:var(--paper);color:var(--tx-ink);border-radius:14px;padding:12px 14px;
+    border:1px solid #cdbf9e;border-left:6px solid #cdbf9e;transition:border-color .18s,background .18s;height:100%;
+    display:flex;flex-direction:column;gap:8px}
   .move[data-status="learning"] .card{border-left-color:var(--learning)}
   .move[data-status="got"] .card{border-left-color:var(--got);background:#e7edd9}
-  .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  /* the whole name row is the expand toggle — a real button, reset to look like the old header */
+  .cardhead{width:100%;background:transparent;border:0;padding:0;margin:0;color:inherit;
+    font:inherit;text-align:left;cursor:pointer;min-height:44px;
+    display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .cardhead:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:8px}
+  .hd-title{display:flex;flex-direction:column;min-width:0}
+  .hd-side{display:flex;align-items:center;gap:8px;flex-shrink:0;padding-top:2px}
   .name{font-family:var(--display);font-size:20px;font-weight:600;line-height:1.12}
   .aka{font-size:12px;color:#6f6446;margin-top:2px;font-style:italic}
-  .pips{display:flex;gap:3px;flex-shrink:0;margin-top:4px}
+  .pips{display:flex;gap:3px;flex-shrink:0}
   .pip{width:7px;height:7px;border-radius:50%;background:#d8cba7}
   .pip.on{background:var(--brass-lo)}
+  .lglyph{font-size:15px;line-height:1;color:var(--c);font-weight:700}
+  .chev{font-size:11px;color:#9a8a5f;line-height:1;transition:transform .18s}
+  .cardhead[aria-expanded="true"] .chev{transform:rotate(180deg)}
+  .detail{display:flex;flex-direction:column;gap:9px}
   .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
   .count{font-family:var(--mono);font-size:11px;color:#5a4e33;background:#e2d6b7;
     padding:2px 7px;border-radius:5px;letter-spacing:.02em}
@@ -148,14 +158,17 @@
     padding:2px 8px;border-radius:999px;color:#fff;background:var(--c);display:inline-flex;gap:5px;align-items:center;font-weight:600}
   .builds{font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:#7a6b45}
   .builds b{color:var(--brass-lo)}
-  .blurb{font-size:14px;color:#3f3826;line-height:1.5;flex:1}
-  .status{display:flex;gap:7px;margin-top:2px}
+  .blurb{font-size:14px;color:#3f3826;line-height:1.5}
+  .status{display:flex;gap:7px}
   .status button{font-family:var(--mono);font-size:11px;letter-spacing:.03em;text-transform:uppercase;
-    border:1px solid #c3b691;background:transparent;color:#6a5f45;padding:5px 11px;border-radius:8px;cursor:pointer;transition:.15s}
+    border:1px solid #c3b691;background:transparent;color:#6a5f45;padding:5px 11px;border-radius:8px;cursor:pointer;transition:.15s;
+    min-height:44px;flex:1}
+  .status button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
   .status .lrn.on{background:var(--learning);border-color:var(--learning);color:#3a2409;font-weight:600}
   .status .got.on{background:var(--got);border-color:var(--got);color:#07251d;font-weight:600}
-  .watch{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.03em;text-transform:uppercase;color:#5a4e33;text-decoration:none;border:1px solid #c3b691;border-radius:8px;padding:5px 10px;transition:.15s;white-space:nowrap}
+  .watch{align-self:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.03em;text-transform:uppercase;color:#5a4e33;text-decoration:none;border:1px solid #c3b691;border-radius:8px;padding:8px 12px;min-height:38px;display:inline-flex;align-items:center;transition:.15s;white-space:nowrap}
   .watch:hover{background:#e2d6b7;color:#3a2f19}
+  @media (prefers-reduced-motion:reduce){.chev{transition:none}}
 
   .empty{color:var(--tx-dim);font-style:italic;padding:8px 0 20px}
 
@@ -390,6 +403,9 @@
 
 let famFilter="all";
 let repOnly=false;
+// Which move cards are expanded. Cleared/reapplied across render() rebuilds so a
+// re-render (status toggle, chip filter) doesn't collapse everything the user opened.
+const openCards=new Set();
 
 // ---- challenge card (F2) ----------------------------------------------------
 // Four states: idle / offered / accepted / done. Only "accepted" persists, via
@@ -552,22 +568,28 @@ function setStatus(id,target){
 
 function moveCard(m){
   const st=state[m.id]||"none";
+  const open=openCards.has(m.id);
   const vurl = m.video ? m.video : ("https://www.youtube.com/results?search_query="+encodeURIComponent(m.q||("west coast swing "+m.name+" tutorial")));
   const pips=[1,2,3,4].map(i=>`<span class="pip ${i<=m.diff?'on':''}"></span>`).join("");
+  // Collapsed keeps the lever readable as a colour + glyph only; the full chip
+  // with its text lives in the expanded detail.
+  const glyph = m.lever ? `<span class="lglyph" style="--c:${LV[m.lever].c}" aria-hidden="true">${LV[m.lever].g}</span>` : "";
   const lever = m.lever ? `<span class="lever" style="--c:${LV[m.lever].c}">${LV[m.lever].g} ${m.lever}</span>` : "";
   const builds = m.builds ? `<span class="builds">from <b>${esc(m.builds)}</b></span>` : `<span class="builds">basic</span>`;
   const count = m.count ? `<span class="count">${esc(m.count)}</span>` : "";
   return `<div class="move fade" data-status="${st}" data-fam="${m.fam}">
     <div class="card">
-      <div class="top">
-        <div><div class="name">${esc(m.name)}</div>${m.aka?`<div class="aka">${esc(m.aka)}</div>`:""}</div>
-        <div class="pips">${pips}</div>
-      </div>
-      <div class="meta">${builds}${lever}${count}</div>
-      <div class="blurb">${esc(m.blurb)}</div>
+      <button class="cardhead" type="button" data-id="${m.id}" aria-expanded="${open?"true":"false"}" aria-controls="d-${m.id}">
+        <span class="hd-title"><span class="name">${esc(m.name)}</span>${m.aka?`<span class="aka">${esc(m.aka)}</span>`:""}</span>
+        <span class="hd-side"><span class="pips">${pips}</span>${glyph}<span class="chev" aria-hidden="true">▾</span></span>
+      </button>
       <div class="status">
         <button class="lrn ${st==='learning'?'on':''}" data-id="${m.id}" data-t="learning">Learning</button>
         <button class="got ${st==='got'?'on':''}" data-id="${m.id}" data-t="got">Got it</button>
+      </div>
+      <div class="detail" id="d-${m.id}"${open?"":" hidden"}>
+        <div class="meta">${builds}${lever}${count}</div>
+        <div class="blurb">${esc(m.blurb)}</div>
         <a class="watch" href="${vurl}" target="_blank" rel="noopener">▶ Watch</a>
       </div>
     </div>
@@ -603,6 +625,17 @@ function render(){
   // wire status buttons
   tree.querySelectorAll(".status button").forEach(b=>{
     b.addEventListener("click",()=>setStatus(b.dataset.id,b.dataset.t));
+  });
+  // wire card expand/collapse. Toggling is a DOM flip, not a re-render, so scroll
+  // and focus survive; openCards keeps the state across the next full render().
+  tree.querySelectorAll(".cardhead").forEach(h=>{
+    h.addEventListener("click",()=>{
+      const id=h.dataset.id, region=document.getElementById("d-"+id);
+      const nowOpen=!openCards.has(id);
+      if(nowOpen) openCards.add(id); else openCards.delete(id);
+      h.setAttribute("aria-expanded",nowOpen?"true":"false");
+      if(region) region.hidden=!nowOpen;
+    });
   });
   updateMeter();
 }
