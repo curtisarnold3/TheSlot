@@ -156,11 +156,20 @@
   .leverkey .lk{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex:0 0 auto}
   .leverkey .g{color:var(--c);font-size:14px;font-weight:700;line-height:1}
 
-  /* family header */
-  .fam-head{display:flex;align-items:baseline;gap:14px;margin:34px 0 4px;
-    padding-top:14px;border-top:1px solid var(--line)}
+  /* native <details> accordions: hide the default marker, use our own chevron */
+  summary{list-style:none;cursor:pointer}
+  summary::-webkit-details-marker{display:none}
+  summary:focus-visible{outline:2px solid var(--brass);outline-offset:2px;border-radius:8px}
+  details[open]>summary .chev{transform:rotate(180deg)}
+
+  /* family accordion (move grid) */
+  .fam{margin-top:20px}
+  .fam-sum{padding-top:14px;border-top:1px solid var(--line)}
+  /* family header — the separator now lives on .fam-sum */
+  .fam-head{display:flex;align-items:baseline;gap:14px;margin:0 0 8px}
   .fam-head h2{font-family:var(--display);font-size:clamp(26px,5vw,42px);margin:0;font-weight:600}
   .fam-head .n{font-family:var(--mono);font-size:12px;color:var(--brass);letter-spacing:.1em}
+  .fam-head .chev{margin-left:auto;font-size:14px;color:var(--brass)}
   .fam-desc{color:var(--tx-dim);max-width:64ch;margin:6px 0 14px}
   .fambar{margin:0 0 18px}
   .fambar .lab{display:flex;justify-content:space-between;font-family:var(--mono);
@@ -251,8 +260,15 @@
   .wk .role{display:block;margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.02em;line-height:1.7}
   .wk .role b{color:var(--tx)}
 
-  /* drill bank (game layer) */
-  .fnd-head{font-family:var(--display);font-size:22px;margin:30px 0 6px;font-weight:600;color:var(--tx)}
+  /* drill bank (game layer) — each foundation is a collapsed accordion */
+  .fnd-group{border-top:1px solid var(--line)}
+  .fnd-sum{display:flex;align-items:baseline;gap:10px;min-height:44px;padding:8px 0}
+  .fnd-head{font-family:var(--display);font-size:22px;font-weight:600;color:var(--tx)}
+  .fnd-count{font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.04em}
+  .fnd-count::before{content:"·";margin-right:8px;color:var(--line)}
+  .fnd-sum .chev{margin-left:auto;align-self:center;font-size:14px;color:var(--brass)}
+  .fnd-group .fnd-note{margin-top:10px}
+  .fnd-group .drills{margin:6px 0 16px}
   .drills{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
   .drill{background:var(--paper);color:var(--tx-ink);border-radius:14px;padding:16px 16px 14px;
     border:1px solid #cdbf9e;border-left:6px solid var(--got);height:100%;
@@ -482,6 +498,9 @@ let repOnly=false;
 // Which move cards are expanded. Cleared/reapplied across render() rebuilds so a
 // re-render (status toggle, chip filter) doesn't collapse everything the user opened.
 const openCards=new Set();
+// Which family accordions are open. Foundation leads open; the rest start collapsed.
+// Survives render() the same way openCards does.
+const openFams=new Set(["foundation"]);
 
 // ---- challenge card (F2) ----------------------------------------------------
 // Four states: idle / offered / accepted / done. Only "accepted" persists, via
@@ -675,6 +694,12 @@ function moveCard(m){
 function render(){
   // tree
   const tree=document.getElementById("tree");
+  // Capture which family accordions are open right now — synchronously, before we
+  // wipe the DOM. (The native `toggle` event fires a task late, so reading it here
+  // is more reliable than a toggle listener for surviving the rebuild.)
+  tree.querySelectorAll("details.fam").forEach(d=>{
+    if(d.open) openFams.add(d.dataset.fam); else openFams.delete(d.dataset.fam);
+  });
   let html="";
   FAMS.forEach(f=>{
     if(famFilter!=="all" && famFilter!==f.id) return;
@@ -684,14 +709,17 @@ function render(){
     const tot=MOVES.filter(m=>m.fam===f.id).length;
     const got=MOVES.filter(m=>m.fam===f.id && (state[m.id]||"none")==="got").length;
     const pct=tot?Math.round(got/tot*100):0;
-    html+=`<section>
-      <div class="fam-head"><h2>${f.name}</h2><span class="n">${f.n}</span></div>
+    const isOpen=openFams.has(f.id);
+    html+=`<details class="fam" data-fam="${f.id}"${isOpen?" open":""}>
+      <summary class="fam-sum">
+        <div class="fam-head"><h2>${f.name}</h2><span class="n">${f.n}</span><span class="chev" aria-hidden="true">▾</span></div>
+        <div class="fambar"><div class="lab"><span>${f.name} owned</span><span>${got} / ${tot}</span></div>
+          <div class="track"><div class="fill" style="width:${pct}%"></div></div></div>
+      </summary>
       <p class="fam-desc">${f.desc}</p>
-      <div class="fambar"><div class="lab"><span>${f.name} owned</span><span>${got} / ${tot}</span></div>
-        <div class="track"><div class="fill" style="width:${pct}%"></div></div></div>
       <div class="moves">${ms.map(moveCard).join("")}</div>
       ${(repOnly&&ms.length===0)?`<div class="empty">Nothing marked yet in this family.</div>`:""}
-    </section>`;
+    </details>`;
   });
   if(repOnly){
     const anyGot=MOVES.some(m=>(state[m.id]||"none")==="got");
@@ -713,6 +741,8 @@ function render(){
       if(region) region.hidden=!nowOpen;
     });
   });
+  // (Open-family state is captured from the live DOM at the top of render(), so no
+  // per-details toggle listener is needed here.)
   updateMeter();
 }
 
@@ -740,6 +770,12 @@ function renderDrills(){
   const wrap=document.getElementById("drills");
   if(!wrap) return;
 
+  // Each foundation is a collapsed accordion — "Timing · 5 drills". All start closed.
+  const group=(head,n,note,cards)=>`<details class="fnd-group">
+      <summary class="fnd-sum"><span class="fnd-head">${esc(head)}</span><span class="fnd-count">${n} ${n===1?"drill":"drills"}</span><span class="chev" aria-hidden="true">▾</span></summary>
+      ${note}<div class="drills">${cards}</div>
+    </details>`;
+
   const order=["f-time","f-slot","f-starter","f-anchor","f-roll","f-conn"];
   wrap.innerHTML=order.map(fnd=>{
     const src=MOVES.find(m=>m.id===fnd);
@@ -751,15 +787,13 @@ function renderDrills(){
     const note = fnd==="f-conn"
       ? `<p class="fnd-note">Connection is the one foundation a doorframe can only half-teach. These build the shape and the habits. The conversation needs a person.</p>`
       : "";
-    return `<h3 class="fnd-head">${esc(head)}</h3>
-      ${note}<div class="drills">${list.map(drillCard).join("")}</div>`;
+    return group(head,list.length,note,list.map(drillCard).join(""));
   }).join("");
 
   const fw=DRILLS.filter(d=>d.move).slice().sort((a,b)=>a.lvl-b.lvl);
   if(fw.length){
-    wrap.innerHTML += `<h3 class="fnd-head">Anchor &amp; footwork</h3>
-      <p class="fnd-note">Every one of these is an anchor if the away-stretch survives it, and just fancy feet if it doesn't. That's also why they're the best fifteen minutes on the site: drill one and you're drilling the anchor at the same time.</p>
-      <div class="drills">${fw.map(drillCard).join("")}</div>`;
+    const note=`<p class="fnd-note">Every one of these is an anchor if the away-stretch survives it, and just fancy feet if it doesn't. That's also why they're the best fifteen minutes on the site: drill one and you're drilling the anchor at the same time.</p>`;
+    wrap.innerHTML += group("Anchor & footwork",fw.length,note,fw.map(drillCard).join(""));
   }
 }
 
