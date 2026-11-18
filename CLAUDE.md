@@ -29,6 +29,6 @@ Everything lives in **`index.html`** — all HTML, CSS, and JavaScript are inlin
 - **Deploy:** see `DEPLOY.md`. Static site — no build command, output is the repo root.
 
 ## Conventions
-- Keep it dependency-free and single-file. Don't introduce a build system or framework.
-- Preserve the visual system (ink/brass/bone palette, the five-lever color coding). Footwork nodes intentionally have no lever (footwork is a rhythm axis, not a pattern lever) and rely on their count/rhythm chip instead.
+- Keep it dependency-free (no third-party requests; fonts are local files). Don't introduce a build system or framework.
+- Preserve the visual system: dark navy ground, hairline panels, Inter / JetBrains Mono / Fraunces (self-hosted in `assets/fonts/`), a cyan→violet accent, and the five-lever color coding. Tokens and shared pieces live in `theslot.css`. No emoji, no colored left-border stripes on cards. Footwork nodes intentionally have no lever (footwork is a rhythm axis, not a pattern lever) and rely on their count/rhythm chip instead.
 - Don't invent YouTube video IDs — use a search link (`q`) unless a real URL is verified.

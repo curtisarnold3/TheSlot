@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Slot — a free path through West Coast Swing</title>
 <meta name="description" content="A free, scroll-down map of West Coast Swing from beginner to novice. Every move branches off the basics — track what you've learned, see your repertoire, and drill the beginner practice plan.">
-<meta name="theme-color" content="#1C2B45">
+<meta name="theme-color" content="#060a14">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Slot — a free path through West Coast Swing">
 <meta property="og:description" content="Every West Coast Swing move branches off one of the basics. Track what you've learned, see your repertoire, and drill the practice plan — a friendly place to start learning to dance.">
@@ -21,15 +21,15 @@
   window.slotFail=function(){
     if(started) return;
     document.body.innerHTML='<div role="alert" style="position:fixed;inset:0;display:flex;'
-      +'align-items:center;justify-content:center;padding:24px;background:#1C2B45;color:#efe7d6;'
+      +'align-items:center;justify-content:center;padding:24px;background:#060a14;color:#e8eefb;'
       +'font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif">'
       +'<div style="max-width:420px;text-align:center">'
       +'<h1 style="font-size:22px;font-weight:600;margin:0 0 12px">Something didn’t load</h1>'
-      +'<p style="font-size:16px;line-height:1.5;color:#A9B5C9;margin:0 0 20px">The site couldn’t '
+      +'<p style="font-size:16px;line-height:1.5;color:#93a1bd;margin:0 0 20px">The site couldn’t '
       +'fetch part of itself. This is usually temporary.</p>'
       +'<button onclick="location.reload()" style="font:600 16px system-ui;min-height:44px;padding:12px 24px;'
-      +'border-radius:10px;border:1px solid #c99a3f;background:#c99a3f;color:#231a08;cursor:pointer">Try again</button>'
-      +'<p style="font-size:13px;line-height:1.5;color:#8a80a0;margin:20px 0 0">If it keeps happening, an ad '
+      +'border-radius:12px;border:0;background:linear-gradient(90deg,#38d6f5,#a78bfa);color:#06101e;cursor:pointer">Try again</button>'
+      +'<p style="font-size:13px;line-height:1.5;color:#5f6d89;margin:20px 0 0">If it keeps happening, an ad '
       +'blocker or privacy extension may be blocking a file.</p>'
       +'</div></div>';
   };
@@ -49,195 +49,180 @@
 })();
 </script>
 <style>
-  *{box-sizing:border-box}
+  /* Tokens, fonts, base and the shared .kicker/.brand/.cbtn live in theslot.css. */
   html{scroll-behavior:smooth}
-  body{margin:0;background:var(--ink);color:var(--tx);
-    font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
-  a{color:var(--brass-hi)}
-  .wrap{max-width:940px;margin:0 auto;padding:0 20px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
 
   /* hero */
-  header.hero{padding:70px 0 26px;position:relative;overflow:hidden}
-  .spine{position:absolute;left:50%;top:0;bottom:0;width:2px;
-    background:linear-gradient(var(--brass),transparent);opacity:.25;transform:translateX(-50%)}
-  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.28em;
-    text-transform:uppercase;color:var(--brass);margin-bottom:20px}
-  h1{font-family:var(--display);font-weight:600;line-height:1.02;
-    font-size:clamp(38px,8vw,76px);margin:0 0 10px;letter-spacing:-.01em}
-  h1 em{font-style:normal;color:var(--brass-hi)}
-  .pillars{font-family:var(--display);font-size:clamp(20px,4vw,32px);
-    color:var(--tx);margin:16px 0 22px;letter-spacing:.01em}
-  .pillars b{color:var(--brass-hi);font-weight:600}
-  .pillars span{color:var(--line)}
-  .lede{font-size:18px;color:var(--tx-dim);max-width:62ch}
-  .lede strong{color:var(--tx)}
+  header.hero{padding:72px 0 44px}
+  h1{font-weight:700;line-height:1;font-size:clamp(46px,9vw,96px);margin:16px 0 20px;letter-spacing:-.04em}
+  h1 em{font-family:var(--serif);font-weight:500;font-style:italic;letter-spacing:-.02em;padding-right:.06em;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .pillars{font-size:clamp(17px,2.2vw,21px);color:var(--tx-dim);margin:0;line-height:1.5}
+  .pillars b{color:var(--tx);font-weight:600}
+  .pillars span{color:var(--line2);margin:0 .2em}
+  .lede{font-size:clamp(17px,1.6vw,20px);line-height:1.6;color:var(--tx-dim);max-width:64ch;margin:0}
+  .lede strong{color:var(--tx);font-weight:600}
 
-  /* sticky top bar: tabs (always) + search (always) + controls (Moves only). One
-     sticky element, not three stacked ones. */
-  .topbar{position:sticky;top:0;z-index:40;background:rgba(28,43,69,.94);
-    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-  .topbar .wrap{padding-top:8px;padding-bottom:8px}
-  /* tab bar */
-  .tabs{display:flex;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  /* sticky top bar: brand + tabs (always) + search (always) + controls (Moves only).
+     One sticky element, not three stacked ones. */
+  .topbar{position:sticky;top:0;z-index:40;background:rgba(6,10,20,.92);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .topbar .wrap{padding-top:10px;padding-bottom:10px}
+  .navrow{display:flex;align-items:center;gap:14px}
+  .tabs{display:flex;gap:2px;flex:1 1 auto;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
-  .tab{flex:1 0 auto;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
-    background:transparent;color:var(--tx-dim);border:0;border-bottom:2px solid transparent;
-    padding:9px 12px;min-height:44px;cursor:pointer;transition:color .15s,border-color .15s;white-space:nowrap}
-  .tab:hover{color:var(--tx)}
-  .tab[aria-selected="true"]{color:var(--brass-hi);border-bottom-color:var(--brass)}
-  .tab:focus-visible{outline:2px solid var(--brass);outline-offset:-2px;border-radius:4px}
-  /* search row + the quiet, always-present link to /game */
-  .searchrow{margin-top:6px;display:flex;gap:8px;align-items:stretch}
-  .search{flex:1 1 auto;min-width:0;font-family:var(--body);font-size:16px;color:var(--tx);
-    background:var(--ink3);border:1px solid var(--line);border-radius:10px;
+  .tab{flex:0 0 auto;font:500 14px var(--sans);background:transparent;color:var(--tx-dim);
+    border:1px solid transparent;border-radius:999px;padding:0 14px;min-height:40px;cursor:pointer;
+    transition:background .15s,color .15s,border-color .15s;white-space:nowrap}
+  .tab:hover{color:var(--tx);background:var(--panel2)}
+  .tab[aria-selected="true"]{color:var(--tx);background:var(--panel2);border-color:var(--line2)}
+  .gamelink{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:0 14px;min-height:40px;
+    font:600 13px var(--sans);color:var(--tx);text-decoration:none;
+    border:1px solid var(--line2);border-radius:999px;white-space:nowrap;transition:border-color .15s}
+  .gamelink:hover{border-color:var(--dim)}
+  .gamelink .arr{color:var(--cyan)}
+  .searchrow{margin-top:10px}
+  .search{width:100%;font-family:var(--sans);font-size:16px;color:var(--tx);
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
     padding:10px 14px;min-height:44px;-webkit-appearance:none;appearance:none}
-  .search::placeholder{color:var(--tx-dim)}
-  .search:focus-visible{outline:2px solid var(--brass);outline-offset:1px;border-color:var(--brass-lo)}
-  .gamelink{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;padding:0 13px;min-height:44px;
-    font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
-    color:var(--brass-hi);text-decoration:none;border:1px solid var(--brass-lo);border-radius:10px;white-space:nowrap}
-  .gamelink:hover{background:var(--ink3);color:var(--brass-hi)}
-  .gamelink:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+  .search::placeholder{color:var(--dim)}
+  .search:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;border-color:var(--line2)}
   /* controls row (Moves only). Chips scroll horizontally so the sticky header stays
      shallow on a phone instead of wrapping to three rows. */
-  .controls{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+  .controls{margin-top:10px}
   /* meter | repertoire | reset on the first line, chips scroll on the second */
-  .controls .row{display:grid;grid-template-columns:1fr auto auto;gap:6px 10px;align-items:center}
-  .meter{display:flex;align-items:baseline;gap:10px;grid-column:1;grid-row:1}
-  .meter .big{font-family:var(--display);font-size:24px;color:var(--brass-hi)}
-  .meter .sub{font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.04em}
+  .controls .row{display:grid;grid-template-columns:1fr auto auto;gap:8px 8px;align-items:center}
+  .meter{display:flex;align-items:baseline;gap:8px;grid-column:1;grid-row:1;min-width:0}
+  .meter .big{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--tx);font-variant-numeric:tabular-nums}
+  .meter .sub{font-family:var(--mono);font-size:12px;color:var(--dim);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .toggle{grid-column:2;grid-row:1}
   .reset{grid-column:3;grid-row:1}
   .chips{display:flex;flex-wrap:nowrap;gap:6px;grid-column:1/-1;grid-row:2;min-width:0;
     overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
   .chips::-webkit-scrollbar{display:none}
-  .chip{white-space:nowrap;flex:0 0 auto}
-  .chip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
-    background:var(--ink3);color:var(--tx-dim);border:1px solid var(--line);
-    padding:6px 11px;border-radius:999px;cursor:pointer;transition:.15s}
-  .chip:hover{color:var(--tx)}
-  .chip.on{background:var(--brass);color:#231a08;border-color:var(--brass);font-weight:600}
-  .toggle{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;
-    background:transparent;color:var(--got);border:1px solid var(--got-lo);
-    padding:6px 12px;border-radius:999px;cursor:pointer;transition:.15s}
-  .toggle.on{background:var(--got);color:#08251d;font-weight:600}
-  .reset{font-family:var(--mono);font-size:11px;color:var(--tx-dim);background:transparent;
-    border:1px solid var(--line);padding:6px 10px;border-radius:999px;cursor:pointer}
-  .reset:hover{color:var(--tx)}
+  .chip,.toggle,.reset{font:500 13px var(--sans);white-space:nowrap;flex:0 0 auto;border-radius:999px;
+    padding:0 13px;min-height:34px;cursor:pointer;background:transparent;
+    transition:background .15s,color .15s,border-color .15s}
+  .chip{color:var(--tx-dim);border:1px solid var(--line)}
+  .chip:hover{color:var(--tx);border-color:var(--line2)}
+  .chip.on{background:var(--panel2);color:var(--tx);border-color:var(--line2)}
+  .toggle{color:var(--teal);border:1px solid color-mix(in srgb,var(--teal) 40%,transparent)}
+  .toggle.on{background:var(--teal);border-color:var(--teal);color:#04201c;font-weight:600}
+  .reset{color:var(--dim);border:1px solid var(--line)}
+  .reset:hover{color:var(--tx);border-color:var(--line2)}
 
-  section{padding:20px 0}
-  /* The game layer ships dark (D-012). `hidden` is styled display:none by the UA
-     stylesheet, but that has near-zero specificity — any later `display` rule on a
-     section would silently win and reveal an unreviewed section on the live site.
-     This makes the dark-ship guarantee structural instead of leaning on that default. */
-  [hidden]{display:none !important}
-  .section-lead{max-width:64ch}
-  h2.big{font-family:var(--display);font-size:clamp(26px,5vw,40px);margin:8px 0 4px;font-weight:600}
+  .panel{padding-top:28px}
+  section{padding:0 0 28px}
+  h2.big{font-size:clamp(26px,3.6vw,38px);letter-spacing:-.025em;margin:8px 0 4px;font-weight:700}
 
-  /* levers key */
-  .levers{background:var(--ink2);border:1px solid var(--line);border-radius:16px;
-    padding:26px 24px;margin:8px 0 4px}
-  .levers .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin-bottom:6px}
-  .levers h2{font-family:var(--display);font-size:clamp(24px,4vw,34px);margin:0 0 8px;font-weight:600}
-  .levers p{color:var(--tx-dim);max-width:64ch;margin:0 0 18px}
-  .lgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-  .lcard{background:var(--ink3);border:1px solid var(--line);border-radius:12px;padding:14px 15px;
-    border-left:4px solid var(--c)}
-  .lcard .g{font-size:18px;line-height:1;color:var(--c)}
-  .lcard .t{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;
-    color:var(--tx);margin:6px 0 4px;font-weight:600}
-  .lcard .d{font-size:13px;color:var(--tx-dim);line-height:1.4}
+  /* levers ("five knobs") */
+  .levers{border-top:1px solid var(--line);padding-top:36px}
+  .levers .k,.block .k,.challenge .k{font-family:var(--mono);font-size:12px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--cyan);margin-bottom:10px}
+  .levers h2,.block h2{font-size:clamp(26px,3.6vw,38px);line-height:1.12;letter-spacing:-.025em;
+    margin:0 0 14px;font-weight:700;max-width:24ch;text-wrap:balance}
+  .levers p{color:var(--tx-dim);font-size:16.5px;max-width:66ch;margin:0 0 22px}
+  .lgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+  .lcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .lcard .g{font-size:22px;line-height:1;color:var(--c)}
+  .lcard .t{font-size:16px;letter-spacing:-.01em;color:var(--tx);margin:12px 0 4px;font-weight:600}
+  .lcard .d{font-size:14px;color:var(--tx-dim);line-height:1.5}
   /* compact lever legend on the Moves panel — decodes the collapsed-card glyphs.
      Scrolls sideways rather than wrapping so it stays a single quiet line. */
-  .leverkey{display:flex;gap:8px 14px;margin:4px 0 16px;overflow-x:auto;
-    -webkit-overflow-scrolling:touch;scrollbar-width:none;
-    font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--tx-dim)}
+  .leverkey{display:flex;gap:8px 18px;margin:0 0 4px;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;font-size:13px;color:var(--tx-dim)}
   .leverkey::-webkit-scrollbar{display:none}
-  .leverkey .lk{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex:0 0 auto}
-  .leverkey .g{color:var(--c);font-size:14px;font-weight:700;line-height:1}
+  .leverkey .lk{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;flex:0 0 auto}
+  .leverkey .g{color:var(--c);font-size:15px;font-weight:700;line-height:1}
 
   /* native <details> accordions: hide the default marker, use our own chevron */
   summary{list-style:none;cursor:pointer}
   summary::-webkit-details-marker{display:none}
-  summary:focus-visible{outline:2px solid var(--brass);outline-offset:2px;border-radius:8px}
-  details[open]>summary .chev{transform:rotate(180deg)}
+  /* the ▾ text stays in the markup; the chevron itself is drawn so it never depends on a font glyph */
+  .chev{font-size:0;width:8px;height:8px;flex:0 0 auto;border-right:1.5px solid var(--dim);border-bottom:1.5px solid var(--dim);
+    transform:translateY(-2px) rotate(45deg);transition:transform .18s}
+  details[open]>summary .chev{transform:translateY(2px) rotate(-135deg)}
 
   /* family accordion (move grid) */
-  .fam{margin-top:20px}
-  .fam-sum{padding-top:14px;border-top:1px solid var(--line)}
-  /* family header — the separator now lives on .fam-sum */
-  .fam-head{display:flex;align-items:baseline;gap:14px;margin:0 0 8px}
-  .fam-head h2{font-family:var(--display);font-size:clamp(26px,5vw,42px);margin:0;font-weight:600}
-  .fam-head .n{font-family:var(--mono);font-size:12px;color:var(--brass);letter-spacing:.1em}
-  .fam-head .chev{margin-left:auto;font-size:14px;color:var(--brass)}
-  .fam-desc{color:var(--tx-dim);max-width:64ch;margin:6px 0 14px}
-  .fambar{margin:0 0 18px}
+  .fam{margin-top:22px}
+  .fam-sum{padding-top:20px;border-top:1px solid var(--line)}
+  .fam-head{display:flex;align-items:baseline;gap:12px;margin:0 0 12px}
+  .fam-head h2{font-size:clamp(24px,3.4vw,34px);letter-spacing:-.025em;margin:0;font-weight:700}
+  .fam-head .n{font-family:var(--mono);font-size:12px;color:var(--cyan);letter-spacing:.06em}
+  .fam-head .chev{margin-left:auto;align-self:center;width:10px;height:10px}
+  .fam-desc{color:var(--tx-dim);max-width:66ch;margin:4px 0 18px}
+  .fambar{margin:0 0 16px;max-width:420px}
   .fambar .lab{display:flex;justify-content:space-between;font-family:var(--mono);
-    font-size:11px;letter-spacing:.06em;color:var(--tx-dim);margin-bottom:5px;text-transform:uppercase}
-  .fambar .track{height:6px;background:var(--ink3);border-radius:3px;overflow:hidden}
-  .fambar .fill{height:100%;background:linear-gradient(90deg,var(--got-lo),var(--got));width:0;transition:width .4s}
+    font-size:11px;letter-spacing:.06em;color:var(--dim);margin-bottom:6px;text-transform:uppercase}
+  .fambar .track{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+  .fambar .fill{height:100%;background:var(--teal);width:0;transition:width .4s}
 
   /* move cards */
-  .moves{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-  .move .card{background:var(--paper);color:var(--tx-ink);border-radius:14px;padding:12px 14px;
-    border:1px solid #cdbf9e;border-left:6px solid #cdbf9e;transition:border-color .18s,background .18s;height:100%;
-    display:flex;flex-direction:column;gap:8px}
-  .move[data-status="learning"] .card{border-left-color:var(--learning)}
-  .move[data-status="got"] .card{border-left-color:var(--got);background:#e7edd9}
-  /* the whole name row is the expand toggle — a real button, reset to look like the old header */
+  .moves{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .move .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px 16px;
+    transition:border-color .18s,background .18s;height:100%;display:flex;flex-direction:column;gap:10px}
+  .move .card:hover{border-color:var(--line2)}
+  .move[data-status="learning"] .card{border-color:color-mix(in srgb,var(--learning) 45%,var(--line))}
+  .move[data-status="got"] .card{border-color:color-mix(in srgb,var(--got) 50%,var(--line));
+    background:color-mix(in srgb,var(--got) 6%,var(--panel))}
+  /* the whole name row is the expand toggle — a real button, reset to look like a header */
   .cardhead{width:100%;background:transparent;border:0;padding:0;margin:0;color:inherit;
     font:inherit;text-align:left;cursor:pointer;min-height:44px;
     display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-  .cardhead:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:8px}
+  .cardhead:focus-visible{outline-offset:3px;border-radius:8px}
   .hd-title{display:flex;flex-direction:column;min-width:0}
-  .hd-side{display:flex;align-items:center;gap:8px;flex-shrink:0;padding-top:2px}
-  .name{font-family:var(--display);font-size:20px;font-weight:600;line-height:1.12}
-  .aka{font-size:12px;color:#6f6446;margin-top:2px;font-style:italic}
+  .hd-side{display:flex;align-items:center;gap:10px;flex-shrink:0;padding-top:7px}
+  .name{font-size:18px;font-weight:600;line-height:1.2;letter-spacing:-.015em}
+  .aka{font-size:13px;color:var(--dim);margin-top:3px}
   .pips{display:flex;gap:3px;flex-shrink:0}
-  .pip{width:7px;height:7px;border-radius:50%;background:#d8cba7}
-  .pip.on{background:var(--brass-lo)}
+  .pip{width:6px;height:6px;border-radius:50%;background:var(--line2)}
+  .pip.on{background:var(--tx-dim)}
   .lglyph{font-size:15px;line-height:1;color:var(--c);font-weight:700}
-  .chev{font-size:11px;color:#9a8a5f;line-height:1;transition:transform .18s}
-  .cardhead[aria-expanded="true"] .chev{transform:rotate(180deg)}
-  .detail{display:flex;flex-direction:column;gap:9px}
-  .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-  .count{font-family:var(--mono);font-size:11px;color:#5a4e33;background:#e2d6b7;
-    padding:2px 7px;border-radius:5px;letter-spacing:.02em}
-  .lever{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;
-    padding:2px 8px;border-radius:999px;color:#fff;background:var(--c);display:inline-flex;gap:5px;align-items:center;font-weight:600}
-  .builds{font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:#7a6b45}
-  .builds b{color:var(--brass-lo)}
-  .blurb{font-size:14px;color:#3f3826;line-height:1.5}
-  .status{display:flex;gap:7px}
-  .status button{font-family:var(--mono);font-size:11px;letter-spacing:.03em;text-transform:uppercase;
-    border:1px solid #c3b691;background:transparent;color:#6a5f45;padding:5px 11px;border-radius:8px;cursor:pointer;transition:.15s;
-    min-height:44px;flex:1}
-  .status button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
-  .status .lrn.on{background:var(--learning);border-color:var(--learning);color:#3a2409;font-weight:600}
-  .status .got.on{background:var(--got);border-color:var(--got);color:#07251d;font-weight:600}
-  .watch{align-self:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.03em;text-transform:uppercase;color:#5a4e33;text-decoration:none;border:1px solid #c3b691;border-radius:8px;padding:8px 12px;min-height:38px;display:inline-flex;align-items:center;transition:.15s;white-space:nowrap}
-  .watch:hover{background:#e2d6b7;color:#3a2f19}
-  @media (prefers-reduced-motion:reduce){.chev{transition:none}}
+  .cardhead[aria-expanded="true"] .chev{transform:translateY(2px) rotate(-135deg)}
+  .detail{display:flex;flex-direction:column;gap:10px;padding-top:2px}
+  .meta{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+  .count,.drill .lvl,.drill .mins{font-family:var(--mono);font-size:11px;color:var(--tx-dim);
+    background:var(--panel2);border:1px solid var(--line);padding:2px 7px;border-radius:6px}
+  .lever{font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:999px;color:var(--c);
+    background:color-mix(in srgb,var(--c) 12%,transparent);
+    border:1px solid color-mix(in srgb,var(--c) 38%,transparent);display:inline-flex;gap:5px;align-items:center}
+  .builds{font-family:var(--mono);font-size:11px;color:var(--dim)}
+  .builds b{color:var(--tx-dim);font-weight:500}
+  .blurb{font-size:14.5px;color:var(--tx-dim);line-height:1.55}
+  .status{display:flex;gap:8px}
+  .status button{font:500 13px var(--sans);border:1px solid var(--line);background:transparent;color:var(--tx-dim);
+    padding:5px 11px;border-radius:10px;cursor:pointer;min-height:44px;flex:1;
+    transition:background .15s,color .15s,border-color .15s}
+  .status button:hover{color:var(--tx);border-color:var(--line2)}
+  .status .lrn.on{background:color-mix(in srgb,var(--learning) 14%,transparent);
+    border-color:color-mix(in srgb,var(--learning) 55%,transparent);color:var(--learning);font-weight:600}
+  .status .got.on{background:color-mix(in srgb,var(--got) 14%,transparent);
+    border-color:color-mix(in srgb,var(--got) 55%,transparent);color:var(--got);font-weight:600}
+  .watch{align-self:flex-start;font:600 13px var(--sans);color:var(--tx);text-decoration:none;
+    border:1px solid var(--line2);border-radius:10px;padding:8px 13px;min-height:38px;
+    display:inline-flex;align-items:center;transition:border-color .15s;white-space:nowrap}
+  .watch:hover{border-color:var(--dim)}
 
-  .empty{color:var(--tx-dim);font-style:italic;padding:8px 0 20px}
-  .searchcount{font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.03em;margin:6px 0 14px}
+  .empty{color:var(--tx-dim);padding:8px 0 20px;max-width:64ch}
+  .searchcount{font-family:var(--mono);font-size:12px;color:var(--dim);margin:0 0 14px}
 
-  /* prose blocks */
-  .block{background:var(--ink2);border:1px solid var(--line);border-radius:16px;padding:26px 24px;margin:8px 0}
-  .block.honest{border-color:var(--brass-lo);background:linear-gradient(180deg,#221a2f,#1c1729)}
-  .block .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin-bottom:8px}
-  .block h2{font-family:var(--display);font-size:clamp(24px,4vw,36px);margin:0 0 12px;font-weight:600}
-  .block p{color:var(--tx-dim);max-width:66ch;margin:0 0 12px}
+  /* prose sections — no box; a hairline and a kicker carry the structure */
+  .block{border-top:1px solid var(--line);padding-top:36px;margin-top:8px}
+  .panel>section:first-child .block{border-top:0;padding-top:8px;margin-top:0}
+  .block p{color:var(--tx-dim);font-size:16.5px;max-width:66ch;margin:0 0 14px}
   .block p:last-child{margin-bottom:0}
-  .block strong{color:var(--tx)}
-  .tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:6px}
-  .tip{background:var(--ink3);border:1px solid var(--line);border-radius:12px;padding:16px}
-  .tip h3{font-family:var(--display);font-size:18px;margin:0 0 6px;font-weight:600;color:var(--tx)}
-  .tip p{font-size:14px;color:var(--tx-dim);margin:0;max-width:none}
-  .treekey{display:flex;flex-wrap:wrap;gap:8px 18px;margin:2px 0 16px;font-family:var(--mono);font-size:11px;color:var(--tx-dim);letter-spacing:.02em}
-  .treekey .d{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
-  .treekey .kl{color:var(--brass);text-transform:uppercase;letter-spacing:.1em;flex-basis:100%}
-  .treewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px}
+  .block strong{color:var(--tx);font-weight:600}
+  .tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:22px}
+  .tip{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .tip h3{font-size:17px;letter-spacing:-.01em;margin:0 0 6px;font-weight:600;color:var(--tx)}
+  .tip p{font-size:14.5px;line-height:1.55;color:var(--tx-dim);margin:0;max-width:none}
+  .treekey{display:flex;flex-wrap:wrap;gap:8px 18px;margin:18px 0 0;font-size:13px;color:var(--tx-dim)}
+  .treekey .d{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:7px;vertical-align:middle}
+  .treekey .kl{font-family:var(--mono);font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.12em;flex-basis:100%}
+  .treewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:22px;
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:8px}
   .tree{display:block;width:100%;min-width:640px;height:auto}
   /* The dynamic tree sizes its own viewBox to the container, so it never needs
      the horizontal scroll the hand-made SVG depends on. */
@@ -245,73 +230,73 @@
   #tree2 g[data-fid]{cursor:pointer}
   /* Chrome does not match :focus on an SVG <g>, and outline does not paint on
      SVG reliably — so focus is flagged by an attribute and drawn as a stroke. */
-  #tree2 g[data-focus] .rbox,#tree2 g[data-fid]:focus .rbox{stroke:var(--brass-hi);stroke-width:2}
-  .block h3.sub-h{font-family:var(--display);font-size:22px;margin:30px 0 6px;font-weight:600;color:var(--tx)}
-  .routine-steps{margin:14px 0 8px;border-top:1px solid var(--line)}
-  .rstep{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);align-items:baseline}
-  .rstep .t{font-family:var(--mono);font-size:12px;color:var(--brass);white-space:nowrap;min-width:66px;letter-spacing:.03em}
-  .rstep .c h4{font-family:var(--display);font-size:18px;margin:0 0 3px;font-weight:600;color:var(--tx)}
-  .rstep .c p{margin:0;color:var(--tx-dim);font-size:14px;max-width:62ch}
-  .weeklist{display:flex;flex-direction:column;gap:14px;margin-top:6px}
-  .wk{background:var(--ink3);border:1px solid var(--line);border-radius:12px;padding:18px 20px;border-left:4px solid var(--brass)}
-  .wk .wnum{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
-  .wk h3{font-family:var(--display);font-size:22px;margin:4px 0 4px;font-weight:600;color:var(--tx)}
-  .wk .idea{color:var(--tx);font-size:15px;margin:0 0 9px;font-style:italic;max-width:68ch}
-  .wk p{color:var(--tx-dim);font-size:14.5px;margin:0;max-width:68ch}
-  .wk .role{display:block;margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.02em;line-height:1.7}
-  .wk .role b{color:var(--tx)}
+  #tree2 g[data-focus] .rbox,#tree2 g[data-fid]:focus .rbox{stroke:var(--cyan);stroke-width:2}
+  .block h3.sub-h{font-size:22px;letter-spacing:-.02em;margin:40px 0 8px;font-weight:700;color:var(--tx)}
+  .routine-steps{margin:18px 0 8px;border-top:1px solid var(--line)}
+  .rstep{display:flex;gap:20px;padding:16px 0;border-bottom:1px solid var(--line);align-items:baseline}
+  .rstep .t{font-family:var(--mono);font-size:12px;color:var(--cyan);white-space:nowrap;min-width:84px}
+  .rstep .c h4{font-size:17px;letter-spacing:-.01em;margin:0 0 4px;font-weight:600;color:var(--tx)}
+  .rstep .c p{margin:0;color:var(--tx-dim);font-size:14.5px;max-width:64ch}
+  .weeklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:14px;margin-top:18px}
+  .wk{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+  .wk .wnum{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+  .wk h3{font-size:21px;letter-spacing:-.02em;margin:8px 0 6px;font-weight:700;color:var(--tx)}
+  .wk .idea{font-family:var(--serif);font-style:italic;color:var(--tx);font-size:18px;line-height:1.4;margin:0 0 10px;max-width:none}
+  .wk p{color:var(--tx-dim);font-size:14.5px;margin:0;max-width:none}
+  .wk .role{display:block;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);
+    font-size:13.5px;color:var(--tx-dim);line-height:1.6}
+  .wk .role b{color:var(--tx);font-weight:600}
 
-  /* drill bank (game layer) — each foundation is a collapsed accordion */
+  /* drill bank — each foundation is a collapsed accordion */
+  #drills{margin-top:22px;border-bottom:1px solid var(--line)}
   .fnd-group{border-top:1px solid var(--line)}
-  .fnd-sum{display:flex;align-items:baseline;gap:10px;min-height:44px;padding:8px 0}
-  .fnd-head{font-family:var(--display);font-size:22px;font-weight:600;color:var(--tx)}
-  .fnd-count{font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.04em}
-  .fnd-count::before{content:"·";margin-right:8px;color:var(--line)}
-  .fnd-sum .chev{margin-left:auto;align-self:center;font-size:14px;color:var(--brass)}
-  .fnd-group .fnd-note{margin-top:10px}
-  .fnd-group .drills{margin:6px 0 16px}
-  .drills{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-  .drill{background:var(--paper);color:var(--tx-ink);border-radius:14px;padding:16px 16px 14px;
-    border:1px solid #cdbf9e;border-left:6px solid var(--got);height:100%;
-    display:flex;flex-direction:column;gap:9px}
-  .drill .name{font-family:var(--display);font-size:20px;font-weight:600;line-height:1.12}
-  .drill .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-  .drill .lvl,.drill .mins{font-family:var(--mono);font-size:11px;color:#5a4e33;background:#e2d6b7;
-    padding:2px 7px;border-radius:5px;letter-spacing:.06em;text-transform:uppercase}
-  .drill .develops{font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:#7a6b45}
-  .drill .blurb{font-size:14px;color:#3f3826;line-height:1.5;flex:1}
-  .drill .cue{font-size:15px;font-style:italic;color:#3f3826;line-height:1.45;
-    border-left:1px solid var(--brass-lo);padding-left:12px;margin-top:2px}
-  .fnd-note{color:var(--tx-dim);font-size:14px;max-width:64ch;margin:0 0 14px}
+  .fnd-sum{display:flex;align-items:baseline;gap:12px;min-height:56px;padding:12px 0}
+  .fnd-head{font-size:19px;letter-spacing:-.015em;font-weight:600;color:var(--tx)}
+  .fnd-count{font-family:var(--mono);font-size:12px;color:var(--dim)}
+  .fnd-sum .chev{margin-left:auto;align-self:center;width:10px;height:10px}
+  .fnd-note{color:var(--tx-dim);font-size:14.5px;max-width:66ch;margin:0 0 16px}
+  .fnd-group .drills{margin:4px 0 22px}
+  .drills{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .drill{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px 18px;
+    height:100%;display:flex;flex-direction:column;gap:10px}
+  .drill .name{font-size:18px;font-weight:600;line-height:1.2;letter-spacing:-.015em}
+  .drill .lvl{color:var(--teal);border-color:color-mix(in srgb,var(--teal) 35%,transparent);background:transparent}
+  .drill .develops{font-family:var(--mono);font-size:11px;color:var(--dim)}
+  .drill .blurb{margin:0;flex:1}
+  .drill .cue{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--tx);line-height:1.45;
+    margin:0;padding-top:10px;border-top:1px dashed var(--line)}
 
   /* challenge card */
-  .challenge{background:var(--ink2);border:1px solid var(--brass-lo);border-radius:16px;padding:18px 20px;margin:8px 0}
-  .challenge .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin-bottom:6px}
-  .challenge .activity{font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.03em;margin:0 0 10px}
-  .challenge .lead{font-size:16px;color:var(--tx);margin:0 0 6px;max-width:64ch;line-height:1.45}
-  .challenge .lead b{color:var(--brass-hi);font-weight:600}
-  .challenge .meta{font-family:var(--mono);font-size:12px;color:var(--tx-dim);letter-spacing:.02em;margin:0 0 12px}
-  .challenge .meta b{color:var(--tx)}
-  .challenge .double{color:var(--got);font-size:14px;line-height:1.45;margin:10px 0 0;max-width:64ch}
-  .challenge .act{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
-  .cbtn{font-family:var(--body);font-size:15px;font-weight:600;border-radius:10px;padding:11px 18px;
-    min-height:44px;cursor:pointer;border:1px solid var(--brass);background:var(--brass);color:#231a08;transition:.15s}
-  .cbtn.ghost{background:transparent;color:var(--brass-hi);border-color:var(--brass-lo)}
-  .cbtn:hover{filter:brightness(1.06)}
+  .challenge{background:var(--panel);border:1px solid var(--line2);border-radius:16px;padding:22px 24px}
+  .challenge .activity{font-family:var(--mono);font-size:12px;color:var(--dim);margin:0 0 10px}
+  .challenge .lead{font-size:17px;color:var(--tx);margin:0 0 6px;max-width:64ch;line-height:1.5}
+  .challenge .lead b{font-weight:700}
+  .challenge .meta{display:block;font-family:var(--mono);font-size:12px;color:var(--tx-dim);margin:0 0 12px}
+  .challenge .meta b{color:var(--tx);font-weight:500}
+  .challenge .double{color:var(--teal);font-size:14.5px;line-height:1.5;margin:10px 0 0;max-width:64ch}
+  .challenge .act{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
 
-  footer{padding:40px 0 70px;color:var(--tx-dim);font-size:13px;max-width:70ch}
-  footer a{color:var(--brass-hi)}
-  .fade{opacity:0;transform:translateY(14px);animation:rise .6s forwards}
-  @keyframes rise{to{opacity:1;transform:none}}
-  @media (max-width:520px){.meter{width:100%;margin-bottom:6px}}
+  footer{border-top:1px solid var(--line);margin-top:12px;padding:26px 0 80px;color:var(--dim);font-size:13.5px;line-height:1.65}
+  footer p{max-width:78ch;margin:0}
+  footer strong{color:var(--tx-dim);font-weight:600}
+  footer a{color:var(--tx-dim)}
+  footer a:hover{color:var(--tx)}
+
+  @media (max-width:640px){
+    header.hero{padding:44px 0 32px}
+    .brand .word{display:none}
+    .navrow{gap:8px}
+    .tab{padding:0 11px}
+    .gamelink{padding:0 11px}
+    .rstep{flex-direction:column;gap:4px}
+  }
 </style>
 </head>
 <body>
 
 <header class="hero">
-  <div class="spine"></div>
   <div class="wrap">
-    <div class="eyebrow">A free on-ramp for West Coast Swing · beginner → novice</div>
+    <div class="kicker">A free on-ramp for West Coast Swing · beginner → novice</div>
     <h1>The <em>Slot</em>.</h1>
     <div class="pillars"><b>One push.</b> <span>·</span> <b>Two passes.</b> <span>·</span> <b>Three whips.</b> <span>·</span> <b>Five knobs.</b></div>
   </div>
@@ -320,6 +305,8 @@
 
 <div class="topbar">
   <div class="wrap">
+    <div class="navrow">
+    <a class="brand" href="./" aria-label="The Slot — home"><span class="mark" aria-hidden="true">S</span><span class="word">The Slot<span class="dot">.</span></span></a>
     <div class="tabs" role="tablist" aria-label="Site sections">
       <button class="tab" id="t-moves"  role="tab" aria-selected="true"  aria-controls="p-moves"  tabindex="0"  data-panel="moves">Moves</button>
       <button class="tab" id="t-tree"   role="tab" aria-selected="false" aria-controls="p-tree"   tabindex="-1" data-panel="tree">Tree</button>
@@ -327,9 +314,10 @@
       <button class="tab" id="t-drills" role="tab" aria-selected="false" aria-controls="p-drills" tabindex="-1" data-panel="drills">Drills</button>
       <button class="tab" id="t-about"  role="tab" aria-selected="false" aria-controls="p-about"  tabindex="-1" data-panel="about">About</button>
     </div>
+    <a class="gamelink" href="game.html" title="The game edition — spin, draw, drill">Game <span class="arr" aria-hidden="true">→</span></a>
+    </div>
     <div class="searchrow">
       <input type="search" id="q" class="search" placeholder="Find a move…" aria-label="Find a move" autocomplete="off" autocapitalize="off" spellcheck="false">
-      <a class="gamelink" href="game.html" title="The game edition — spin, draw, drill">🎲 Game</a>
     </div>
     <div class="controls" id="mv-controls">
       <div class="row">
@@ -367,19 +355,19 @@
       <p>Then there's the top of the tree, which works differently. The six Foundations — timing, the slot, the starter step, the anchor, rolling feet, connection — aren't moves you finish. Nobody wakes up one morning done with timing. So instead of a Got-it button they get a <strong>ladder</strong>: a handful of rungs describing what "better" actually looks like, from your first honest attempt to the thing you'll still be sharpening in five years. Tap a rung when you've reached it. Moves fill in the same way — mark one Got it and you'll see it light up here, so the tree doubles as a picture of how far you've come. Nothing here decides that for you — you're the only one in the room who knows.</p>
       <p>One rung on the Anchor ladder points ⤴ at the footwork family further down. That's not a mistake. An anchor is a <em>connection</em>, not a foot position — so once you own the settle-back, any footwork that keeps it can be your anchor. The whole footwork family is anchor practice wearing different shoes.</p>
       <div class="treekey"><span class="kl">how a move branches</span>
-        <span><span class="d" style="background:#8f6e2b"></span>basic / root</span>
-        <span><span class="d" style="background:#c99a3f"></span>↻ add a turn</span>
-        <span><span class="d" style="background:#c8757f"></span>↺ reverse it</span>
-        <span><span class="d" style="background:#7a6bb0"></span>⇄ hand change</span>
-        <span><span class="d" style="background:#4f8a9c"></span>⤵ new entry</span>
-        <span><span class="d" style="background:#b06a3a"></span>⤴ new exit</span>
+        <span><span class="d" style="background:#6b7a9c"></span>basic / root</span>
+        <span><span class="d" style="background:#f2c14e"></span>↻ add a turn</span>
+        <span><span class="d" style="background:#ff7a90"></span>↺ reverse it</span>
+        <span><span class="d" style="background:#a78bfa"></span>⇄ hand change</span>
+        <span><span class="d" style="background:#38d6f5"></span>⤵ new entry</span>
+        <span><span class="d" style="background:#fb923c"></span>⤴ new exit</span>
       </div>
       <div class="treekey"><span class="kl">what you've marked</span>
-        <span><span class="d" style="background:#e7edd9;border:1px solid #54a58c"></span>move you own</span>
-        <span><span class="d" style="background:#efe7d6;border:1px solid #dd934a"></span>still learning</span>
-        <span><span class="d" style="background:#54a58c"></span>rung reached</span>
-        <span><span class="d" style="background:#d8cba7"></span>not yet</span>
-        <span><span class="d" style="background:#8f6e2b"></span>bonus rung</span>
+        <span><span class="d" style="background:#0c2a2e;border:1px solid #2dd4bf"></span>move you own</span>
+        <span><span class="d" style="background:#0f182c;border:1px solid #fbbf24"></span>still learning</span>
+        <span><span class="d" style="background:#2dd4bf"></span>rung reached</span>
+        <span><span class="d" style="background:#2a3a5a"></span>not yet</span>
+        <span><span class="d" style="background:#6b7a9c"></span>bonus rung</span>
       </div>
       <div class="treewrap"><div id="tree2"></div></div>
     </div>
@@ -955,9 +943,9 @@ function layoutTree(forest,opts){
 // Lever -> [accent colour, glyph]. Footwork moves carry no lever and get no glyph:
 // footwork branches on rhythm, not on a pattern lever, so inventing one would
 // overwrite a deliberate teaching decision. Roots use the plain brass accent.
-const LEVER_ART={"hand change":["#7a6bb0","⇄"],"add a turn":["#c99a3f","↻"],
-  "reverse it":["#c8757f","↺"],"new entry":["#4f8a9c","⤵"],"new exit":["#b06a3a","⤴"]};
-const ROOT_ACCENT="#8f6e2b";
+const LEVER_ART={"hand change":["#a78bfa","⇄"],"add a turn":["#f2c14e","↻"],
+  "reverse it":["#ff7a90","↺"],"new entry":["#38d6f5","⤵"],"new exit":["#fb923c","⤴"]};
+const ROOT_ACCENT="#6b7a9c";
 
 // Splits a label at the space nearest its middle, matching the static file
 // ("Sugar Tuck w/ Inside Turn" -> "Sugar Tuck w/" + "Inside Turn").
@@ -971,17 +959,17 @@ function treeLabel(name,w){
 }
 
 // Rung accent colours. Green is reserved for reached — an unearned foundation
-// must not photograph as owned. Unreached reuses the #d8cba7 the difficulty pips
+// must not photograph as owned. Unreached reuses the #2a3a5a the difficulty pips
 // already use for "unfilled"; an unreached bonus keeps the brass root accent.
-const RUNG_REACHED="#54a58c", RUNG_BONUS="#8f6e2b", RUNG_UNREACHED="#d8cba7";
+const RUNG_REACHED="#2dd4bf", RUNG_BONUS="#6b7a9c", RUNG_UNREACHED="#2a3a5a";
 
 // Status rides the box, not the left accent bar — the bar is the lever, which is the
 // whole point of the tree. Same fill and stroke the move cards already use, so the tree
 // reads without a second vocabulary to learn.
 const MOVE_ART={
-  got:     {fill:"#e7edd9",stroke:"#54a58c",sw:1.5},
-  learning:{fill:"#efe7d6",stroke:"#dd934a",sw:1.5},
-  none:    {fill:"#efe7d6",stroke:"#d8cba7",sw:1}
+  got:     {fill:"#0c2a2e",stroke:"#2dd4bf",sw:1.5},
+  learning:{fill:"#0f182c",stroke:"#fbbf24",sw:1.5},
+  none:    {fill:"#0f182c",stroke:"#2a3a5a",sw:1}
 };
 
 // Ladder rungs as tree nodes — numbered first, bonus last. Shaped like move
@@ -1044,17 +1032,17 @@ function drawTree(){
     const fname=(MOVES.find(m=>m.id===r.fid)||{}).name||r.fid;
     const aria=`${fname} ${r.bonus?"bonus":"level "+r.lvl}, ${r.label}, ${hit?"reached":"not reached"}`;
     let s=`<g data-fid="${esc(r.fid)}" data-lvl="${r.lvl}" role="button" tabindex="0" aria-label="${esc(aria)}">`
-      +`<rect class="rbox" x="${n.x}" y="${n.y}" rx="${G.RX}" width="${n.w}" height="${n.h}" fill="#efe7d6" stroke="#d8cba7" stroke-width="1"/>`
+      +`<rect class="rbox" x="${n.x}" y="${n.y}" rx="${G.RX}" width="${n.w}" height="${n.h}" fill="#0f182c" stroke="#2a3a5a" stroke-width="1"/>`
       +`<rect x="${n.x}" y="${n.y}" rx="${G.RX}" width="6" height="${n.h}" fill="${c}"/>`;
     if(lines.length===1){
-      s+=`<text x="${n.x+13}" y="${n.y+18.5}" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">${esc(lines[0])}</text>`;
+      s+=`<text x="${n.x+13}" y="${n.y+18.5}" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#e8eefb">${esc(lines[0])}</text>`;
     }else{
-      s+=`<text x="${n.x+13}" y="${n.y+11}" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">${esc(lines[0])}</text>`
-        +`<text x="${n.x+13}" y="${n.y+23}" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">${esc(lines[1])}</text>`;
+      s+=`<text x="${n.x+13}" y="${n.y+11}" font-family="Inter,system-ui,sans-serif" font-size="10.5" fill="#e8eefb">${esc(lines[0])}</text>`
+        +`<text x="${n.x+13}" y="${n.y+23}" font-family="Inter,system-ui,sans-serif" font-size="10.5" fill="#e8eefb">${esc(lines[1])}</text>`;
     }
     // The Anchor's L5 winks at the footwork family. No other rung gets a glyph —
     // rungs are progression steps, not levers.
-    if(r.pointsToFootwork) s+=`<text x="${n.x+n.w-9}" y="${n.y+19}" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="#b06a3a">⤴</text>`;
+    if(r.pointsToFootwork) s+=`<text x="${n.x+n.w-9}" y="${n.y+19}" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="700" fill="#fb923c">⤴</text>`;
     return s+`</g>`;
   };
 
@@ -1067,12 +1055,12 @@ function drawTree(){
     let s=`<rect x="${n.x}" y="${n.y}" rx="${G.RX}" width="${n.w}" height="${n.h}" fill="${st.fill}" stroke="${st.stroke}" stroke-width="${st.sw}"/>`
       +`<rect x="${n.x}" y="${n.y}" rx="${G.RX}" width="6" height="${n.h}" fill="${c}"/>`;
     if(lines.length===1){
-      s+=`<text x="${n.x+13}" y="${n.y+18.5}" font-family="system-ui,sans-serif" font-size="11" fill="#241f36">${esc(lines[0])}</text>`;
+      s+=`<text x="${n.x+13}" y="${n.y+18.5}" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#e8eefb">${esc(lines[0])}</text>`;
     }else{
-      s+=`<text x="${n.x+13}" y="${n.y+11}" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">${esc(lines[0])}</text>`
-        +`<text x="${n.x+13}" y="${n.y+23}" font-family="system-ui,sans-serif" font-size="10.5" fill="#241f36">${esc(lines[1])}</text>`;
+      s+=`<text x="${n.x+13}" y="${n.y+11}" font-family="Inter,system-ui,sans-serif" font-size="10.5" fill="#e8eefb">${esc(lines[0])}</text>`
+        +`<text x="${n.x+13}" y="${n.y+23}" font-family="Inter,system-ui,sans-serif" font-size="10.5" fill="#e8eefb">${esc(lines[1])}</text>`;
     }
-    if(art) s+=`<text x="${n.x+n.w-9}" y="${n.y+19}" text-anchor="end" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="${c}">${art[1]}</text>`;
+    if(art) s+=`<text x="${n.x+n.w-9}" y="${n.y+19}" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="700" fill="${c}">${art[1]}</text>`;
     return s+n.children.map(drawNode).join("");
   };
   // Column links are a left-to-right bezier; outline links are an elbow — a stem down
@@ -1087,13 +1075,13 @@ function drawTree(){
       const px=n.x+n.w, py=n.y+n.h/2, mid=(px+c.x)/2;
       d=`M${px} ${py} C${mid} ${py} ${mid} ${cy} ${c.x} ${cy}`;
     }
-    return `<path d="${d}" fill="none" stroke="#c99a3f" stroke-width="1.6" opacity="0.55"/>`
+    return `<path d="${d}" fill="none" stroke="#3a4d74" stroke-width="1.4" opacity="1"/>`
       +drawLinks(c);
   }).join("");
 
   host.innerHTML=`<svg viewBox="0 0 ${forest.geo.SVG_W} ${forest.totalHeight}" xmlns="http://www.w3.org/2000/svg" class="tree tree-dyn" role="img" aria-label="West Coast Swing move family tree, generated from the move list">`
     +forest.map(f=>
-      `<text x="24" y="${f.headY}" font-family="Iowan Old Style,Georgia,serif" font-size="19" font-weight="600" fill="#c99a3f">${esc(f.name)}</text>`
+      `<text x="24" y="${f.headY}" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="700" letter-spacing="-.3" fill="#e8eefb">${esc(f.name)}</text>`
       +f.roots.map(drawLinks).join("")+f.roots.map(drawNode).join("")
     ).join("")
     +`</svg>`;
@@ -1234,8 +1222,8 @@ window.addEventListener("resize",()=>{
 function showProgressNotice(){
   var bar=document.createElement("div");
   bar.setAttribute("role","status");
-  bar.style.cssText="position:sticky;top:0;z-index:100;background:#2E4266;color:#efe7d6;border-bottom:1px solid #8f6e2b;padding:10px 14px;font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;gap:12px;align-items:center;justify-content:center;text-align:center";
-  bar.innerHTML='<span>We couldn’t read your saved progress. A backup is stored in case you need it.</span><button aria-label="Dismiss" style="background:transparent;border:1px solid #8f6e2b;color:#efe7d6;border-radius:6px;min-width:32px;min-height:32px;cursor:pointer;font-size:16px">×</button>';
+  bar.style.cssText="position:sticky;top:0;z-index:100;background:#0f182c;color:#e8eefb;border-bottom:1px solid #2a3a5a;padding:10px 14px;font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;gap:12px;align-items:center;justify-content:center;text-align:center";
+  bar.innerHTML='<span>We couldn’t read your saved progress. A backup is stored in case you need it.</span><button aria-label="Dismiss" style="background:transparent;border:1px solid #2a3a5a;color:#e8eefb;border-radius:6px;min-width:32px;min-height:32px;cursor:pointer;font-size:16px">×</button>';
   bar.querySelector("button").addEventListener("click",function(){ bar.remove(); });
   document.body.insertBefore(bar, document.body.firstChild);
 }

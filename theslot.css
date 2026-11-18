@@ -1,17 +1,55 @@
-/* theslot.css — shared design tokens for The Slot. Loaded first by both pages.
-   The :root block only; layout CSS stays inline in each page (no tokenization
-   pass this sprint). */
-  :root{
-    --ink:#1C2B45; --ink2:#253756; --ink3:#2E4266;
-    --paper:#efe7d6; --paper2:#e5dbc3; --paper3:#ded2b6;
-    --brass:#c99a3f; --brass-lo:#8f6e2b; --brass-hi:#ecc069;
-    --got:#54a58c; --got-lo:#3c7d69; --learning:#dd934a;
-    --tx:#efe7d6; --tx-dim:#A9B5C9; --tx-ink:#241f36;
-    --line:#475E85;
-    /* lever colors */
-    --lv-hand:#7a6bb0; --lv-turn:#c99a3f; --lv-rev:#c8757f;
-    --lv-entry:#4f8a9c; --lv-exit:#b06a3a;
-    --display:'Iowan Old Style','Palatino Linotype','Georgia',serif;
-    --body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-  }
+/* theslot.css — shared fonts, design tokens and base styles for The Slot.
+   Loaded first by both pages; page-specific layout CSS stays inline in each page.
+   Fonts are self-hosted (Inter, JetBrains Mono, Fraunces — all SIL OFL), so the
+   site still has no third-party requests. */
+@font-face{font-family:"Inter";src:url(assets/fonts/inter-latin-wght-normal.woff2) format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Fraunces";src:url(assets/fonts/fraunces-latin-wght-normal.woff2) format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+
+:root{
+  /* surfaces */
+  --bg:#060a14; --panel:#0b1222; --panel2:#0f182c;
+  --line:#1c2840; --line2:#2a3a5a;
+  /* text */
+  --tx:#e8eefb; --tx-dim:#93a1bd; --dim:#5f6d89;
+  /* accents */
+  --cyan:#38d6f5; --violet:#a78bfa; --teal:#2dd4bf; --amber:#fbbf24;
+  --grad:linear-gradient(90deg,var(--cyan),var(--violet));
+  --on-accent:#06101e;
+  /* status */
+  --got:#2dd4bf; --learning:#fbbf24;
+  /* the five levers — one hue each, tuned for the dark ground */
+  --lv-hand:#a78bfa; --lv-turn:#f2c14e; --lv-rev:#ff7a90;
+  --lv-entry:#38d6f5; --lv-exit:#fb923c;
+  /* type */
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --serif:"Fraunces",Georgia,serif;
+  /* aliases the page scripts still reference */
+  --display:var(--sans); --body:var(--sans);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--sans);
+  line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--cyan);text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:6px}
+[hidden]{display:none !important}
+
+/* shared pieces */
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+.brand{display:inline-flex;align-items:center;gap:9px;text-decoration:none;color:var(--tx);
+  font-weight:700;letter-spacing:-.01em;font-size:15px;flex:0 0 auto}
+.brand .mark{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;
+  font-family:var(--serif);font-style:italic;font-weight:600;font-size:16px;line-height:1;
+  color:var(--on-accent);background:linear-gradient(135deg,var(--cyan),var(--violet))}
+.brand .dot{color:var(--cyan)}
+.cbtn{font-family:var(--sans);font-size:15px;font-weight:600;border-radius:12px;padding:11px 18px;
+  min-height:44px;cursor:pointer;border:1px solid transparent;background:var(--grad);
+  color:var(--on-accent);transition:filter .15s,border-color .15s,color .15s}
+.cbtn:hover{filter:brightness(1.08)}
+.cbtn.ghost{background:none;color:var(--tx);border-color:var(--line2)}
+.cbtn.ghost:hover{filter:none;border-color:var(--dim)}
+
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
